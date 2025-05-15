@@ -183,7 +183,7 @@ app.post('/reviews/:storageId', async (req, res) => {
         } 
         client.query(`
         INSERT INTO public.reviews 
-       ( "userId", "storageId", "title", "body", "rating")
+       ("userId", "storageId", "title", "body", "rating")
         VALUES ($1, $2, $3, $4, $5)
       `, [userId, storageId, title, body, rating], (err, results) => {
             if (err) {
@@ -199,11 +199,13 @@ app.post('/reviews/:storageId', async (req, res) => {
 });
 
 app.post("/replies", async (req, res) => {
+    console.log(req.session);
     const userId = req.session.userId;
+    console.log(userId);
     console.log("Received body:", req.body);
-    const { reviewId, reply, storageId } = req.body;
+    const { reviewId, reply} = req.body;
 
-    const renderedHTML = await ejs.renderFile("views/reviews.ejs", { storageId });
+    // const renderedHTML = await ejs.renderFile("views/reviews.ejs", { storageId });
 
     const client = new pg.Client(config);
     client.connect();
@@ -214,7 +216,7 @@ app.post("/replies", async (req, res) => {
        ("userId", "reviewId", "body")
         VALUES ($1, $2, $3)
       `, [userId, reviewId, reply]);
-        res.send(renderedHTML);
+        res.send(redirect);
     } catch (err) {
         console.error(err);
         res.status(500).send("Error saving reply");

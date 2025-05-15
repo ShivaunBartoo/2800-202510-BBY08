@@ -4,10 +4,9 @@ const pgSession = require("connect-pg-simple")(session);
 const bcrypt = require("bcrypt");
 const fs = require("fs");
 const pg = require("pg");
-const dotenv = require('dotenv').config();
+const dotenv = require("dotenv").config();
 
 const ejs = require("ejs");
-
 
 const saltRounds = 12;
 const app = express();
@@ -182,10 +181,10 @@ app.get("/manage/storage", async (req, res) => {
         if (storage.lastCleaned) {
             storage.lastCleaned = new Date(storage.lastCleaned);
         }
-        res.render('manage', {
+        res.render("manage", {
             storage,
             stylesheets: ["manage.css"],
-            scripts: ["imageUploadUtil.js", "manage.js"]
+            scripts: ["imageUploadUtil.js", "manage.js"],
         });
     } catch (error) {
         console.error("Error fetching storage:", error);
@@ -194,7 +193,6 @@ app.get("/manage/storage", async (req, res) => {
         await client.end();
     }
 });
-
 
 ///route for reviews
 app.get("/reviews", function (req, res) {
@@ -219,26 +217,28 @@ app.get("/profile", function (req, res) {
 
 // Route for create new fridge/pantry page
 
-app.get('/storage/createnew', (req, res) => {
-    res.render('create_new', {
+app.get("/storage/createnew", (req, res) => {
+    res.render("create_new", {
         stylesheets: ["create_new.css"],
-        scripts: ["imageUploadUtil.js", "create_new.js"]
+        scripts: ["imageUploadUtil.js", "create_new.js"],
     });
-
 });
 
 ///route for reviews
 app.get("/reviews/:storageId", function (req, res) {
-    const storageId  = req.params.storageId;
+    const storageId = req.params.storageId;
     res.render("reviews", {
         stylesheets: ["reviews.css", "contents.css", "addreview.css"],
         scripts: ["reviews.js"],
-        other: [`<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">`, `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>`]
+        other: [
+            `<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">`,
+            `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>`,
+        ],
     });
 });
 
-app.post('/reviews/:storageId', async (req, res) => {
+app.post("/reviews/:storageId", async (req, res) => {
     const userId = req.session.userId;
     //if (!userId) return res.status(401).send('Not logged in');
 
@@ -248,26 +248,27 @@ app.post('/reviews/:storageId', async (req, res) => {
     const client = new pg.Client(config);
 
     client.connect((err) => {
-
         if (err) {
             console.log(err);
             return;
-        } 
-        client.query(`
+        }
+        client.query(
+            `
         INSERT INTO public.reviews 
        ( "userId", "storageId", "title", "body", "rating")
         VALUES ($1, $2, $3, $4, $5)
-      `, [userId, storageId, title, body, rating], (err, results) => {
-            if (err) {
-                console.log(err);
-                return;
-            } 
-            res.redirect(`/reviews/${storageId}`);
-            client.end();
-        });
-        
+      `,
+            [userId, storageId, title, body, rating],
+            (err, results) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                res.redirect(`/reviews/${storageId}`);
+                client.end();
+            }
+        );
     });
-    
 });
 
 app.post("/replies", async (req, res) => {
@@ -281,11 +282,14 @@ app.post("/replies", async (req, res) => {
     client.connect();
 
     try {
-        await client.query(`
+        await client.query(
+            `
         INSERT INTO public.replies 
        ("userId", "reviewId", "body")
         VALUES ($1, $2, $3)
-      `, [userId, reviewId, reply]);
+      `,
+            [userId, reviewId, reply]
+        );
         res.send(renderedHTML);
     } catch (err) {
         console.error(err);
@@ -308,10 +312,9 @@ app.get("/logout", function (req, res) {
     }
 });
 
-require('./api')(app);
-require('./authentication')(app);
-require('./create_manageStorage')(app);
-
+require("./api")(app);
+require("./authentication")(app);
+require("./create_manageStorage")(app);
 
 // Page not found
 app.use(function (req, res, next) {

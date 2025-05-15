@@ -17,31 +17,35 @@ function getFridgePosition(fridgeId) {
     xhr.send();
 }
 
-switchMapView();
-function switchMapView() {
-    const storageId = window.location.pathname.split("/")[2];
-    const apixhr = new XMLHttpRequest();
-    apixhr.open("GET", "/gmapkey");
-    apixhr.onreadystatechange = function () {
-        if (apixhr.readyState === 4 && apixhr.status === 200) {
-            const apiKey = JSON.parse(apixhr.responseText).apiKey;
+loadMapView();
 
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", `/storageloc/${storageId}`);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    let data = JSON.parse(xhr.responseText);
-                    storelat = data.latitude;
-                    storelon = data.longitude;
+function loadMapView() {
+    const mapElement = document.getElementById("map");
+    if (mapElement) {
+        const storageId = window.location.pathname.split("/")[2];
+        const apixhr = new XMLHttpRequest();
+        apixhr.open("GET", "/gmapkey");
+        apixhr.onreadystatechange = function () {
+            if (apixhr.readyState === 4 && apixhr.status === 200) {
+                const apiKey = JSON.parse(apixhr.responseText).apiKey;
 
-                    const googleEmbed = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${storelat},${storelon}`;
-                    document.getElementById("map").src = googleEmbed;
-                }
-            };
-            xhr.send();
-        }
-    };
-    apixhr.send();
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", `/storageloc/${storageId}`);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        let data = JSON.parse(xhr.responseText);
+                        storelat = data.latitude;
+                        storelon = data.longitude;
+
+                        const googleEmbed = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${storelat},${storelon}`;
+                        mapElement.src = googleEmbed;
+                    }
+                };
+                xhr.send();
+            }
+        };
+        apixhr.send();
+    }
 }
 
 function openMap() {

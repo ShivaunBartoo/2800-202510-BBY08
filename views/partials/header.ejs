@@ -14,7 +14,7 @@
     <% } 
     } if(typeof scripts !== "undefined") { 
         for(let script of scripts) { %>
-            <script src="/js/<%-script%>" defer></script>
+            <script type="module" src="/js/<%-script%>" defer></script>
     <% } 
     }%>
     <%

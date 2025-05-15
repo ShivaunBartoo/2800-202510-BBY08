@@ -2,6 +2,7 @@ body {
     display: flex;
     flex-direction: column;
 }
+
 #tab-nav {
     height: 30px;
     background-color: var(--blue-light);
@@ -19,10 +20,21 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: height 0.2s ease-out, background-color 0.2s ease-out;
+    text-decoration: none;
 }
 
 .tab.selected {
     height: 65px;
+}
+
+.tab.tabs-hovered {
+    height: 50px;
+}
+
+.tab:hover {
+    height: 65px;
+    background-color: var(--blue-accent);
 }
 
 .tab span {
@@ -52,7 +64,7 @@ main {
     color: var(--blue-dark);
 }
 
-#title > hr {
+#title>hr {
     width: 90%;
     border: 1px solid var(--pink-dark);
     margin: 0;
@@ -66,13 +78,14 @@ main {
 #title-type {
     color: var(--pink-dark);
 }
+
 #contents {
     grid-area: contents;
     margin: 20px;
     overflow: auto;
 }
 
-#contents > table {
+#contents>table {
     width: 90%;
     border-collapse: collapse;
     margin: 0 auto;
@@ -80,12 +93,13 @@ main {
     color: var(--blue-dark);
 }
 
-#contents > table th,
+#contents>table th,
 tr {
     text-align: left;
     height: 2em;
     border-bottom: 1px solid var(--blue-medium);
 }
+
 #buttons {
     grid-area: buttons;
     display: flex;
@@ -93,7 +107,7 @@ tr {
     margin: 5%;
 }
 
-#buttons > button {
+#buttons>button {
     width: 150px;
     height: 50px;
     border-radius: 50px;
@@ -104,8 +118,12 @@ tr {
     cursor: pointer;
 }
 
-#buttons > button:hover {
+#buttons>button:hover {
     background-color: var(--blue-medium);
+}
+
+#buttons>button:disabled {
+    background-color: rgb(167, 158, 158);
 }
 
 #contact {
@@ -123,8 +141,10 @@ tr {
 }
 
 #map-content {
-    display: none;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #map {
@@ -132,6 +152,21 @@ tr {
     width: 100%;
 }
 
+#maps-btn {
+    margin: 10px;
+    width: 300px;
+    height: 50px;
+    border-radius: 50px;
+    border: none;
+    background-color: var(--blue-text);
+    color: var(--pink-light);
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+#maps-btn:hover {
+    background-color: var(--blue-dark);
+}
 #donationList {
     width: 80%;
     border-collapse: collapse;
@@ -140,8 +175,31 @@ tr {
     color: var(--blue-dark);
 }
 
-#donationList > th, tr {
+#donationList > th,
+tr {
     text-align: left;
     height: 2em;
     border-bottom: 1px solid var(--blue-medium);
+}
+
+#maxValue {
+    margin-left: 0.3em;
+}
+
+#donate-errors {
+    color: red;
+    text-align: center;
+}
+
+#distance-error, #take-error {
+    display: flex;
+    justify-self: center;
+    padding: 0.5em;
+    background-color: var(--pink-light);
+    text-align: center;
+    border: 1px solid var(--pink-accent);
+}
+
+#distance {
+    color: rgb(138, 134, 134);
 }

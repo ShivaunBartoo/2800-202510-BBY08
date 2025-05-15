@@ -2,7 +2,7 @@ let storelat, storelon;
 
 function getFridgePosition(fridgeId) {
     // let params = new URLSearchParams(window.location.search);
-    let storageId = fridgeId;  // params.get("id");
+    let storageId = fridgeId; // params.get("id");
     const xhr = new XMLHttpRequest();
     xhr.open("GET", `/storageloc?id=${storageId}`);
     xhr.onreadystatechange = function () {
@@ -17,8 +17,9 @@ function getFridgePosition(fridgeId) {
     xhr.send();
 }
 
+switchMapView();
 function switchMapView() {
-    const storageId = window.location.pathname.substring(10);
+    const storageId = window.location.pathname.split("/")[2];
     const apixhr = new XMLHttpRequest();
     apixhr.open("GET", "/gmapkey");
     apixhr.onreadystatechange = function () {
@@ -33,12 +34,8 @@ function switchMapView() {
                     storelat = data.latitude;
                     storelon = data.longitude;
 
-
                     const googleEmbed = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${storelat},${storelon}`;
                     document.getElementById("map").src = googleEmbed;
-                    document.getElementById("main-contents").style.display = "none";
-                    document.getElementById("map-content").style.display = "block";
-
                 }
             };
             xhr.send();
@@ -49,7 +46,7 @@ function switchMapView() {
 
 function openMap() {
     const googleMapsUrl = `https://www.google.com/maps?q=${storelat},${storelon}`;
-    window.open(googleMapsUrl, '_blank');
+    window.open(googleMapsUrl, "_blank");
 }
 
 async function getDistanceToFridge(fridgeId) {
@@ -58,5 +55,3 @@ async function getDistanceToFridge(fridgeId) {
     let distance = getDistance(userlocation.lat, userlocation.lon, storagelocation.lat, storagelocation.lon);
     return distance;
 }
-
-

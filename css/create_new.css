@@ -1,9 +1,11 @@
+
 #body-container {
-  height: 100vh;
-  padding: 10% ;
+  height: 100%;
+  padding-left: 10% ;
+  padding-right: 10%;
   margin: auto;
-  background-color: #fff;
-  font-size: 20pt;
+  font-size: 16pt;
+  padding-bottom: 10%;
 }
 
 .section {
@@ -25,7 +27,18 @@ label {
 .field-group input {
   flex: 1;
 }
+.address-fields {
+  flex: 1;
+}
 
+.address-field label {
+  font-size: 1rem;
+  color: #555
+}
+
+.address-field {
+  margin-bottom: 3%;
+}
 
 input[type="text"] {
   width: calc(100% - 40px);
@@ -39,16 +52,10 @@ input[type="text"] {
 #description {
   height: 100px;
 }
-.edit-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  vertical-align: middle;
-}
 
 .photo-box {
   background: #CEDDF1;
-  height: 100px;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,33 +65,30 @@ input[type="text"] {
 .actions {
   display: flex;
   justify-content: space-evenly;
-  margin-top: 10%;
+  margin-top: 5%;
+  padding-bottom: 10vh;
 }
 
 button {
-  font-size: 20pt;
+  font-size: 16pt;
 
 }
 .cre-back-btn, .cre-save-btn {
-  background-color: #F0F3FF;
-  border: none;
+  border: var(--blue-medium);
   padding: 10px 30px;
   border-radius: 5px;
+  background-color: var(--blue-light);
 }
 
-.title-container {
+.header-title {
   text-align: center;
-  margin-bottom: 10px;
-}
-
-.title-container h2 {
   margin: 0;
 }
 
 .type-toggle {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 5%;
   gap: 0px;
 }
 
@@ -96,10 +100,11 @@ button {
   cursor: pointer;
   font-weight: bold;
   transition: 0.2s ease;
+  font-size: 14pt;
 }
 
 .type-btn.active {
-  background-color: #CEDDF1;
+  background-color: var(--blue-light);
   color: white;
-  border-color: #CEDDF1;
+  border-color: var(--blue-medium);
 }

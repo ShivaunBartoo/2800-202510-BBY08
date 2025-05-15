@@ -1,97 +1,98 @@
-    <%- include('partials/header') %>
-    <div id="tab-nav">
-        <div class="tab" id="tab-contents" onclick="switchMapView()"><span class="material-icons">route</span></div>
-        <div class="tab selected" id="tab-contents"><span class="material-icons">shelves</span></div>
-        <div class="tab" id="tab-contents"><span class="material-icons">settings</span></div>
-        <div class="tab" id="tab-contents"><span class="material-icons">reviews</span></div>
-    </div>
-    <main id="main-contents">
-        <div id="title">
-            <div id="title-name"><%=title%></div>
-            <hr />
-            <% if (type == 1) { %>
-                <div id="title-type">Community Fridge</div>
-            <% } else { %>
-                <div id="title-type">Community Pantry</div>
-            <% } %>
-            
-        </div>
-        <div id="contents">
-            <table id="content-rows">
-                <tr>
-                    <th>Qty</th>
-                    <th>Item</th>
-                    <th>BBD</th>
-                </tr>
-            </table>
-        </div>
-        <div id="buttons">
-            <button name="donate-item" value="donate-item" id="open-modal">Donate</button>
-            <button name="take-item" value="take-item">Take</button>
-        </div>
-        <div id="contact">
-            <div class="material-icons">account_circle</div>
-            <div>
-                <div>Last cleaned: <span id="clean-date"><%=lastCleaned%></span></div>
-                <div>Contact the <span id="contact-type">fridge</span> manager</div>
+<%- include('partials/header') %>
+    <%- include('partials/contents-tab', {selected: 'contents' }) %>
+        <main id="main-contents">
+            <div id="title">
+                <div id="title-name">
+                    <%=title%>
+                </div>
+                <hr />
+                <% if (type==1) { %>
+                    <div id="title-type">Community Fridge</div>
+                    <% } else { %>
+                        <div id="title-type">Community Pantry</div>
+                        <% } %>
+                            <div id="distance"></div>
             </div>
-        </div>
-    </main>
-     <div id="map-content">
-            <iframe id="map" src=""></iframe>
-            <button id="maps-btn" onclick="openMap()"> Directions in Google Maps</button>
+            <div id="contents">
+                <table id="content-rows">
+                    <tr>
+                        <th>Qty</th>
+                        <th>Item</th>
+                        <th>BBD</th>
+                    </tr>
+                </table>
+            </div>
+            <span id="take-error" class="hidden">Uh oh! You cannot take more than the available quantity.</span>
+            <span id="distance-error" class="hidden">You must be within 2km of this location to donate or take items.
+            </span>
+            <div id="buttons">
+                <button name="donate-item" value="donate-item" id="open-modal" class="contents-btns">Donate</button>
+                <button name="take-item" id="take" value="take-item">Take</button>
+                <button name="take-cancel" value="take-cancel" id="take-cancel" class="hidden"
+                    style="background-color: var(--blue-accent); color: var(--blue-dark) ">Cancel</button>
+                <button name="take-confirm" value="take-confirm" id="take-confirm" class="hidden"
+                    style="background-color: var(--blue-accent); color: var(--blue-dark)">Confirm</button>
 
-        </div>
-    <div>
-        <div id="contentsmodal" class="modal">
-            <div class="modal-content">
-                <div id="donateheader">
-                    <h3>Donate item</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                        id="close-modal"></button>
+            </div>
+            <div id="contact">
+                <div class="material-icons">account_circle</div>
+                <div>
+                    <div>Last cleaned: <span id="clean-date">
+                            <%=lastCleaned%>
+                        </span></div>
+                    <div>Contact the <span id="contact-type">fridge</span> manager</div>
                 </div>
-                <div class="item-name-input">
-                    <!-- <label for="itemName">Enter item name</label> -->
-                    <input type="text" id="itemName" placeholder="Enter item name" />
-                </div>
+            </div>
+        </main>
+        <div>
+            <div id="contentsmodal" class="modal">
+                <div class="modal-content">
+                    <div id="donateheader">
+                        <h3>Donate item</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                            id="close-modal"></button>
+                    </div>
+                    <div class="item-name-input">
+                        <input type="text" id="itemName" placeholder="Enter item name" />
+                    </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="qty">Quantity:</label>
-                        <div class="qty-input">
-                            <!-- <button onclick="changeQty(-1)"></button> -->
-                            <input type="number" id="qty" value="0" min="0" />
-                            <!-- <button onclick="changeQty(1)"></button> -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="qty">Quantity:</label>
+                            <div class="qty-input">
+                                <input type="number" id="qty" value="0" min="0" />
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="bbd-gr">
+                            <label for="bbd">Best Before Date:</label>
+                            <input type="date" id="bbd" />
                         </div>
                     </div>
-
-                    <div class="form-group" id="bbd-gr">
-                        <label for="bbd">Best Before Date:</label>
-                        <input type="date" id="bbd" />
+                    <div id="donate-errors" class="hidden">
+                        <p id="name-error">Uh oh! Something went wrong. </p>
+                        <p id="qty-error">Item Name cannot be empty, item quantity cannot be 0, and BBD cannot be
+                            expired.
+                        </p>
                     </div>
-                </div>
-
-                <button id="addItem">Add Item</button>
-                <div id="itempreview">
-                    <p><strong>Items for donation:</strong></p>
-                    <table id="donationList">
-                        <tr>
-                            <th>Qty</th>
-                            <th>Item</th>
-                            <th>BBD</th>
-                        </tr>
-                    </table>
-                </div>
-                <div class="modal-actions">
-                    <button id="modal-cancel">Cancel</button>
-                    <button id="donate-btn">Donate</button>
+                    <button id="addItem">Add Item</button>
+                    <div id="itempreview">
+                        <p><strong>Items for donation:</strong></p>
+                        <table id="donationList">
+                            <tr>
+                                <th>Qty</th>
+                                <th>Item</th>
+                                <th>BBD</th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="modal-actions">
+                        <button id="modal-cancel">Cancel</button>
+                        <button id="donate-btn">Donate</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <script src="/js/contents.js"></script>
-    <script src="/js/locational.js"></script>
-    
-</body>
-
-</html>
+        <script type="module" src="/js/contents.js"></script>
+        <script src="/js/locational.js"></script>
+        <%- include('partials/footer') %>

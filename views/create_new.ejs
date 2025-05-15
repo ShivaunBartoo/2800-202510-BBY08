@@ -1,0 +1,73 @@
+<%- include('partials/header') %>
+    <div id="body-container">
+        <div class="header-title">
+            <h2>Create New Storage</h2>
+        </div>
+
+        <form id="newStorageForm">
+            <div class="type-toggle">
+                <button id="fridgeBtn" class="type-btn active" onclick="selectType('fridge')">Fridge</button>
+                <button id="pantryBtn" class="type-btn" onclick="selectType('pantry')">Pantry</button>
+                <input type="hidden" id="storageType" name="storageType" value="1">
+            </div>
+
+            <div class="section">
+                <label>Name:</label>
+                <div class="field-group">
+                    <input type="text" name="title" id="title" placeholder="Enter name" />
+
+                </div>
+            </div>
+
+            <div class="section">
+                <label>Address:</label>
+                <div class="field-group">
+                    <div class="address-fields">
+                        <div class="address-field">
+                            <label for="street">Street:</label>
+                            <input type="text" name="street" id="street" placeholder="Enter street" />
+                        </div>
+                        <div class="address-field">
+                            <label for="city">City:</label>
+                            <input type="text" name="city" id="city" placeholder="Enter city" />
+                        </div>
+                        <div class="address-field">
+                            <label for="province">Province:</label>
+                            <input type="text" name="province" id="province" placeholder="Enter Province" />
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <label>Upload cover photo:</label>
+                <div class="photo-box">
+                    <input type="file" name="photo" id="coverPhotoInput" accept="image/*" style="display: none;">
+
+                    <button type="button" class="upload-btn" id="uploadTrigger">
+                        <span class="material-icons" class="upload-icon">upload</span>
+                    </button>
+                    <div id="photoPreview" style="display: none;">
+                        <img id="previewImage" src="#" alt="Preview" style="max-width: 200px; max-height: 200px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <label>Description:</label>
+                <div class="field-group">
+                    <input type="text" name="description" id="description" placeholder="Enter Message" />
+
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="cre-back-btn">Back</button>
+                <button type="submit" class="cre-save-btn">Save</button>
+            </div>
+
+        </form>
+    </div>
+
+    <%-include('partials/footer')%>

@@ -1,0 +1,22 @@
+<%- include('partials/header') %>
+        <div class="login-form">
+            <form class="form-container">
+                <h1>Create an Account</h1>
+
+                <label for="first-name">First Name</label>
+                <input id="first-name" type="text" required="required" placeholder="first name" />
+                <label for="last-name">Last Name</label>
+                <input id="last-name" type="text" required="required" placeholder="last name" />
+                <label for="email">Email</label>
+                <input id="email" type="email" required="required" placeholder="Email" />
+                <label for="password">Password</label>
+                <input id="password" type="password" required="required" placeholder="Password" />
+                <label for="confirm-password">Confirm Password</label>
+                <input id="confirm-password" type="password" required="required" placeholder="Password" />
+                <p class="hidden" id="errormsg">All fields are required.</p>
+                <p class="hidden" id="pwderror">Passwords do not match.</p>
+                <input type="button" value="Login" id="create-submit" />
+            </form>
+        </div>
+        <div class="spacer"></div>
+<%- include('partials/footer') %>

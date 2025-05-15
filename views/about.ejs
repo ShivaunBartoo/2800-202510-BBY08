@@ -1,0 +1,106 @@
+<%- include('partials/header') %>
+  <h1>About Us</h1>
+
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span>What is BeCool?</span>
+      <span class="material-icons arrow">arrow_drop_down</span>
+    </div>
+    <div class="section-content">
+      <p>BeCool is a student project started with the aim to decrease food insecurity and food waste in Canada by not
+        only raising awareness of community fridges in the greater Vancouver area,
+        but also by facilitating the accessibility and contribution of food to those fridges. We aim to equip users with
+        the ability to visualize food resources donated by the community
+        from the comfort of their homes, so those suffering from food scarcity and insecurity are not only made aware of
+        available fresh food nearby,
+        but are also able to plan their routes and meals.
+        To those with resources to give, we aim to help ease the process of locating available spaces
+        nearby as well as keeping track of donations that could have otherwise become foodwaste in their homes. </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span>What is Community Food Storage?</span>
+      <span class="material-icons arrow">arrow_drop_down</span>
+    </div>
+    <div class="section-content">
+      <p>Community food storages are exactly what they sound like,
+        these sptorages are put in place by the community where people donate what they can,
+        and take what they need. These locations work on an honor system and are widely
+        regarded as a judgement free zone. Our app provides a way to track the food in
+        the community food storages so people may know how long food has been sitting there for,
+        and so that a hopeful trip is not wasted upon arrival of an empty fridge or pantry.</p>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span><span class="material-icons">volunteer_activism</span> What You Can Donate</span>
+      <span class="material-icons arrow">arrow_drop_down</span>
+    </div>
+    <div class="section-content">
+      <ul>
+        <li>✅ Sealed packaged foods (with visible use-by date)</li>
+        <li>✅ Commercially prepared meals (with label & ingredients)</li>
+        <li>✅ Cheeses, fresh fruits & vegetables</li>
+        <li>✅ Table sauces, pastries, bread</li>
+        <li>✅ Unopened pasteurized milk, yogurt, and fruit juices</li>
+        <li>✅ Fresh eggs (with use-by date), cured meats</li>
+        <li>🧼 Personal care items: diapers, PPE, laundry soap, menstrual products, toiletries</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span><span class="material-icons">do_not_disturb_alt</span> What NOT to Donate</span>
+      <span class="material-icons arrow">arrow_drop_down</span>
+    </div>
+    <div class="section-content">
+      <ul>
+        <li>❌ Items past their use-by date or visibly spoiled</li>
+        <li>❌ Opened or partially used products</li>
+        <li>❌ Packages with no visible expiration date</li>
+        <li>❌ Leftovers or homemade meals</li>
+        <li>❌ Alcohol, vitamins, medicine, or anything unsafe for children</li>
+        <li>❌ Anything you wouldn’t eat or use yourself</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span><span class="material-icons">clean_hands</span> Fridge Etiquette</span>
+      <span class="material-icons arrow" >arrow_drop_down</span>
+    </div>
+    <div class="section-content">
+      <ul>
+        <li>🧼 Wash or sanitize hands before accessing the fridge</li>
+        <li>🚫 Avoid touching food unnecessarily</li>
+        <li>🗑 Discard spoiled or damaged items</li>
+        <li>📆 Check expiration dates and remove expired food</li>
+        <li>📦 Place newer donations at the back</li>
+        <li>🧽 Clean up spills if you can</li>
+        <li>📩 Report maintenance issues to <a href="mailto:">Mail placeholder</a></li>
+      </ul>
+    </div>
+  </div>
+
+
+  <!-- Script for expanding-->
+
+  <script>
+
+    function toggleSection(header) {
+      const section = header.parentElement;
+      section.classList.toggle('open');
+
+      const arrow = header.querySelector('.arrow');
+      if (arrow) {
+        arrow.classList.toggle('rotated');
+      }
+
+    }
+
+  </script>
+<%- include('partials/footer') %>

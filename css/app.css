@@ -58,7 +58,7 @@ body {
 /*#endregion GLOBALS */
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .spacer {

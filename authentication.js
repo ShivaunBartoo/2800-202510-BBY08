@@ -19,23 +19,21 @@ module.exports = function (app) {
     app.post('/createUser', async (req, res) => {
         let {firstName, lastName, email, password} = JSON.parse(atob(req.body.data));
 
-        console.log(password);
-
         let hashedPassword = bcrypt.hashSync(password, saltRounds);
 
         const client = new pg.Client(config);
         client.connect((err) => {
             if (err) {
-                console.log(err);
+                console.log("Error connecting to database in /createUser:", err);
                 return;
             }
             client.query(`INSERT INTO "users" ("firstName", "lastName", "email", "password") VALUES ($1, $2, $3, $4)`, [firstName, lastName, email, hashedPassword], (error, results) => {
                 if (error) {
                     if (firstName == null || lastName == null || email == null || password == null) {
-                        console.alert("All fields are required.")
+                        console.log("Validation error in /createUser: All fields are required.");
                         return;
                     }
-                    console.log(error);
+                    console.log("Error inserting user in /createUser:", error);
                     res.send({ status: "fail", msg: "Unable to create user." });
                     return;
                 } else {
@@ -44,7 +42,9 @@ module.exports = function (app) {
                     req.session.lastName = lastName;
                     req.session.email = email;
                     req.session.save(function (err) {
-                        console.error(err);
+                        if (err) {
+                            console.error("Error saving session in /createUser:", err);
+                        }
                     });
                     res.send({ status: "success", msg: "Logged in." });
                 }
@@ -59,7 +59,7 @@ module.exports = function (app) {
         const client = new pg.Client(config);
         client.connect((err) => {
             if (err) {
-                console.log(err);
+                console.log("Error connecting to database in /loggingIn:", err);
                 return;
             }
             client.query(`SELECT * FROM "users" WHERE users.email = $1`, [email], async (error, results) => {
@@ -71,7 +71,7 @@ module.exports = function (app) {
                         return;
                     }
 
-                    console.error(error);
+                    console.error("Error querying user in /loggingIn:", error);
                     res.send({ status: "fail", msg: "Unable to authenticate" });
                     return;
                 }
@@ -82,16 +82,15 @@ module.exports = function (app) {
                     res.send({ status: 'fail', msg: 'Invalid password' });
                     return;
                 }
-
-                console.log(validPassword);
-
                 req.session.authenticated = true;
                 req.session.userId = results.rows[0]["userId"];
                 req.session.userFirstName = results.rows[0]["firstName"];
                 req.session.lastName = results.rows[0]["lastName"];
                 req.session.email = email;
                 req.session.save(function (err) {
-                    console.error(err);
+                    if (err) {
+                        console.error("Error saving session in /loggingIn:", err);
+                    }
                 });
                 res.send({ status: "success", msg: "Logged in." });
                 client.end();

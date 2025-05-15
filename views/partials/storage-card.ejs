@@ -1,11 +1,14 @@
-<div class="storage-card">
+<a href="contents/<%= row.storageId %>" class="storage-card">
     <%if(row.image) {%>
     <img src="<%= "/img/" + row.image%>" class="card-background" />
     <% }%>
     <div class="card-background-gradient"></div>
     <div class="card-content">
         <div class="card-content-left">
-            <div class="card-favourite active material-icons">favorite</div>
+            <% if(typeof isFavourite != "undefined") { %>
+            <div class="card-favourite <%if(isFavourite){%>active<%}%> material-icons" 
+                data-id="<%= row.storageId %>">favorite</div>
+            <% } %>
         </div>
         <div class="card-content-right">
             <div class="card-main">
@@ -22,8 +25,10 @@
             </div>
             <span class="card-footer">
                 <div class="card-footer-restocked hidden"><span>RESTOCKED</span></div>
+                <% if(typeof distance != "undefined") { %>
                 <div class="card-distance"><%= distance %> km</div>
+                <% } %>
             </span>
         </div>
     </div>
-</div>
+</a>

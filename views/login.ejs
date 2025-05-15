@@ -1,0 +1,21 @@
+<%- include('partials/header') %>
+        <div class="login-form">
+            <form class="form-container">
+                <h1>Login</h1>
+
+                <label for="email">Email</label>
+                <input id="login-email" type="email" required="required" placeholder="Email" />
+
+                <label for="password">Password</label>
+                <input id="login-password" type="password" required="required" placeholder="Password" />
+
+                <input type="button" value="Login" id="login-submit" />
+                <p class="hidden" id="errormsg">Highlighted fields cannot be empty.</p>
+                <div id="links">
+                    <p id="forgotP"><a href="#">Forgot Login?</a></p>
+                    <p id="notMemberP"><a href="/createAccount">Create Account</a></p>
+                </div>
+            </form>
+        </div>
+        <div class="spacer"></div>
+<%- include('partials/footer') %>

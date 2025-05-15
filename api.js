@@ -2,19 +2,19 @@ const { getDistance } = require("./js/userLocation");
 const fs = require("fs");
 const pg = require("pg");
 const ejs = require("ejs");
-const multer = require('multer');
-const cloudinary = require('cloudinary').v2;
-const express = require('express');
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+const express = require("express");
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_CLOUD_KEY,
-    api_secret: process.env.CLOUDINARY_CLOUD_SECRET
+    api_secret: process.env.CLOUDINARY_CLOUD_SECRET,
 });
 
-const config = ({
+const config = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     host: process.env.DB_HOST,
@@ -23,49 +23,60 @@ const config = ({
     ssl: {
         rejectUnauthorized: true,
         ca: fs.readFileSync("./ca.pem").toString(),
-    }
-});
+    },
+};
 
 module.exports = function (app) {
-    app.get('/api/browse', (req, res) => {
-
-
+    app.get("/api/browse", async (req, res) => {
         const client = new pg.Client(config);
-        client.connect((err) => {
-            if (err) {
-                console.log(err);
-                return;
-            }
-            client.query("SELECT * FROM public.storage", async (error, results) => {
-                if (error) {
-                    console.log(error);
-                    client.end();
-                    return;
-                }
-                try {
-                    const lat = parseFloat(req.query.lat);
-                    const lon = parseFloat(req.query.lon);
-                    // Map each row to a promise that renders the template
-                    const renderedCards = await Promise.all(
-                        results.rows.map((row) => {
-                            let distance = getDistance(lat, lon, parseFloat(row.coordinates.x), parseFloat(row.coordinates.y));
-                            distance = distance.toFixed(1);
-                            return ejs.renderFile("views/partials/storage-card.ejs", { row, distance });
+        try {
+            await client.connect();
+
+            const storageResults = await client.query('SELECT * FROM public.storage WHERE "deletedDate" IS NULL');
+
+            let favoriteIds = [];
+            const favResults = await client.query('SELECT "storageId" FROM public.favourites WHERE "userId" = $1', [
+                req.session.userId,
+            ]);
+            favoriteIds = favResults.rows.map((row) => row.storageId);
+
+            const lat = parseFloat(req.query.lat);
+            const lon = parseFloat(req.query.lon);
+
+            let renderedCards = await Promise.all(
+                storageResults.rows.map((row) => {
+                    let distance = getDistance(lat, lon, parseFloat(row.coordinates.x), parseFloat(row.coordinates.y));
+                    distance = distance.toFixed(1);
+                    const isFavourite = favoriteIds.includes(row.storageId);
+                    return ejs
+                        .renderFile("views/partials/storage-card.ejs", {
+                            row,
+                            distance,
+                            isFavourite,
                         })
-                    );
-                    // Send the array of rendered HTML
-                    res.json(renderedCards);
-                } catch (err) {
-                    console.error("Template rendering error:", err);
-                    res.status(500).json({ error: "Failed to render templates" });
-                } finally {
-                    client.end();
-                }
-            });
-        });
+                        .then((html) => ({
+                            html,
+                            isFavourite,
+                            distance,
+                        }));
+                })
+            );
+            //sort the cards by favourite/non-favourite, and then sort the sublists by distance.
+            let sortByDistance = (arr) => arr.sort((a, b) => a.distance - b.distance);
+            let favouriteCards = sortByDistance(renderedCards.filter((card) => card.isFavourite));
+            let nonFavouriteCards = sortByDistance(renderedCards.filter((card) => !card.isFavourite));
+            let allCards = [...favouriteCards, ...nonFavouriteCards];
+            allCards = allCards.map((card) => card.html);
+            res.json(allCards);
+        } catch (err) {
+            console.error("Error:", err);
+            res.status(500).json({ error: "Failed to fetch data" });
+        } finally {
+            await client.end();
+        }
     });
 
-    app.get('/api/contents/:id', (req, res) => {
+    app.get("/api/contents/:id", (req, res) => {
         let storageID = req.params.id;
         const client = new pg.Client(config);
         client.connect((err) => {
@@ -73,40 +84,42 @@ module.exports = function (app) {
                 console.log(err);
                 return;
             }
-            client.query(`
+            client.query(
+                `
                 SELECT 
                 c."contentId", c."itemName", c."quantity", to_char(c."bbd", 'Mon dd, yyyy') AS bbd
                 FROM public.content AS c
-                WHERE c."storageId" = $1`, [storageID], async (error, results) => {
-                if (error) {
-                    console.log(error);
+                WHERE c."storageId" = $1`,
+                [storageID],
+                async (error, results) => {
+                    if (error) {
+                        console.log(error);
+                        client.end();
+                        return;
+                    }
+                    const renderedRows = await Promise.all(
+                        results.rows.map((row) => {
+                            return ejs.renderFile("views/partials/content-rows.ejs", { row });
+                        })
+                    );
+
+                    res.json(renderedRows);
                     client.end();
-                    return;
                 }
-                const renderedRows = await Promise.all(
-                    results.rows.map((row) => {
-                        return ejs.renderFile("views/partials/content-rows.ejs", { row });
-                    })
-                );
-
-                res.json(renderedRows)
-                client.end();
-            });
+            );
         });
-
     });
 
     app.post('/api/donate', (req, res) => {
-        // let storageId = req.query.ID;
         let data = req.body;
-        let sql = 'INSERT INTO "content" ("storageId", "itemName", "quantity", "bbd") VALUES '
+        let sql = 'INSERT INTO "content" ("storageId", "itemName", "quantity", "bbd") VALUES ';
         let items = [];
         for (let i = 0; i < data.length; i++) {
             let info = data[i];
             let str = "(" + info.storageId + ", '" + info.itemName + "', " + info.quantity + ", '" + info.bbd + "')";
             items.push(str);
         }
-        sql += items + ';';
+        sql += items + ";";
 
         const client = new pg.Client(config);
         client.connect((err) => {
@@ -116,204 +129,94 @@ module.exports = function (app) {
             }
             client.query(sql, (error, results) => {
                 if (error) {
-                    console.log(sql);
+                    console.log(error);
                     res.send({ status: "fail", msg: "Unable to add item to DB" })
-                }
-                else {
+                } else {
                     res.send({ status: "success", msg: "Item added to DB" })
                 }
-            })
+                client.end();
+            });
+
+        });
+    });
+
+    app.post("/api/take", async (req, res) => {
+        let data = req.body;
+        let deleteList = [];
+        let updateList = [];
+        let failure = false;
+        data.forEach(item => {
+            if (typeof item.id !== 'number' || typeof item.qty !== 'number') {
+                failure = true;
+                return;
+            }
+            if (item.qty == 0) {
+                deleteList.push(item);
+            } else {
+                updateList.push(item);
+            }
         })
-    });
-
-
-    app.get("/manage/storage", async (req, res) => {
-        const storageId = req.query.storageId;
-
-        if (!storageId) {
-            return res.status(400).json({ error: "Storage ID is required" });
-        }
-        const client = new pg.Client(config);
-        try {
-            await client.connect();
-
-            const result = await client.query(
-                `SELECT * FROM public.storage WHERE "storageId" = $1 AND "deletedDate" IS NULL`, // ✅ spelling fix: storageId
-                [storageId]
-            );
-
-            if (result.rows.length === 0) {
-                return res.status(404).json({ error: "Storage not found" });
-            }
-
-            const storage = result.rows[0];
-
-            if (storage.lastCleaned) {
-                storage.lastCleaned = new Date(storage.lastCleaned);
-            }
-            res.render('manage', {
-                storage,
-                stylesheets: ["manage.css"],
-                scripts: ["manage.js"]
-            });
-        } catch (error) {
-            console.error("Error fetching storage:", error);
-            res.status(500).json({ error: "Internal server error" });
-        } finally {
-            await client.end(); // ✅ Close connection
+        if (failure) {
+            res.send({ status: "fail", msg: "Unable to remove items from DB" });
+            return;
         }
 
-    });
+        let updateSql = 'UPDATE "content" AS c SET "quantity" = d.qty FROM (VALUES ' + updateList.map(d => { return `(${d.id}, ${d.qty})` }).join(', ') + ') as d(id, qty) WHERE d.id = c."contentId"';
 
-    app.put("/manage/storage", async (req, res) => {
-        const { storageId } = req.query;
-        const { title, storageType, street, city, province, lastCleaned, image } = req.body;
+        let deleteSql = 'DELETE FROM "content" WHERE "contentId" IN (' + deleteList.map(d => { return `${d.id}` }).join(', ') + ')';
 
-        if (!storageId) {
-            return res.status(400).json({ error: "Storage ID is required" });
-        }
-        const client = new pg.Client(config);
-        try {
-            // Convert empty string to NULL
-            const cleanedValue = lastCleaned === '' || lastCleaned === null
-                ? null
-                : lastCleaned;
-            await client.connect();
+        const queryPromises = [];
 
-            const result = await client.query(
-                `UPDATE public.storage
-                 SET "title" = $1, 
-                     "storageType" = $2, 
-                     "street" = $3, 
-                     "city" = $4, 
-                     "province" = $5, 
-                     "lastCleaned" = $6,
-                     "image"= $7
-                 WHERE "storageId" = $8
-                 RETURNING *`,
-                [title, storageType, street, city, province, cleanedValue, image, storageId]
-            );
-
-            if (result.rows.length === 0) {
-                return res.status(404).json({ error: "Storage not found" });
-            }
-
-            res.json(result.rows[0]);
-        } catch (error) {
-            console.error("Error updating storage:", error);
-            res.status(500).json({ error: "Internal server error" });
-        } finally {
-            await client.end(); // ✅ Close connection
-        }
-    });
-
-    app.delete("/manage/storage/soft-delete", async (req, res) => {
-        const { storageId } = req.query;
-
-        if (!storageId) {
-            return res.status(400).json({ error: "Storage ID is required" });
-        }
-        const client = new pg.Client(config);
-
-        try {
-            await client.connect();
-
-            const result = await client.query(
-                `UPDATE public.storage 
-                 SET "deletedDate" = CURRENT_DATE 
-                 WHERE "storageId" = $1 
-                 RETURNING *`,
-                [storageId]
-            );
-
-            if (result.rows.length === 0) {
-                return res.status(404).json({ error: "Storage not found" });
-            }
-
-            res.json({ message: "Storage soft-deleted", storage: result.rows[0] });
-        } catch (error) {
-            console.error("Error soft-deleting storage:", error);
-            res.status(500).json({ error: "Internal server error" });
-        } finally {
-            await client.end();
-        }
-    });
-
-    app.post('/manage/storage/upload', upload.single('photo'), async (req, res) => {
-
-        const storageId = req.query.storageId;
-        if (!storageId) {
-            return res.status(400).json({ error: 'Missing storageId' });
-        }
-
-        if (!req.file) {
-            return res.status(400).json({ error: 'No file upload' });
-        }
-        const client = new pg.Client(config);
-
-        try {
-            await client.connect();
-
-            //delete old image
-            try {
-                const existing = await client.query(
-                    `SELECT "imgPublicId" FROM public.storage WHERE "storageId" = $1`,
-                    [storageId]
-                );
-
-                const oldPublicId = existing.rows[0]?.imgPublicId;
-
-                if (oldPublicId) {
-                    await cloudinary.uploader.destroy(oldPublicId);
-                }
-            } catch (error) {
-                console.error('Delete on the cloudinary error:', error);
-                res.status(500).json({ error: 'Server error' });
-
-            }
-
-
-            // Upload to Cloudinary
-            const imageUrl = await new Promise((resolve, reject) => {
-                const stream = cloudinary.uploader.upload_stream(
-
-                    { folder: 'storage_img' },
-
-                    (error, result) => {
-
-                        if (error) return reject(error);
-
-                        resolve({
-                            url: result.secure_url,
-                            publicId: result.public_id
-                        });
+        queryPromises.push(new Promise((resolve, reject) => {
+            if (updateList.length > 0) {
+                const client = new pg.Client(config);
+                client.connect((err) => {
+                    if (err) {
+                        reject(err);
                     }
-                );
-                stream.end(req.file.buffer);
+                    client.query(updateSql, (error, results) => {
+                        if (error) {
+                            reject(err);
+                        }
+
+                        resolve();
+                        client.end();
+                    });
+                });
+            } else {
+                resolve();
+            }
+        }));
+
+        queryPromises.push(new Promise((resolve, reject) => {
+            if (deleteList.length > 0) {
+                const client = new pg.Client(config);
+                client.connect((err) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    client.query(deleteSql, (error, results) => {
+                        if (error) {
+                            reject(err);
+                        }
+                        resolve();
+                        client.end();
+                    });
+                })
+            } else {
+                resolve();
+            }
+        }));
+
+        Promise.all(queryPromises)
+            .then(() => {
+                res.send({ status: "success", msg: "Database successfully updated" });
+            })
+            .catch(err =>{
+                console.log(err);
+                res.send({ status:"fail", msg: "Unable to remove items"});
             });
-
-            // Save image URL in PostgreSQL
-            await client.query(
-                `UPDATE public.storage SET 
-                    "image" = $1,
-                    "imgPublicId" = $2
-                    WHERE "storageId" = $3`,
-                [imageUrl.url, imageUrl.publicId, storageId]
-            );
-
-            res.status(200).json({ image: imageUrl.url });
-
-            // Pipe the image buffer to Cloudinary upload stream
-        } catch (error) {
-            console.error('Upload error:', error);
-            res.status(500).json({ error: 'Server error' });
-        } finally {
-            await client.end();
-
-        }
-
     });
-    // isabel put ur code here
 
     app.get('/api/reviews/:storageId', (req, res) => {
         const { storageId } = req.params;
@@ -368,15 +271,19 @@ module.exports = function (app) {
         });
     });
 
-
     app.get("/storageloc/:id", async (req, res) => {
         const storageId = req.params.id;
         const client = new pg.Client(config);
         await client.connect();
-        const seperate = await client.query(`
+        const seperate = await client.query(
+            `
             SELECT CAST(coordinates[0] AS FLOAT) AS latitude, CAST(coordinates[1] AS FLOAT) AS longitude
             FROM storage WHERE "storageId" = $1`,
             [storageId]);
+        console.log("db:", JSON.stringify(seperate.rows[0]));
+        res.json(seperate.rows[0]);
+        client.end();
+
         console.log("db:", JSON.stringify(seperate.rows[0]));
         res.json(seperate.rows[0]);
         client.end();
@@ -386,6 +293,34 @@ module.exports = function (app) {
     app.get("/gmapkey", (req, res) => {
         const apiKey = process.env.GOOGLE_MAPS_API_KEY;
         res.json({ apiKey })
+        res.json({ apiKey })
     });
 
+    app.post("/api/favourite", async (req, res) => {
+        const id = req.body.id;
+        const client = new pg.Client(config);
+        await client.connect();
+
+        const favResults = await client.query(
+            'SELECT "storageId" FROM public.favourites WHERE "userId" = $1 AND "storageId" = $2',
+            [req.session.userId, id]
+        );
+        let favoriteIds = [];
+        favoriteIds = favResults.rows.map((row) => row.storageId);
+
+        if (favoriteIds.includes(Number(id))) {
+            // If already favourite, remove from favourites
+            await client.query('DELETE FROM public.favourites WHERE "userId" = $1 AND "storageId" = $2', [
+                req.session.userId,
+                id,
+            ]);
+        } else {
+            // If not favourite, add to favourites
+            await client.query('INSERT INTO public.favourites ("userId", "storageId") VALUES ($1, $2)', [
+                req.session.userId,
+                id,
+            ]);
+        }
+        res.status(200).send();
+    });
 };

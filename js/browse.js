@@ -1,18 +1,18 @@
-import {getUserLocation, getDistance} from "./userLocation.js";
+import { getUserLocation, getDistance } from "./userLocation.js";
 
 initialize();
 
-async function initialize(){
+async function initialize() {
     await loadCards();
     setupFilterButtons();
 }
 
-function setupFilterButtons(){
+function setupFilterButtons() {
     const buttons = document.querySelectorAll(".filter-button");
     const mainContainer = document.querySelector("#main-card-container");
-    for(let button of buttons){
+    for (let button of buttons) {
         button.addEventListener("click", (event) => {
-            buttons.forEach(button => button.classList.remove("active"));
+            buttons.forEach((button) => button.classList.remove("active"));
             event.target.classList.add("active");
             switch (event.target.name) {
                 case "all":
@@ -27,7 +27,7 @@ function setupFilterButtons(){
                     mainContainer.classList.remove("filter-fridge");
                     break;
             }
-        })
+        });
     }
 }
 
@@ -44,40 +44,48 @@ async function getCards() {
 async function loadCards() {
     const heroContainer = document.querySelector("#hero-card-container");
     const mainContainer = document.querySelector("#main-card-container");
+    //List is returned already sorted first by distance, and then by favourite status
     const cards = await getCards();
     if (cards.length > 0) {
-        let hero = selectHero(cards);
-        heroContainer.innerHTML = hero;
+        //The hero card is the first one in the list (closest favourite)
+        heroContainer.innerHTML = cards.shift();
         heroContainer.firstChild.classList.add("hero");
-        labelType(heroContainer.firstChild);
         for (let card of cards) {
             mainContainer.innerHTML += card;
-            labelType(mainContainer.lastChild);
         }
-    }
-    else {
+        const cardElements = document.querySelectorAll(".storage-card");
+        cardElements.forEach((card) => {
+            labelType(card);
+            addFavouriteButtonListener(card.querySelector(".card-favourite"));
+        });
+    } else {
         console.log("No fridges to show.");
     }
 }
 
-//Selects a store to show in the hero section of the page. 
-//removes it from the stores array and returns it. 
-function selectHero(stores){
-    //TODO: this should use favourites and distance to select a hero
-    if(stores.length > 0){
-        let hero = stores[0];
-        stores.splice(0, 1);
-        return hero;
-    }
-    return null;
-}
-
-function labelType(store){
+function labelType(store) {
     const typeElement = store.querySelector(".card-storage-type");
-    if(typeElement.innerHTML == "community fridge"){
+    if (typeElement.innerHTML == "community fridge") {
         store.classList.add("fridge");
-    }
-    else{
+    } else {
         store.classList.add("pantry");
     }
+}
+
+function addFavouriteButtonListener(element) {
+    element.addEventListener("click", async (event) => {
+        const id = element.dataset.id;
+        event.preventDefault();
+        element.classList.toggle("active");
+        const response = await fetch("/api/favourite", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id }),
+        });
+        if (!response.ok) {
+            console.log("Error adding to favourites");
+        }
+    });
 }

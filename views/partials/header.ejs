@@ -40,10 +40,17 @@
                     <span>About Us</span>
                     <span class="material-icons">info</span>
                 </a>
+                <% if(session.authenticated) { %>
                 <a href="/logout" class="header-menu-option">
                     <span>Log Out</span>
                     <span class="material-icons">logout</span>
                 </a>
+                <% } else { %>
+                <a href="/login" class="header-menu-option">
+                    <span>Log In</span>
+                    <span class="material-icons">login</span>
+                </a>
+                <%}%>
             </div>
         </div>
     </header>

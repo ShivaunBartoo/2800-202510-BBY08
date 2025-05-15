@@ -52,7 +52,6 @@ document.querySelector('#login-submit')?.addEventListener('click', function (e) 
 
 document.querySelector('#create-submit')?.addEventListener('click', function (e) {
     e.preventDefault();
-    console.log("test");
 
     let firstName = document.getElementById('first-name');
     let lastName = document.getElementById('last-name');

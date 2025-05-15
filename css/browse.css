@@ -45,6 +45,8 @@
     background-color: var(--blue-light);
     position: relative;
     overflow: hidden;
+    display: block;
+    text-decoration: none;
 }
 
 .storage-card.hero {
@@ -125,6 +127,7 @@
 }
 
 .card-storage-type {
+    color: var(--blue-dark);
     font-weight: 300;
 }
 
@@ -187,7 +190,7 @@
     transition: background-color 0.2s ease-in, color 0.2s ease-in;
 }
 
-.filter-button:hover{
+.filter-button:hover {
     cursor: pointer;
 }
 
@@ -196,24 +199,24 @@
     color: var(--pink-light);
 }
 
-.card-container.filter-fridge .storage-card.pantry{
+.card-container.filter-fridge .storage-card.pantry {
     display: none;
 }
 
-.card-container.filter-pantry .storage-card.fridge{
+.card-container.filter-pantry .storage-card.fridge {
     display: none;
 }
 
-#map-toggle-container{
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 2px;
+#map-toggle-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
 }
 
-.map-icon{
-  color: var(--pink-accent);
+.map-icon {
+    color: var(--pink-accent);
 }
 
 .toggle {
@@ -253,7 +256,7 @@
 }
 
 .toggle input:checked + .slider {
-  background-color: var(--pink-dark);
+    background-color: var(--pink-dark);
 }
 
 .toggle input:checked + .slider::before {
@@ -263,4 +266,3 @@
 .hidden {
     display: none;
 }
-

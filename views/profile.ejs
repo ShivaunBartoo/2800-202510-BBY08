@@ -1,0 +1,49 @@
+<%- include('partials/header') %>
+        <main>
+            <div id="user-section">
+                <div id="user-section-left">
+                    <div id="image-placeholder" aria-label="Profile picture placeholder"></div>
+                    <p>UserName</p>
+                </div>
+                <button>Edit</button>
+            </div>
+            <div class="container" id="infosec">
+                <p>Profile</p>
+                <form id="infoform">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required /><br /><br />
+
+                    <label for="gmail">Email:</label>
+                    <input type="email" id="gmail" name="gmail" required /><br /><br />
+
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required /><br /><br />
+                </form>
+                <div id="notifs">
+                    <label for="enable-notifications">
+                        <input type="checkbox" id="enable-notifications" />
+                        Enable notifications
+                    </label>
+                    <button>Save</button>
+                </div>
+            </div>
+            <div id="locationinform">
+                <strong>Note:</strong>
+                <small>
+                    To get the most out of our location-based features, please allow the app to access your location.
+                </small>
+            </div>
+
+            <div class="container" id="addsec"><p>My Fridges</p></div>
+            <div class="container" id="myreviews">
+                <div id="myreviews-content">
+                    <p>My Reviews</p>
+                    <ul>
+                        <li class="no-reviews">No reviews yet</li>
+                    </ul>
+                </div>
+                <button id="expandrev" onclick="expandReviews()">Expand</button>
+            </div>
+            <div class="spacer"></div>
+        </main>
+<%- include('partials/footer') %>

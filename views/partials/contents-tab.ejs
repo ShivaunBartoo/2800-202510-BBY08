@@ -1,0 +1,10 @@
+<div id="tab-nav">
+    <a href="/map/<%= id %>" class="tab <% if (selected == 'map') { %> selected <% } %>" id="tab-contents"><span class="material-icons">route</span></a>
+    <a href="/contents/<%= id %>" class="tab <% if (selected == 'contents') { %> selected <% } %>" id="tab-contents"><span class="material-icons">shelves</span></a>
+    <!-- replace 'true' with a boolean indicating if the user is the fridge owner -->
+    <% if (true ) { %>
+        <a href="/manage/<%= id %>" class="tab <% if (selected == 'manage') { %> selected <% } %>" id="tab-contents"><span class="material-icons">settings</span></a>
+    <% } %>
+    <a href="/reviews/<%= id %>" class="tab <% if (selected == 'reviews') { %> selected <% } %>" id="tab-contents"><span class="material-icons">reviews</span></a>
+</div>
+<script src="/js/contentTabs.js"></script>

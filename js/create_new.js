@@ -1,3 +1,4 @@
+import { initImageUploadPreview } from './imageUploadUtil.js';
 
 document.addEventListener('DOMContentLoaded', function () {
 

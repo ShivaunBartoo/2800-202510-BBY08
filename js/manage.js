@@ -1,3 +1,5 @@
+import { initImageUploadPreview } from './imageUploadUtil.js';
+
 const storageId = window.location.pathname.split("/")[2];
 
 localStorage.setItem('storageId', storageId);

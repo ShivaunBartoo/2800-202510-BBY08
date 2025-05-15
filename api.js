@@ -284,15 +284,10 @@ module.exports = function (app) {
         res.json(seperate.rows[0]);
         client.end();
 
-        console.log("db:", JSON.stringify(seperate.rows[0]));
-        res.json(seperate.rows[0]);
-        client.end();
-
     });
 
     app.get("/gmapkey", (req, res) => {
         const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-        res.json({ apiKey })
         res.json({ apiKey })
     });
 

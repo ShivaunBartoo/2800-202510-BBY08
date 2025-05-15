@@ -30,7 +30,7 @@ async function checkDistance() {
 
     document.getElementById('distance').innerHTML = `${distance}km Away`;
 
-    if (distance > 2) {
+    if (distance > 50) {
         document.querySelector('#open-modal').disabled = true;
         document.querySelector('#take').disabled = true;
         document.querySelector('#distance-error').classList.remove('hidden');

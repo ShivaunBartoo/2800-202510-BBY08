@@ -1,3 +1,5 @@
+import { initImageUploadPreview } from './imageUploadUtil.js';
+
 const storageId = window.location.pathname.split("/")[2];
 
 function expandReview(element) {
@@ -44,6 +46,15 @@ function closeModal() {
 
 // Main initialization
 document.addEventListener("DOMContentLoaded", () => {
+    initImageUploadPreview(
+        'uploadTrigger',
+        'coverPhotoInput',
+        'photoPreview',
+        'previewImage',
+        (file) => {
+            console.log('User selected file:', file);
+        }
+    );
     getReviews();
     registerEventListeners();
 });
@@ -80,7 +91,7 @@ async function submitReview() {
     }
 }
 
-function resetReviewForm(){
+function resetReviewForm() {
     document.getElementById("reviewTitle").value = "";
     document.getElementById("reviewText").value = "";
     document.getElementById("reviewRating").value = "";
@@ -98,7 +109,7 @@ async function getReviews() {
     } catch (error) {
         console.error('Error fetching reviews:', error);
         // You might want to display an error message to the user here
-        document.getElementById('reviews-container').innerHTML =                               
+        document.getElementById('reviews-container').innerHTML =
             '<p>Error loading reviews. Please try again later.</p>';
     }
 }
@@ -107,7 +118,7 @@ async function getReviews() {
 function registerEventListeners() {
 
     document.addEventListener("click", (event) => {
-        
+
         const executeOnMatch = (selector, callback) => {
             if (event.target.matches(selector)) {
                 callback(event.target);
@@ -164,4 +175,5 @@ async function submitReply(button) {
         }
     } catch (err) {
         console.error(err);
-    }};
+    }
+};

@@ -133,3 +133,12 @@ main {
     font-style: italic;
     padding: 5px 10px;
 }
+
+.photo-box {
+    background: #CEDDF1;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+}

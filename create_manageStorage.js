@@ -46,7 +46,7 @@ async function geocodeAddress(fullAddress) {
     }
 }
 
-async function uploadPhotoCloud(fileBuffer, oldPublicId = null, folder = 'default_folder') {
+ async function uploadPhotoCloud(fileBuffer, oldPublicId = null, folder = 'default_folder') {
     try {
         if (oldPublicId) {
             await cloudinary.uploader.destroy(oldPublicId);

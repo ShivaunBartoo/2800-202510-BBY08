@@ -30,7 +30,16 @@
 
                 <div class="form-group">
                     <label for="reviewImage">Upload Picture</label>
-                    <input type="file" id="reviewImage" accept="image/*" />
+                    <div class="photo-box">
+                    <input type="file" name="photo" id="coverPhotoInput" id="reviewImage" accept="image/*" style="display: none;">
+
+                    <button type="button" class="upload-btn" id="uploadTrigger">
+                        <span class="material-icons" class="upload-icon">upload</span>
+                    </button>
+                    <div id="photoPreview" style="display: none;">
+                        <img id="previewImage" src="#" alt="Preview" style="max-width: 200px; max-height: 180px;">
+                    </div>
+                </div>
                 </div>
             </div>
 

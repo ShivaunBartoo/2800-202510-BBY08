@@ -310,9 +310,9 @@ app.get("/reviews/:storageId", function (req, res) {
 app.post("/reviews/:storageId", async (req, res) => {
     const userId = req.session.userId;
     //if (!userId) return res.status(401).send('Not logged in');
-
     const storageId = req.params.storageId;
     const { title, body, rating } = req.body;
+
     //const photo = req.file ? `/uploads/${req.file.filename}` : null;
     const client = new pg.Client(config);
 

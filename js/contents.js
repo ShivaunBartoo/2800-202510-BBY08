@@ -6,14 +6,15 @@ const storageId = window.location.pathname.split("/")[2];
 
 function initialize() {
     checkDistance();
-    loadRows().then(items => {
-        if (items.length > 0){
-            console.log("are we getting HERE?");
-            createNotification(itemsToNotify);
-        } else {
-            return;
-        }
-    });
+    loadRows()
+    // .then(items => {
+    //     if (items.length > 0){
+    //         console.log("are we getting HERE?");
+    //         createNotification(itemsToNotify);
+    //     } else {
+    //         return;
+    //     }
+    // });
     
 }
 initialize();
@@ -49,7 +50,6 @@ async function checkDistance() {
 }
 
 function loadRows() {
-    itemsToNotify.length = 0;
     return new Promise((resolve, reject) => {
         let table = document.getElementById("content-rows");
         getRows().then((rows) => {
@@ -60,37 +60,37 @@ function loadRows() {
                     rowHTML.innerHTML = row.trim();
                     table.appendChild(rowHTML);
                 }
-                let elements = document.getElementsByClassName("item-quantity");
-                let items = Array.from(elements);
-                items.forEach((item) => {
-                    let itemName = item.nextElementSibling.innerHTML;
-                    console.log(itemName);
-                    let itemId = item.dataset["contentid"];
-                    let itemQty = item.dataset["qty"];
-                    let donatedAt = new Date(item.dataset["donatedat"]);
-                    let referenceTime = new Date() - 3600;
-                    if (donatedAt > referenceTime) {
-                        checkForNotification(itemId).then(alreadyNotified => {
-                            if (!alreadyNotified) {
-                                let itemInfo = { id: itemId, name: itemName, qty: itemQty };
-                                itemsToNotify.push(itemInfo);
-                            }
-                        });
-                    } 
-                }).then(() => {
-                    console.log("is this working");
-                    console.log(itemsToNotify);
-                    resolve(itemsToNotify);
-                })
-
+                resolve();
+                // let elements = document.getElementsByClassName("item-quantity");
+                // let items = Array.from(elements);
+                // items.forEach((item) => {
+                //     let itemName = item.nextElementSibling.innerHTML;
+                //     console.log(itemName);
+                //     let itemId = item.dataset["contentid"];
+                //     let itemQty = item.dataset["qty"];
+                //     let donatedAt = new Date(item.dataset["donatedat"]);
+                //     let referenceTime = new Date() - 3600;
+                //     if (donatedAt > referenceTime) {
+                //         checkForNotification(itemId).then(alreadyNotified => {
+                //             if (!alreadyNotified) {
+                //                 let itemInfo = { id: itemId, name: itemName, qty: itemQty };
+                //                 itemsToNotify.push(itemInfo);
+                //             }
+                //             if (item === items[items.length - 1]) {
+                //                 console.log("items to notify: ", itemsToNotify);
+                //                 resolve(itemsToNotify);
+                //             }
+                //         });
+                //     } 
+                // });
             } else {
-                resolve(itemsToNotify);
+                resolve();
             }
         }).catch(() => reject());
-
     })
 
 }
+
 
 function ajaxPOST(url, callback, data) {
     const xhr = new XMLHttpRequest();
@@ -278,22 +278,21 @@ function checkForNotification(itemId) {
             .catch(() => reject());
     });
 }
-async function createNotification(itemsToNotify) {
-    console.log("are we getting here?");
+function createNotification(itemsToNotify) {
     let notifications = [];
-    for (let item in itemsToNotify) {
+    itemsToNotify.forEach(item => {
+        console.log("item: ", item);
         let notificationBody = `\n- ${item.qty} ${item.name}`;
         let notification = { id: item.id, notificationMsg: notificationBody };
         notifications.push(notification);
-    }
-    const response = await fetch(`/api/newNotification/${storageId}`, {
+    });
+    console.log("notifications: ", notifications);
+    fetch(`/api/newNotification/${storageId}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify(notifications),
     });
-    itemsToNotify.length = 0;
-    console.log("done!")
-    console.log(response);
+    console.log("done!");
 }

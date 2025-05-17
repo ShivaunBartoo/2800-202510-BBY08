@@ -8,6 +8,8 @@ const express = require("express");
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
+const notificationUtils = require('./notification-emails');
+
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_CLOUD_KEY,
@@ -25,6 +27,7 @@ const config = {
         ca: fs.readFileSync("./ca.pem").toString(),
     },
 };
+
 
 module.exports = function (app) {
     app.get("/api/browse", async (req, res) => {
@@ -114,8 +117,10 @@ module.exports = function (app) {
         let data = req.body;
         let sql = 'INSERT INTO "content" ("storageId", "itemName", "quantity", "bbd") VALUES ';
         let items = [];
+        let storageId;
         for (let i = 0; i < data.length; i++) {
             let info = data[i];
+            storageId = info.storageId;
             let str = "(" + info.storageId + ", '" + info.itemName + "', " + info.quantity + ", '" + info.bbd + "')";
             items.push(str);
         }
@@ -132,6 +137,10 @@ module.exports = function (app) {
                     console.log(error);
                     res.send({ status: "fail", msg: "Unable to add item to DB" })
                 } else {
+
+                    // add notifications
+                    notificationUtils.generateNotifications(storageId);
+
                     res.send({ status: "success", msg: "Item added to DB" })
                 }
                 client.end();
@@ -139,6 +148,7 @@ module.exports = function (app) {
 
         });
     });
+
 
     app.post("/api/take", async (req, res) => {
         let data = req.body;
@@ -237,9 +247,8 @@ module.exports = function (app) {
                 res.json({ hasNotification: hasNotification });
                 client.end();
             });
-            
+
         });
-        
 
     });
 
@@ -269,12 +278,12 @@ module.exports = function (app) {
 
             client.query(
                 `SELECT * 
-            FROM public.reviews AS r
-            JOIN public.users AS u ON r."userId" = u."userId"
-            WHERE r."storageId" = $1 
-            AND r."deletedDate" IS NULL 
-            ORDER BY r."createdAt" DESC
-                `, [storageId],
+FROM public.reviews AS r
+JOIN public.users AS u ON r."userId" = u."userId"
+WHERE r."storageId" = $1 
+AND r."deletedDate" IS NULL 
+ORDER BY r."createdAt" DESC
+`, [storageId],
                 async (error, results) => {
                     if (error) {
                         console.error(error);
@@ -283,10 +292,10 @@ module.exports = function (app) {
 
                     const replies = await client.query(
                         `SELECT * 
-                        FROM public.replies AS r
-                        JOIN public.users AS u ON r."userId" = u."userId"
-                        AND r."deletedDate" IS NULL 
-                        ORDER BY r."createdAt" DESC`
+FROM public.replies AS r
+JOIN public.users AS u ON r."userId" = u."userId"
+AND r."deletedDate" IS NULL 
+ORDER BY r."createdAt" DESC`
                     )
                     try {
                         const renderedCards = await Promise.all(
@@ -316,8 +325,8 @@ module.exports = function (app) {
         await client.connect();
         const seperate = await client.query(
             `
-            SELECT CAST(coordinates[0] AS FLOAT) AS latitude, CAST(coordinates[1] AS FLOAT) AS longitude
-            FROM storage WHERE "storageId" = $1`,
+SELECT CAST(coordinates[0] AS FLOAT) AS latitude, CAST(coordinates[1] AS FLOAT) AS longitude
+FROM storage WHERE "storageId" = $1`,
             [storageId]);
         res.json(seperate.rows[0]);
         client.end();

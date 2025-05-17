@@ -121,7 +121,6 @@ app.get("/contents/:id", function (req, res) {
             async (error, results) => {
                 if (error) {
                     console.log(error);
-                    client.end();
                     return;
                 }
                 let type = results.rows[0].storageType;
@@ -136,7 +135,8 @@ app.get("/contents/:id", function (req, res) {
                     other: other,
                     id: storageID,
                 });
-            }
+                client.end();
+            } 
         );
     });
 });

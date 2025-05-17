@@ -41,7 +41,7 @@ transporter.sendMail(mailOptions, function(error, info){
 });
 
 module.exports = function (app) {
-    app.post('/createNotification', (req, res) => {
+    app.post('/sendNotification', (req, res) => {
         
     })
 };

@@ -90,7 +90,7 @@ module.exports = function (app) {
             client.query(
                 `
                 SELECT 
-                c."contentId", c."itemName", c."quantity", c."donatedAt", to_char(c."bbd", 'Mon dd, yyyy') AS bbd
+                c."contentId", c."itemName", c."quantity", to_char(c."bbd", 'Mon dd, yyyy') AS bbd
                 FROM public.content AS c
                 WHERE c."storageId" = $1`,
                 [storageID],
@@ -227,45 +227,6 @@ module.exports = function (app) {
                 res.send({ status: "fail", msg: "Unable to remove items" });
             });
     });
-
-    app.get("/api/checkForNotifications/:id", async (req, res) => {
-        let contentId = req.params.id;
-        const client = new pg.Client(config);
-        client.connect(async (err) => {
-            if (err) {
-                reject(err);
-            }
-            const response = await client.query(`SELECT * FROM notifications WHERE "contentId" = $1`, [contentId], (error, results) => {
-                if (error) {
-                    console.error(error);
-                }
-                if (results.length > 0) {
-                    hasNotification = true;
-                } else {
-                    hasNotification = false
-                }
-                res.json({ hasNotification: hasNotification });
-                client.end();
-            });
-
-        });
-
-    });
-
-    app.post("/api/newNotification/:id", (req, res) => {
-        let storageId = req.params.id;
-        let data = req.body;
-        let sql = `INSERT INTO "notifications" ("storageId", "contentId", "body") VALUES`
-        let values = [];
-        for (let i = 0; i < data.length; i++) {
-            let info = data[i];
-            let str = "(" + storageId + ", " + info.id + ", '" + info.notificationMsg + "')";
-            values.push(str);
-        }
-        sql += values + ";";
-        console.log(sql);
-        res.send("worked!")
-    })
 
     app.get('/api/reviews/:storageId', (req, res) => {
         const { storageId } = req.params;

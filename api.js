@@ -9,6 +9,8 @@ const express = require("express");
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
+const notificationUtils = require('./notification-emails');
+
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_CLOUD_KEY,
@@ -26,6 +28,7 @@ const config = {
         ca: fs.readFileSync("./ca.pem").toString(),
     },
 };
+
 
 module.exports = function (app) {
     app.get("/api/browse", async (req, res) => {
@@ -47,7 +50,7 @@ module.exports = function (app) {
                 ? null
                 : parseFloat(req.query.radiusFilter);
 
-                console.log('radius', radius);
+            console.log('radius', radius);
             let renderedCards = await Promise.all(
                 storageResults.rows.map((row) => {
                     let distance = getDistance(lat, lon, parseFloat(row.coordinates.x), parseFloat(row.coordinates.y));
@@ -125,8 +128,10 @@ module.exports = function (app) {
         let data = req.body;
         let sql = 'INSERT INTO "content" ("storageId", "itemName", "quantity", "bbd") VALUES ';
         let items = [];
+        let storageId;
         for (let i = 0; i < data.length; i++) {
             let info = data[i];
+            storageId = info.storageId;
             let str = "(" + info.storageId + ", '" + info.itemName + "', " + info.quantity + ", '" + info.bbd + "')";
             items.push(str);
         }
@@ -144,12 +149,17 @@ module.exports = function (app) {
                     client.end();
                     res.send({ status: "fail", msg: "Unable to add item to DB" });
                 } else {
-                    res.send({ status: "success", msg: "Item added to DB" });
+
+                    // add notifications
+                    notificationUtils.generateNotifications(storageId);
+
+                    res.send({ status: "success", msg: "Item added to DB" })
                 }
                 client.end();
             });
         });
     });
+
 
     app.post("/api/take", async (req, res) => {
         let data = req.body;
@@ -223,9 +233,9 @@ module.exports = function (app) {
             .then(() => {
                 res.send({ status: "success", msg: "Database successfully updated" });
             })
-            .catch(err =>{
+            .catch(err => {
                 console.log(err);
-                res.send({ status:"fail", msg: "Unable to remove items"});
+                res.send({ status: "fail", msg: "Unable to remove items" });
             });
     });
 
@@ -240,11 +250,11 @@ module.exports = function (app) {
 
             client.query(
                 `SELECT * 
-            FROM public.reviews AS r
-            JOIN public.users AS u ON r."userId" = u."userId"
-            WHERE r."storageId" = $1 
-            AND r."deletedDate" IS NULL 
-            ORDER BY r."createdAt" DESC
+                FROM public.reviews AS r
+                JOIN public.users AS u ON r."userId" = u."userId"
+                WHERE r."storageId" = $1 
+                AND r."deletedDate" IS NULL 
+                ORDER BY r."createdAt" DESC
                 `, [storageId],
                 async (error, results) => {
                     if (error) {
@@ -259,15 +269,14 @@ module.exports = function (app) {
                         JOIN public.users AS u ON r."userId" = u."userId"
                         AND r."deletedDate" IS NULL 
                         ORDER BY r."createdAt" DESC`
-                    ) 
+                    )
                     try {
                         const renderedCards = await Promise.all(
-                            results.rows.map((row) =>
-                                {
-                                    const reviewReplies = replies.rows.filter(reply => reply.reviewId == row.reviewId);
-                                    
-                                    return ejs.renderFile("views/partials/review-card.ejs", { row, replies: reviewReplies });
-                                }
+                            results.rows.map((row) => {
+                                const reviewReplies = replies.rows.filter(reply => reply.reviewId == row.reviewId);
+
+                                return ejs.renderFile("views/partials/review-card.ejs", { row, replies: reviewReplies });
+                            }
                             )
                         );
 
@@ -283,7 +292,7 @@ module.exports = function (app) {
         });
     });
 
-     app.get('/api/fridgePoint', (req, res) => {
+    app.get('/api/fridgePoint', (req, res) => {
 
 
         const client = new pg.Client(config);
@@ -298,15 +307,15 @@ module.exports = function (app) {
                     client.end();
                     return;
                 }
-                 const points = results.rows.map(row => ({
-                id: row.id,
-                name: row.title,
-                lat: parseFloat(row.coordinates.x),
-                lon: parseFloat(row.coordinates.y)
-            }));
+                const points = results.rows.map(row => ({
+                    id: row.id,
+                    name: row.title,
+                    lat: parseFloat(row.coordinates.x),
+                    lon: parseFloat(row.coordinates.y)
+                }));
 
-            res.json(points);
-            client.end();
+                res.json(points);
+                client.end();
             });
         });
     });
@@ -318,10 +327,10 @@ module.exports = function (app) {
         await client.connect();
         const seperate = await client.query(
             `
-            SELECT CAST(coordinates[0] AS FLOAT) AS latitude, CAST(coordinates[1] AS FLOAT) AS longitude
-            FROM storage WHERE "storageId" = $1`,
+SELECT CAST(coordinates[0] AS FLOAT) AS latitude, CAST(coordinates[1] AS FLOAT) AS longitude
+FROM storage WHERE "storageId" = $1`,
             [storageId]);
-       
+
         res.json(seperate.rows[0]);
         client.end();
 

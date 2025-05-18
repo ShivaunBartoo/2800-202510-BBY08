@@ -4,8 +4,8 @@ const itemsToDonate = [];
 const storageId = window.location.pathname.split("/")[2];
 
 function initialize() {
-    loadRows();
     checkDistance();
+    loadRows();
 }
 initialize();
 
@@ -39,19 +39,21 @@ async function checkDistance() {
     }
 }
 
-async function loadRows() {
+function loadRows() {
     let table = document.getElementById("content-rows");
-    let rows = await getRows();
-    if (rows.length > 0) {
-        for (let row of rows) {
-            let rowHTML = document.createElement("tr");
-            rowHTML.innerHTML = row.trim();
-            table.appendChild(rowHTML);
+
+    getRows().then((rows) => {
+
+        if (rows.length > 0) {
+            for (let row of rows) {
+                let rowHTML = document.createElement("tr");
+                rowHTML.innerHTML = row.trim();
+                table.appendChild(rowHTML);
+            }
         }
-    } else {
-        console.log("fridge is empty");
-    }
+    })
 }
+
 
 function ajaxPOST(url, callback, data) {
     const xhr = new XMLHttpRequest();

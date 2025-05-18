@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const fs = require("fs");
 const pg = require("pg");
 const dotenv = require("dotenv").config();
+const notificationUtils = require("./notification-emails");
 
 const ejs = require("ejs");
 
@@ -26,6 +27,11 @@ const config = {
 };
 
 const pgPool = new pg.Pool(config);
+
+setInterval(() => {
+    notificationUtils.sendNotifications();
+}, process.env.NOTIF_INTERVAL_IN_MINUTES * 60 * 1000)
+
 
 app.set("view engine", "ejs");
 
@@ -392,5 +398,5 @@ app.use(function (req, res, next) {
 });
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`[INFO] ${(new Date()).toUTCString()} - Server is running on http://localhost:${port}`);
 });

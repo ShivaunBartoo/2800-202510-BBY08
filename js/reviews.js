@@ -46,11 +46,12 @@ function closeModal() {
 
 // Main initialization
 document.addEventListener("DOMContentLoaded", () => {
+    //upload picture for review
     initImageUploadPreview(
-        'uploadTrigger',
-        'coverPhotoInput',
-        'photoPreview',
-        'previewImage',
+        '.uploadTrigger',
+        '.coverPhotoInput',
+        '.photoPreview',
+        '.previewImage',
         (file) => {
             console.log('User selected file:', file);
         }
@@ -63,20 +64,29 @@ document.addEventListener("DOMContentLoaded", () => {
 // Review functions
 async function submitReview() {
     const storageId = window.location.pathname.split("/")[2];
+
+    const photoInput = document.getElementById('coverPhotoInput').files[0];
+
     const review = {
         title: document.getElementById("reviewTitle").value.trim(),
         body: document.getElementById("reviewText").value.trim(),
         rating: parseInt(document.getElementById("reviewRating").value.trim(), 10),
     };
+    const formData = new FormData();
 
-    // if (!validateReview(review)) return;
+    if (photoInput) {
+        formData.append('photo', photoInput);
+    }
+    formData.append("review", JSON.stringify(review));
+
 
     try {
         console.log(storageId);
         const res = await fetch(`/reviews/${storageId}`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(review),
+            //headers: { "Content-Type": "application/json" },
+            body: formData
+            //body: JSON.stringify(review),
         });
 
         if (res.ok) {
@@ -120,7 +130,7 @@ function registerEventListeners() {
     document.addEventListener("click", (event) => {
 
         const executeOnMatch = (selector, callback) => {
-            if (event.target.matches(selector)) {
+            if (event.target.closest(selector)) {
                 callback(event.target);
             }
         };
@@ -140,27 +150,69 @@ function registerEventListeners() {
 }
 
 function toggleReplyForm(button) {
-    console.log(button)
+
     const form = button.nextElementSibling;
-    // console.log(form);
     form.style.display = form.style.display == "none" ? "block" : "none";
+
+    const trigger = form.querySelector('.replyuploadTrigger');
+    const input = form.querySelector('.replycoverPhotoInput');
+    const previewContainer = form.querySelector('.replyphotoPreview');
+    const previewImage = form.querySelector('.replypreviewImage');
+    const removeBtn = form.querySelector('.replyremoveImageBtn');
+
+    initImageUploadPreview(
+        trigger,
+        input,
+        previewContainer,
+        previewImage,
+        (file) => {
+            console.log('User selected file:', file);
+        }
+    );
+
+    // remove listener to avoid duplicate bindings
+    if (removeBtn) {
+        removeBtn.addEventListener("click", () => {
+            previewImage.src = "#";
+            previewContainer.style.display = "none";
+            input.value = ""; // clear input
+        });
+    }
 }
 
 async function submitReply(button) {
-    const reviewDiv = button.closest(".review");
-    const reviewId = reviewDiv.dataset.reviewId;
-    const textarea = reviewDiv.querySelector("#reply-textarea");
-    const replyText = textarea.value.trim();
+    console.log(button);
 
-    if (!replyText) {
-        alert("Reply cannot be empty.");
-        return;
-    }
     try {
+
+        const reviewDiv = button.closest(".review");
+        const reviewId = reviewDiv.dataset.reviewId;
+        const textarea = reviewDiv.querySelector(".reply-textarea");
+        const replyText = textarea.value.trim();
+        const form = reviewDiv.querySelector(".reply-form");
+        const fileInput = form.querySelector(".replycoverPhotoInput");
+        const file = fileInput.files[0];
+
+        console.log('reply pic', file);
+
+        if (!replyText) {
+            alert("Reply cannot be empty.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('reviewId', reviewId);
+        formData.append('reply', replyText);
+        if (file) {
+            formData.append('photo', file);
+        }
+
+
         const res = await fetch(`/replies`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ reviewId: parseInt(reviewId, 10), reply: replyText, storageId: storageId }),
+            //headers: { "Content-Type": "application/json" },
+            //body: JSON.stringify({ reviewId: parseInt(reviewId, 10), reply: replyText, storageId: storageId }),
+            body: formData
         });
 
         if (res.ok) {
@@ -174,6 +226,7 @@ async function submitReply(button) {
             alert("Failed to submit reply.");
         }
     } catch (err) {
-        console.error(err);
+        console.error("Submit Reply Error:", err);
+        //alert("An error occurred.");
     }
 };

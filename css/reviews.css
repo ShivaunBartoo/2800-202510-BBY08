@@ -142,3 +142,12 @@ main {
     justify-content: center;
     border-radius: 5px;
 }
+
+#removeImageBtn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}

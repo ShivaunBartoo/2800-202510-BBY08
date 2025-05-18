@@ -27,12 +27,12 @@
             <% } %>
     </div>
     <div class="review-body">
-        <% if (row.imageurl) { %>
-            <img src="<%= row.imageurl %>" class="review-image" />
+        <% if (row.photo) { %>
+            <img src="<%= row.photo %>" class="review-image" />
             <% } %>
-                    <div class="review-text">
-                        <%= row.body %>
-                    </div>
+                <div class="review-text">
+                    <%= row.body %>
+                </div>
     </div>
 
 
@@ -55,16 +55,43 @@
                     </div>
                 </div>
                 <div class="review-body">
-                    <div class="reply-text">
-                        <%= reply.body %>
-                    </div>
+                    <% if (reply.photo) { %>
+
+                        <img src="<%= reply.photo %>" alt="Review image" class="review-image" style="display: block" />
+                        <% } %>
+
+                            <div class="reply-text">
+                                <%= reply.body %>
+                            </div>
                 </div>
             </div>
             <% }) %>
                 <button class="reply-button">Reply</button>
-                <div class="reply-form-container" style="display: none;">
-                    <textarea id="reply-textarea" placeholder="Write your reply..."></textarea>
+
+                <form class="reply-form-container" enctype="multipart/form-data" style="display: none;">
+                    <div class="reply-photo-box">
+                        <!-- File input (hidden) -->
+                        <input type="file" name="photo" class="replycoverPhotoInput" accept="image/*"
+                            style="display: none;">
+
+                        <!-- Trigger button -->
+                        <button type="button" class="upload-btn replyuploadTrigger">
+                            <span class="material-icons upload-icon">upload</span>
+                        </button>
+
+                        <!-- Image preview -->
+                        <div class="replyphotoPreview" style="display: none;">
+                            <img class="replypreviewImage" src="#" alt="Preview"
+                                style="max-width: 100px; max-height: 100px;">
+                            <button type="button" class="replyremoveImageBtn" style="margin-left: 10px;">Remove</button>
+
+                        </div>
+                    </div>
+
+                    <textarea class="reply-textarea" placeholder="Write your reply..."></textarea>
                     <button class="submit-reply">Submit Reply</button>
-                </div>
+
+                </form>
+
     </div>
 </div>

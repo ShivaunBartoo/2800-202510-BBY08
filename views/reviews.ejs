@@ -9,6 +9,7 @@
     </button>
 
     <div id="reviewModal" class="modal">
+        <form enctype="multipart/form-data">
         <div class="modal-content">
             <div id="reviewHeader">
                 <h3>Add Review</h3>
@@ -31,13 +32,13 @@
                 <div class="form-group">
                     <label for="reviewImage">Upload Picture</label>
                     <div class="photo-box">
-                    <input type="file" name="photo" id="coverPhotoInput" id="reviewImage" accept="image/*" style="display: none;">
+                    <input type="file" name="photo" class="coverPhotoInput" id="reviewImage" accept="image/*" style="display: none;">
 
-                    <button type="button" class="upload-btn" id="uploadTrigger">
+                    <button type="button" class="upload-btn uploadTrigger" >
                         <span class="material-icons" class="upload-icon">upload</span>
                     </button>
-                    <div id="photoPreview" style="display: none;">
-                        <img id="previewImage" src="#" alt="Preview" style="max-width: 200px; max-height: 180px;">
+                    <div class="photoPreview" style="display: none;">
+                        <img class="previewImage" src="#" alt="Preview" style="max-width: 200px; max-height: 180px;">
                     </div>
                 </div>
                 </div>
@@ -53,6 +54,7 @@
                 <button id="submit-review-button">Add</button>
             </div>
         </div>
+        </form>
     </div>
 
         <div id="reviews-container">

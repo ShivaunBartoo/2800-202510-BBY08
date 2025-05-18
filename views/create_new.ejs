@@ -43,13 +43,13 @@
             <div class="section">
                 <label>Upload cover photo:</label>
                 <div class="photo-box">
-                    <input type="file" name="photo" id="coverPhotoInput" accept="image/*" style="display: none;">
+                    <input type="file" name="photo" class="coverPhotoInput" accept="image/*" style="display: none;">
 
-                    <button type="button" class="upload-btn" id="uploadTrigger">
+                    <button type="button" class="upload-btn uploadTrigger" >
                         <span class="material-icons" class="upload-icon">upload</span>
                     </button>
-                    <div id="photoPreview" style="display: none;">
-                        <img id="previewImage" src="#" alt="Preview" style="max-width: 200px; max-height: 180px;">
+                    <div class="photoPreview" style="display: none;">
+                        <img class="previewImage" src="#" alt="Preview" style="max-width: 200px; max-height: 180px;">
                     </div>
                 </div>
             </div>
@@ -61,7 +61,6 @@
 
                 </div>
             </div>
-
             <div class="actions">
                 <div class="cre-back-btn">Back</div>
                 <button type="submit" class="cre-save-btn">Save</button>

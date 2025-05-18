@@ -6,12 +6,23 @@ const bcrypt = require("bcrypt");
 const fs = require("fs");
 const pg = require("pg");
 const dotenv = require("dotenv").config();
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
+const cloudinary = require('cloudinary').v2;
+
 
 const ejs = require("ejs");
 
 const saltRounds = 12;
 const app = express();
 const port = process.env.PORT || 3000;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_CLOUD_KEY,
+    api_secret: process.env.CLOUDINARY_CLOUD_SECRET
+});
+
 
 const config = {
     user: process.env.DB_USER,
@@ -26,7 +37,6 @@ const config = {
 };
 
 const pgPool = new pg.Pool(config);
-
 app.set("view engine", "ejs");
 
 app.use(express.json());
@@ -91,10 +101,10 @@ app.get("/login", function (req, res) {
 
 // Route for browse page
 app.get("/browse", async function (req, res) {
-    const  { lat, lon } = req.query;
+    const { lat, lon } = req.query;
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
     const city = await getYourCity(lat, lon, process.env.GOOGLE_MAPS_API_KEY);
-    
+
     res.render("browse", {
         city,
         stylesheets: ["browse.css"],
@@ -143,6 +153,7 @@ app.get("/contents/:id", function (req, res) {
                     other: other,
                     id: storageID,
                 });
+                client.end();
             }
         );
     });
@@ -227,7 +238,7 @@ app.get("/profile", async function (req, res) {
 
         res.render("profile", {
             userInfo,
-            stylesheets: ["browse.css","reviews.css", "profile.css"],
+            stylesheets: ["browse.css", "reviews.css", "profile.css"],
             scripts: ["profile.js"],
         });
     } catch (error) {
@@ -258,6 +269,7 @@ app.get("/profile", async function (req, res) {
     const client = new pg.Client(config);
     try {
         await client.connect();
+        
 
         const result = await client.query(
             `SELECT * FROM public.users WHERE "userId" = $1`,
@@ -272,7 +284,7 @@ app.get("/profile", async function (req, res) {
 
         res.render("profile", {
             userInfo,
-            stylesheets: ["browse.css","reviews.css", "profile.css"],
+            stylesheets: ["browse.css", "reviews.css", "profile.css"],
             scripts: ["profile.js"],
         });
     } catch (error) {
@@ -307,13 +319,12 @@ app.get("/reviews/:storageId", function (req, res) {
     });
 });
 
-app.post("/reviews/:storageId", async (req, res) => {
+app.post("/reviews/:storageId", upload.single('photo'), async (req, res) => {
     const userId = req.session.userId;
-    //if (!userId) return res.status(401).send('Not logged in');
     const storageId = req.params.storageId;
-    const { title, body, rating } = req.body;
+    
+    const { title, body, rating } = JSON.parse(req.body.review);
 
-    //const photo = req.file ? `/uploads/${req.file.filename}` : null;
     const client = new pg.Client(config);
 
     client.connect((err) => {
@@ -321,41 +332,68 @@ app.post("/reviews/:storageId", async (req, res) => {
             console.log(err);
             return;
         }
-        client.query(
-            `
+        if (req.file) {
+            uploadPhotoCloud(req.file.buffer, null, 'review_img')
+                .then(cloudResult => {
+                    insertReview(cloudResult.image);
+                })
+                .catch(err => {
+                    console.error("Image upload error:", err);
+                    res.status(500).send("Image upload failed");
+                });
+        } else {
+            insertReview(null);
+        }
+        function insertReview(imageUrl) {
+            client.query(
+                `
         INSERT INTO public.reviews 
-       ( "userId", "storageId", "title", "body", "rating")
-        VALUES ($1, $2, $3, $4, $5)
+       ( "userId", "storageId", "title", "body", "rating", "photo")
+        VALUES ($1, $2, $3, $4, $5, $6)
       `,
-            [userId, storageId, title, body, rating],
-            (err, results) => {
-                if (err) {
-                    console.log(err);
-                    return;
+                [userId, storageId, title, body, rating, imageUrl],
+                (err, results) => {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+                    res.redirect(`/reviews/${storageId}`);
+                    client.end();
                 }
-                res.redirect(`/reviews/${storageId}`);
-                client.end();
-            }
-        );
+            );
+        }
     });
 });
 
-app.post("/replies", async (req, res) => {
+app.post("/replies", upload.single('photo'), async (req, res) => {
+    
     const userId = req.session.userId;
     console.log("Received body:", req.body);
-    const { reviewId, reply } = req.body;
 
+    const { reviewId, reply } = req.body;
+    const file = req.file;
+
+    console.log('reply img: ',file)
     const client = new pg.Client(config);
-    client.connect();
 
     try {
+   await client.connect();
+
+        let image = null;
+
+            if (file) {
+
+                const cloudResult = await uploadPhotoCloud(file.buffer, null, 'review_img');
+
+                image = cloudResult.image;
+            }
         await client.query(
             `
         INSERT INTO public.replies 
-       ("userId", "reviewId", "body")
-        VALUES ($1, $2, $3)
+       ("userId", "reviewId", "body", "photo")
+        VALUES ($1, $2, $3, $4)
       `,
-            [userId, reviewId, reply]
+            [userId, reviewId, reply, image]
         );
     } catch (err) {
         console.error(err);
@@ -382,6 +420,8 @@ require('./api')(app);
 require('./authentication')(app);
 require('./create_manageStorage')(app);
 require('./profile_route')(app);
+const { uploadPhotoCloud } = require('./utils');
+
 
 
 // Page not found

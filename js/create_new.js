@@ -5,19 +5,19 @@ document.addEventListener('DOMContentLoaded', function () {
     registerEventListeners();
 
     initImageUploadPreview(
-        'uploadTrigger',
-        'coverPhotoInput',
-        'photoPreview',
-        'previewImage',
+        '.uploadTrigger',
+        '.coverPhotoInput',
+        '.photoPreview',
+        '.previewImage',
         (file) => {
             console.log('User selected file:', file);
         }
     );
-    
+
     document.getElementById('newStorageForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const form = e.target;
-        const coverPhotoInput = document.getElementById('coverPhotoInput');
+        const coverPhotoInput = document.querySelector('.coverPhotoInput');
 
         const formData = new FormData(form);
 
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(() => {
 
                 alert('Storage created in database');
-                window.location.href = '/browse';
+                window.location.href = '/profile';
             })
 
             .catch(error => {
@@ -55,12 +55,13 @@ function registerEventListeners() {
             }
         };
 
-        executeOnMatch("#fridgeBtn", selectType,'fridge');
-        executeOnMatch("#pantryBtn", selectType,'pantry');
-        
+        executeOnMatch("#fridgeBtn", selectType, 'fridge');
+        executeOnMatch("#pantryBtn", selectType, 'pantry');
+        executeOnMatch(".cre-back-btn", () => {
+            window.location.href = '/profile';
+        });
 
     });
-
 
 }
 

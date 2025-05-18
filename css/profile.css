@@ -63,6 +63,7 @@ button:hover {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    overflow-y: auto;
 }
 
 
@@ -131,6 +132,7 @@ button:hover {
 
 .review {
     background-color: var(--blue-medium);
+    margin-bottom: 20px;
 }
 
 #distance-filter-div {
@@ -142,4 +144,30 @@ button:hover {
     width: 100px;
     padding: 5px;
     margin-top: 10px;
+}
+
+#storage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+#storage-header p {
+    margin: 0;
+}
+
+#create-new-storage {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1em;
+    color: var(--pink-dark);
+    transition: color 0.2s ease;
+}
+
+
+#create-new-storage .material-icons.add {
+    margin-right: 5px;
 }

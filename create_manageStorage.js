@@ -4,7 +4,6 @@ const pg = require("pg");
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const express = require('express');
-const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 const saltRounds = 12;
@@ -46,27 +45,7 @@ async function geocodeAddress(fullAddress) {
     }
 }
 
- async function uploadPhotoCloud(fileBuffer, oldPublicId = null, folder = 'default_folder') {
-    try {
-        if (oldPublicId) {
-            await cloudinary.uploader.destroy(oldPublicId);
-        }
-
-        const cloudResult = await new Promise((resolve, reject) => {
-            cloudinary.uploader.upload_stream({ folder }, (err, result) => {
-                if (err) return reject(err);
-                resolve(result);
-            }).end(fileBuffer);
-        });
-
-        return {
-            image: cloudResult.secure_url,
-            imgPublicId: cloudResult.public_id
-        };
-    } catch (err) {
-        throw new Error('Cloudinary upload failed: ' + err.message);
-    }
-}
+const {uploadPhotoCloud} = require('./utils');
 
 module.exports = function (app) {
 

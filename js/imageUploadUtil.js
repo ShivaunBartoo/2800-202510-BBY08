@@ -9,15 +9,21 @@
  * @param {function} [onSelect] - Optional callback with the selected File object
  */
 
-export async function initImageUploadPreview(triggerId, inputId, previewContainerId, previewImageId, onSelect) {
-    
-    const trigger = document.getElementById(triggerId);
-    const input = document.getElementById(inputId);
-    const previewContainer = document.getElementById(previewContainerId);
-    const previewImage = document.getElementById(previewImageId);
+export async function initImageUploadPreview(trigger, input, previewContainer, previewImage, onSelect) {
 
+    // const trigger = document.querySelector(triggerId);
+    // const input = document.querySelector(inputId);
+    // const previewContainer = document.querySelector(previewContainerId);
+    // const previewImage = document.querySelector(previewImageId);
+
+    if (typeof trigger === 'string') trigger = document.querySelector(trigger);
+    if (typeof input === 'string') input = document.querySelector(input);
+    if (typeof previewContainer === 'string') previewContainer = document.querySelector(previewContainer);
+    if (typeof previewImage === 'string') previewImage = document.querySelector(previewImage);
+
+    
     if (!trigger || !input) {
-        console.error(`Missing upload element(s): ${triggerId}, ${inputId}`);
+        console.error(`Missing upload element(s): ${trigger}, ${input}`);
         return;
     }
 
@@ -50,4 +56,13 @@ export async function initImageUploadPreview(triggerId, inputId, previewContaine
         };
         reader.readAsDataURL(file);
     });
+    const removeImageBtn = document.getElementById('removeImageBtn');
+    if (removeImageBtn != null) {
+        removeImageBtn.addEventListener('click', () => {
+            input.value = ''; // clear file input
+            previewImage.src = '#'; // reset image src
+            previewContainer.style.display = 'none'; // hide preview
+            if (onSelect) onSelect(null); // optional: signal no image
+        });
+    }
 }

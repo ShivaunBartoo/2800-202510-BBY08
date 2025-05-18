@@ -73,15 +73,15 @@
             <div class="section">
                 <label>Change cover photo:</label>
                 <div class="photo-box">
-                    <input type="file" id="coverPhotoInput" accept="image/*" style="display: none;">
+                    <input type="file" class="coverPhotoInput" accept="image/*" style="display: none;">
 
-                    <button type="button" class="upload-btn" id="uploadTrigger">
+                    <button type="button" class="uploadTrigger upload-btn">
                         <span class="material-icons upload-icon">upload</span>
                     </button>
 
-                    <div id="photoPreview" style="<%= storage.image ? '' : 'display: none;' %>">
+                    <div class="photoPreview" style="<%= storage.image ? '' : 'display: none;' %>">
                         <% if (typeof storage.image !='undefined' ) { %>
-                            <img id="previewImage" src="<%= storage.image ? storage.image : '#' %>" alt="Preview"
+                            <img class="previewImage" src="<%= storage.image ? storage.image : '#' %>" alt="Preview"
                                 style="max-width: 200px; max-height: 180px;">
                             <% } %>
                     </div>

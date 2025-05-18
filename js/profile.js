@@ -31,6 +31,10 @@ function registerEventListeners() {
         executeOnMatch("#change-password-btn", togglePasswordFields);
         executeOnMatch("#apply-btn", applyFilter);
         executeOnMatch("#profile-edit-btn", toggleProfileEdit);
+        executeOnMatch("#create-new-storage", ()=> {
+            window.location.href = '/storage/createnew';
+        });
+
     });
 
     

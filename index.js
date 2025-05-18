@@ -154,6 +154,7 @@ app.get("/contents/:id", function (req, res) {
                     id: storageID,
                 });
                 client.end();
+                client.end();
             }
         );
     });
@@ -351,17 +352,17 @@ app.post("/reviews/:storageId", upload.single('photo'), async (req, res) => {
        ( "userId", "storageId", "title", "body", "rating", "photo")
         VALUES ($1, $2, $3, $4, $5, $6)
       `,
-                [userId, storageId, title, body, rating, imageUrl],
-                (err, results) => {
-                    if (err) {
-                        console.log(err);
-                        return;
-                    }
-                    res.redirect(`/reviews/${storageId}`);
+            [userId, storageId, title, body, rating],
+            (err, results) => {
+                if (err) {
+                    console.log(err);
                     client.end();
+                    return;
                 }
-            );
-        }
+                res.redirect(`/reviews/${storageId}`);
+                client.end();
+            }
+        );
     });
 });
 

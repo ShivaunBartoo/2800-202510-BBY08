@@ -1,4 +1,5 @@
 const { getDistance } = require("./js/userLocation");
+const { classify } = require("./js/food-classify");
 const fs = require("fs");
 const pg = require("pg");
 const ejs = require("ejs");
@@ -120,7 +121,7 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/api/donate', (req, res) => {
+    app.post("/api/donate", (req, res) => {
         let data = req.body;
         let sql = 'INSERT INTO "content" ("storageId", "itemName", "quantity", "bbd") VALUES ';
         let items = [];
@@ -140,13 +141,13 @@ module.exports = function (app) {
             client.query(sql, (error, results) => {
                 if (error) {
                     console.log(error);
-                    res.send({ status: "fail", msg: "Unable to add item to DB" })
+                    client.end();
+                    res.send({ status: "fail", msg: "Unable to add item to DB" });
                 } else {
-                    res.send({ status: "success", msg: "Item added to DB" })
+                    res.send({ status: "success", msg: "Item added to DB" });
                 }
                 client.end();
             });
-
         });
     });
 
@@ -248,6 +249,7 @@ module.exports = function (app) {
                 async (error, results) => {
                     if (error) {
                         console.error(error);
+                        client.end();
                         return res.status(500).send("Query error");
                     }
 
@@ -304,7 +306,7 @@ module.exports = function (app) {
             }));
 
             res.json(points);
-              
+            client.end();
             });
         });
     });
@@ -356,5 +358,14 @@ module.exports = function (app) {
             ]);
         }
         res.status(200).send();
+        client.end();
     });
-};
+
+    //query should be uri encoded.
+    //eg /api/classify?input=${encodeURIComponent(myString)}
+    app.get("/api/classify", async (req, res) => {
+        const input = req.query.input;
+        const response = await classify(input);
+        res.send(response);
+    });
+}

@@ -84,6 +84,9 @@ function resetValues() {
         list.deleteRow(1);
     }
     itemsToDonate.length = 0;
+    current = "";
+    setClassificationResult("none");
+
 }
 
 document.querySelector("#modal-cancel").addEventListener("click", function (e) {
@@ -105,8 +108,8 @@ document.querySelector("#addItem").addEventListener("click", function (e) {
 
     let today = new Date().setHours(0, 0, 0);
     let bbdDate = new Date(bbd.value);
-
-    if (name.value == "" || qty.value == 0 || bbdDate == `Invalid Date` || bbdDate < today) {
+    let aiRejected = document.getElementById("ai-good").classList.contains("hidden");
+    if (aiRejected || name.value == "" || qty.value == 0 || bbdDate == `Invalid Date` || bbdDate < today) {
         document.getElementById("donate-errors").classList.remove("hidden");
         return;
     }
@@ -130,9 +133,13 @@ document.querySelector("#addItem").addEventListener("click", function (e) {
     item.appendChild(itemName);
     item.appendChild(itemBBD);
     list.appendChild(item);
+    current="";
+    setClassificationResult("none");
+    document.querySelector("#donate-btn").disabled = false;
 });
 
 document.querySelector("#donate-btn").addEventListener("click", function (e) {
+    console.log("donate button clicked");
     let items = JSON.stringify(itemsToDonate);
 
     ajaxPOST(
@@ -225,5 +232,63 @@ document.querySelector("#take-confirm").addEventListener("click", async function
         cancelTake();
     } else {
         console.log("An error has occurred!");
+    }
+});
+
+function setClassificationResult(result){
+    const loader = document.getElementById("ai-loader");
+    const good = document.getElementById("ai-good");
+    const bad = document.getElementById("ai-bad");
+    const warning = document.getElementById("ai-warning");
+    loader.classList.add("hidden");
+    good.classList.add("hidden");
+    bad.classList.add("hidden");
+    warning.classList.add("hidden");
+    switch(result){
+        case "loading":
+            loader.classList.remove("hidden");
+            break;
+        case "good":
+            good.classList.remove("hidden");
+            break;
+        case "bad":
+            bad.classList.remove("hidden");
+            warning.classList.remove("hidden");
+            break;
+        case "none":
+            break;
+        default:
+            console.error("Invalid icon.");
+    }
+}
+
+let current = "";
+
+document.querySelector("#itemName").addEventListener("focusin", async (event) => {
+    if(event.target.value != current){
+        setClassificationResult("none");
+    }
+});
+
+document.querySelector("#itemName").addEventListener("focusout", async (event) => {
+    const input = event.target.value;
+    if (input && current != input) {
+        current = input;
+        setClassificationResult("loading");
+        console.log(`getting score for ${input}.`)
+        let response = await fetch(`/api/classify?input=${encodeURIComponent(input)}`);
+        let result = await response.json();
+        console.log("score: " + JSON.stringify(result));
+        if(result.input == current){
+            if(result.isFood){
+                setClassificationResult("good");
+            }
+            else{
+                setClassificationResult("bad");
+            }
+        }
+        else{
+            console.log("stale result rejected.")
+        }
     }
 });

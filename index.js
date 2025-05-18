@@ -142,7 +142,7 @@ app.get("/contents/:id", function (req, res) {
                     id: storageID,
                 });
                 client.end();
-            } 
+            }
         );
     });
 });
@@ -328,5 +328,5 @@ app.use(function (req, res, next) {
 });
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`[INFO] ${(new Date()).toUTCString()} - Server is running on http://localhost:${port}`);
 });

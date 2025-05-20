@@ -98,10 +98,10 @@ app.get("/login", function (req, res) {
 
 // Route for browse page
 app.get("/browse", async function (req, res) {
-    const  { lat, lon } = req.query;
+    const { lat, lon } = req.query;
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
     const city = await getYourCity(lat, lon, process.env.GOOGLE_MAPS_API_KEY);
-    
+
     res.render("browse", {
         city,
         stylesheets: ["browse.css"],
@@ -175,42 +175,51 @@ app.get("/directions", function (req, res) {
 });
 
 // Route for manage page
-app.get("/manage/:id", async (req, res) => {
+app.get("/manage/:id", (req, res) => {
     const storageId = req.params.id;
-
-    if (!storageId) {
-        return res.status(400).json({ error: "Storage ID is required" });
-    }
-    const client = new pg.Client(config);
-    try {
-        await client.connect();
-
-        const result = await client.query(
-            `SELECT * FROM public.storage WHERE "storageId" = $1 AND "deletedDate" IS NULL`,
-            [storageId]
-        );
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: "Storage not found" });
+    authorization.isAuthorized(storageId, req.session.userId).then(auth => {
+        if (!auth) {
+            res.redirect("/login");
+            return;
         }
-
-        const storage = result.rows[0];
-
-        if (storage.lastCleaned) {
-            storage.lastCleaned = new Date(storage.lastCleaned);
+        if (!storageId) {
+            return res.status(400).json({ error: "Storage ID is required" });
         }
-        res.render("manage", {
-            storage,
-            stylesheets: ["contents.css", "manage.css"],
-            scripts: ["imageUploadUtil.js", "manage.js"],
-            id: storageId
+        const client = new pg.Client(config);
+        client.connect((err) => {
+            if (err) {
+                console.log(error);
+            }
+            client.query(
+                `SELECT * FROM public.storage WHERE "storageId" = $1 AND "deletedDate" IS NULL`,
+                [storageId], (error, results) => {
+                    client.end();
+                    if (error) {
+                        console.log(error);
+
+                    }
+                    if (results.rows.length === 0) {
+                        return res.status(404).json({ error: "Storage not found" });
+                    }
+                    const storage = results.rows[0];
+
+                    if (storage.lastCleaned) {
+                        storage.lastCleaned = new Date(storage.lastCleaned);
+                    }
+                    res.render("manage", {
+                        storage,
+                        stylesheets: ["contents.css", "manage.css"],
+                        scripts: ["imageUploadUtil.js", "manage.js"],
+                        id: storageId,
+                        auth: auth,
+                    });
+                }
+            );
+
         });
-    } catch (error) {
-        console.error("Error fetching storage:", error);
-        res.status(500).json({ error: "Internal server error" });
-    } finally {
-        await client.end();
-    }
+
+    });
+
 });
 
 // Route for profile page
@@ -238,7 +247,7 @@ app.get("/profile", async function (req, res) {
 
         res.render("profile", {
             userInfo,
-            stylesheets: ["browse.css","reviews.css", "profile.css"],
+            stylesheets: ["browse.css", "reviews.css", "profile.css"],
             scripts: ["profile.js"],
         });
     } catch (error) {
@@ -283,7 +292,7 @@ app.get("/profile", async function (req, res) {
 
         res.render("profile", {
             userInfo,
-            stylesheets: ["browse.css","reviews.css", "profile.css"],
+            stylesheets: ["browse.css", "reviews.css", "profile.css"],
             scripts: ["profile.js"],
         });
     } catch (error) {

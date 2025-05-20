@@ -231,7 +231,8 @@ app.get("/profile", async function (req, res) {
 
     const userId = req.session.userId;
     if (!userId) {
-        return res.status(400).json({ error: "user ID is missing" });
+        return res.redirect("/login");
+
     }
 
     const client = new pg.Client(config);
@@ -251,7 +252,7 @@ app.get("/profile", async function (req, res) {
 
         res.render("profile", {
             userInfo,
-            stylesheets: ["browse.css", "reviews.css", "profile.css"],
+            stylesheets: ["browse.css","reviews.css", "profile.css"],
             scripts: ["profile.js"],
         });
     } catch (error) {
@@ -263,16 +264,6 @@ app.get("/profile", async function (req, res) {
 });
 
 // Route for create new fridge/pantry page
-
-app.get("/storage/createnew", (req, res) => {
-    res.render("create_new", {
-        stylesheets: ["create_new.css"],
-        scripts: ["imageUploadUtil.js", "create_new.js"],
-    });
-});
-
-// Route for create new fridge/pantry page
-
 app.get("/storage/createnew", (req, res) => {
     res.render("create_new", {
         stylesheets: ["create_new.css"],

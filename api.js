@@ -184,7 +184,7 @@ module.exports = function (app) {
 
         let updateSql = 'UPDATE "content" AS c SET "quantity" = d.qty FROM (VALUES ' + updateList.map(d => { return `(${d.id}, ${d.qty})` }).join(', ') + ') as d(id, qty) WHERE d.id = c."contentId"';
 
-        let deleteSql = 'DELETE FROM "content" WHERE "contentId" IN (' + deleteList.map(d => { return `${d.id}` }).join(', ') + ')';
+        let deleteSql = 'WITH c_deleted AS (DELETE FROM "content" WHERE "contentId" IN (' + deleteList.map(d => { return `${d.id}` }).join(', ') + '))' + 'DELETE FROM notifications WHERE "contentId" IN (' + deleteList.map(d => { return `${d.id}` }).join(', ') + ')';
 
         const queryPromises = [];
 

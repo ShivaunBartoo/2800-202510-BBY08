@@ -77,6 +77,7 @@ header {
     cursor: pointer;
     color: var(--blue-dark);
     background-color: var(--blue-medium);
+    text-decoration: none;
 
 }
 

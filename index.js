@@ -7,6 +7,7 @@ const fs = require("fs");
 const pg = require("pg");
 const dotenv = require("dotenv").config();
 const notificationUtils = require("./notification-emails");
+const authorization = require("./authorization.js");
 
 const ejs = require("ejs");
 
@@ -119,6 +120,7 @@ app.get("/contents/:id", function (req, res) {
         `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>`,
     ];
     let storageID = req.params.id;
+    let userId = req.session.userId;
     const client = new pg.Client(config);
     client.connect((err) => {
         if (err) {
@@ -127,10 +129,10 @@ app.get("/contents/:id", function (req, res) {
         }
         client.query(
             `
-                    SELECT s."storageType", s."title", s."lastCleaned" 
+                    SELECT s."storageType", s."title", s."lastCleaned", s."ownerId" = $2 AS "isCurrentUserOwner" 
                     FROM public.storage AS s 
                     WHERE s."storageId" = $1`,
-            [storageID],
+            [storageID, userId],
             async (error, results) => {
                 if (error) {
                     console.log(error);
@@ -140,6 +142,7 @@ app.get("/contents/:id", function (req, res) {
                 let type = results.rows[0].storageType;
                 let title = results.rows[0].title;
                 let lastCleaned = results.rows[0].lastCleaned;
+                let authorized = results.rows[0].isCurrentUserOwner;
                 res.render("contents", {
                     type: type,
                     title: title,
@@ -148,6 +151,7 @@ app.get("/contents/:id", function (req, res) {
                     scripts: js,
                     other: other,
                     id: storageID,
+                    auth: authorized,
                 });
                 client.end();
             }

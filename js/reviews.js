@@ -36,13 +36,13 @@ function updateReadMoreButton() {
 }
 
 // add review modal scripts
-function openModal() {
-    document.getElementById("reviewModal").style.display = "flex";
-}
+// function openModal() {
+//     document.getElementById("reviewModal").style.display = "flex";
+// }
 
-function closeModal() {
-    document.getElementById("reviewModal").style.display = "none";
-}
+// function closeModal() {
+//     document.getElementById("reviewModal").style.display = "none";
+// }
 
 // Main initialization
 
@@ -92,7 +92,7 @@ async function submitReview() {
 
         if (res.ok) {
             resetReviewForm();
-            closeModal();
+            closeModal("reviewModal");
             await getReviews();
         } else {
             alert("Failed to submit review. Please try again");
@@ -124,6 +124,7 @@ async function getReviews() {
             '<p>Error loading reviews. Please try again later.</p>';
     }
 }
+let selectedCard = null;
 
 //replies
 function registerEventListeners() {
@@ -140,9 +141,29 @@ function registerEventListeners() {
         executeOnMatch(".review-image", expandImage);
         executeOnMatch(".reply-button", toggleReplyForm);
         executeOnMatch(".submit-reply", submitReply);
-        executeOnMatch("#add-review-button", openModal);
-        executeOnMatch(".close-modal-button", closeModal);
+        executeOnMatch("#add-review-button", () => openModal("reviewModal"));
+        executeOnMatch(".close-modal-button", () => closeModal("reviewModal"));
         executeOnMatch("#submit-review-button", submitReview);
+        executeOnMatch(".btn-delete", (btn) => {
+            const card = btn.closest(".review, .reply");
+
+            if (!card) return;
+
+            selectedCard = card;
+        });
+        // Modal buttons
+
+        executeOnMatch(".btn-delete", () => {
+            openModal("confirmDeleteModal");
+        });
+
+        executeOnMatch("#btn-cancel-delete", () => closeModal("confirmDeleteModal"));
+
+        executeOnMatch("#btn-confirm-delete", () => {
+            deleteCard(selectedCard);
+            closeModal("confirmDeleteModal");
+        });
+
 
     });
 
@@ -200,7 +221,7 @@ async function submitReply(button) {
         const formData = new FormData();
         formData.append('reviewId', reviewId);
         formData.append('reply', replyText);
-        
+
         if (file) {
             formData.append('photo', file);
         }
@@ -211,7 +232,7 @@ async function submitReply(button) {
         });
 
         if (res.ok) {
-        
+
             reviewDiv.querySelector(".reply-form-container").style.display = "none";
             getReviews();
         } else {
@@ -221,4 +242,66 @@ async function submitReply(button) {
         console.error("Submit Reply Error:", err);
     }
 };
+
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    const overlay = document.getElementById("modalOverlay");
+
+    if (!modal) {
+        console.warn(`Modal with ID ${modalId} not found.`);
+        return;
+    }
+
+    if (overlay) {
+        overlay.style.display = "block";
+        overlay.onclick = () => closeModal(modalId);
+    }
+
+    modal.style.display = "flex";
+    modal.style.top = "50%";
+    modal.style.left = "50%";
+    modal.style.transform = "translate(-50%, -50%)";
+
+
+    console.log(`Modal ${modalId} opened.`);
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    const overlay = document.getElementById("modalOverlay");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
+
+    // Hide overlay if no other modals are visible
+   if (overlay) {
+        // Check if any other modals are open
+        const openModals = Array.from(document.querySelectorAll('[id$="Modal"]'))
+            .filter(m => m.style.display === "block");
+        if (openModals.length === 0) {
+            overlay.style.display = "none";
+            overlay.onclick = null;
+        }
+    }
+}
+
+function deleteCard(card) {
+    const reviewId = parseInt(card.dataset.reviewId);
+    const replyId = parseInt(card.dataset.replyId);
+    const isReply = card.classList.contains("reply");
+
+    fetch(isReply ? `/replies/${replyId}` : `/reviews/${reviewId}`, {
+        method: "DELETE",
+    }).then(res => {
+        if (res.ok) {
+
+            card.remove();
+        } else {
+            alert("Failed to delete.");
+        }
+    }).catch(err => {
+        console.error("Delete failed:", err);
+    });
+}
 

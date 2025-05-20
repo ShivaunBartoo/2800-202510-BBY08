@@ -17,9 +17,10 @@
                     <% } %>
             </div>
         </div>
-        <% if (page==='profile' ) { %>
+        <% if (page==='profile' || row.userId === currentUser ) { %>
             <div class="review-header-right">
-                <span class="review-action more-button">...</span>
+                <span class="review-action btn-delete">Delete</span>
+
             </div>
             <% } %>
 
@@ -58,9 +59,10 @@
                             </div>
                         </div>
                     </div>
-                    <% if (page==='profile' ) { %>
+                    <% if (page==='profile' || reply.userId === currentUser ) { %>
                         <div class="review-header-right">
-                            <span class="review-action more-button">...</span>
+                            <span class="review-action btn-delete">Delete</span>
+                            <!-- <span class="review-action more-button">...</span> -->
                         </div>
                         <% } %>
                 </div>
@@ -107,10 +109,6 @@
 </div>
 <div id="modalOverlay" class="modal-overlay" style="display: none;"></div>
 
-<div id="actionModal" class="action-modal" style="display: none;">
-    <div id="btn-delete" class="modal-option">Delete</div>
-    <div id="btn-report" class="modal-option">Report comment</div>
-</div>
 
 <div id="confirmDeleteModal" style="display:none;">
     <div class="delete-modal">

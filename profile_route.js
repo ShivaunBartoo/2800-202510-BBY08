@@ -3,6 +3,8 @@ const saltRounds = 12;
 const pg = require("pg");
 const fs = require("fs");
 const ejs = require("ejs");
+const Joi = require('joi');
+
 
 const config = ({
     user: process.env.DB_USER,
@@ -26,10 +28,23 @@ async function isOwner(req, res, next) {
 }
 module.exports = function (app) {
 
-    app.post('/update-profile', async (req, res) => {
+    const updateProfileSchema = Joi.object({
+        firstName: Joi.string().min(1).max(100).required(),
+        lastName: Joi.string().min(1).max(100).required(),
+        email: Joi.string().email().required(),
+        oldPassword: Joi.string().min(4).optional().allow(''),
+        newPassword: Joi.string().min(4).optional().allow(''),
+        notifications: Joi.boolean().required()
+    });
 
+    app.post('/update-profile', async (req, res) => {
+        const { error, value } = updateProfileSchema.validate(req.body);
+
+        if (error) {
+            return res.status(400).json({ message: error.details[0].message });
+        }
         const userId = req.session.userId;
-        const { firstName, lastName, email, oldPassword, newPassword, notifications } = req.body;
+        const { firstName, lastName, email, oldPassword, newPassword, notifications } = value;
         const client = new pg.Client(config);
 
         try {
@@ -91,7 +106,7 @@ module.exports = function (app) {
                     return ejs.renderFile("views/partials/storage-card.ejs", { row });
                 })
             );
-            // Send the array of rendered HTML
+            
             res.json(renderedCards);
         } catch (err) {
             console.error("Owned storage Template rendering error:", err);
@@ -121,7 +136,7 @@ module.exports = function (app) {
 
             const reviewRows = reviewResult.rows;
             const reviewIds = reviewRows.map(r => r.reviewId);
-            
+
             if (reviewIds.length === 0) {
                 return res.json([]);
             }
@@ -138,14 +153,14 @@ module.exports = function (app) {
 
             const replies = replyResult.rows;
 
-            // Step 3: Render all reviews with replies
+            // Render all reviews with replies
             const renderedCards = await Promise.all(
                 reviewRows.map((review) => {
                     const reviewReplies = replies.filter(reply => reply.reviewId === review.reviewId);
                     return ejs.renderFile("views/partials/review-card.ejs", {
                         row: review,
                         replies: reviewReplies,
-                        page:'profile'
+                        page: 'profile'
                     });
                 })
             );

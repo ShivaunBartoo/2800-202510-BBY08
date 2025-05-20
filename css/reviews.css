@@ -182,3 +182,33 @@ main {
   background-color: #999;
   color: white;
 }
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+#confirmDeleteModal {
+    position: fixed;
+    z-index: 1001;
+    background-color: var(--blue-medium);
+    padding: 20px;
+    border-radius: 12px;
+    width: 300px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    display: none;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+}
+
+.delete-modal {
+    text-align: center;
+}
+
+#action-btn  {
+    display:flex;
+    justify-content: space-around;
+}

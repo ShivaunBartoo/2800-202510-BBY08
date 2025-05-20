@@ -5,6 +5,8 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const express = require('express');
 const upload = multer({ storage: multer.memoryStorage() });
+const Joi = require("joi");
+
 
 const saltRounds = 12;
 
@@ -45,14 +47,34 @@ async function geocodeAddress(fullAddress) {
     }
 }
 
-const {uploadPhotoCloud} = require('./utils');
+const { uploadPhotoCloud } = require('./utils');
 
 module.exports = function (app) {
 
-    
+    const storageSchema = Joi.object({
+        title: Joi.string().max(100).required(),
+        storageType: Joi.string().valid("1", "2").required(),
+        street: Joi.string().max(200).required(),
+        city: Joi.string().max(100).required(),
+        province: Joi.string().max(50).required(),
+        lastCleaned: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
+            .optional()
+            .allow(""),
+        description: Joi.string().max(1000).optional().allow("")
+    });
+
+    const deleteSchema = Joi.object({
+        storageId: Joi.number().integer().required()
+    });
+
     app.put('/manage/storage', upload.single('photo'), async (req, res) => {
         const { storageId } = req.query;
         const { title, storageType, street, city, province, lastCleaned, description } = req.body;
+        const { error } = storageSchema.validate({ title, storageType, street, city, province, lastCleaned, description });
+        if (error) return res.status(400).json({ error: error.details.map(e => e.message) });
+
+        if (!storageId) return res.status(400).json({ error: 'Storage ID is required' });
+
 
         const address = `${street}, ${city}, ${province}, Canada`;
 
@@ -125,6 +147,9 @@ module.exports = function (app) {
     app.delete("/manage/storage/soft-delete", async (req, res) => {
         const { storageId } = req.query;
 
+        const { error } = deleteSchema.validate({ storageId: Number(storageId) });
+        if (error) return res.status(400).json({ error: error.details.map(e => e.message) });
+
         if (!storageId) {
             return res.status(400).json({ error: "Storage ID is required" });
         }
@@ -155,13 +180,17 @@ module.exports = function (app) {
     });
 
     app.post('/storage/createnew', upload.single('photo'), async (req, res) => {
-        
+
         const ownerId = req.session.userId;
         if (!ownerId) {
             return res.status(400).json({ error: "userID is required" });
         }
 
         const { storageType, title, street, city, province, description } = req.body;
+
+        const { error } = storageSchema.validate({ title, storageType, street, city, province, description });
+        if (error) return res.status(400).json({ error: error.details.map(e => e.message) });
+
         const address = `${street}, ${city}, ${province}, Canada`;
 
         const coords = await geocodeAddress(address);

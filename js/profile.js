@@ -39,31 +39,17 @@ function registerEventListeners() {
         executeOnMatch(".reply-button", toggleReplyForm);
         executeOnMatch(".submit-reply", submitReply);
 
-        executeOnMatch(".more-button", (btn) => {
+        executeOnMatch(".btn-delete", (btn) => {
             const card = btn.closest(".review, .reply");
-            const container = document.getElementById("myreviews");
 
             if (!card) return;
 
             selectedCard = card;
-
-            const containerRect = container.getBoundingClientRect();
-            const btnRect = btn.getBoundingClientRect();
-            let offset = 150;
-            const modalX = btnRect.left - containerRect.left + container.scrollLeft - offset;
-            const modalY = btnRect.bottom - containerRect.top + container.scrollTop + 4;
-
-            showActionModal(modalX, modalY);
         });
         // Modal buttons
-        executeOnMatch("#btn-report", () => {
-            handleReport(selectedCard);
-            closeModal("actionModal");
-        });
 
-        executeOnMatch("#btn-delete", () => {
-            closeModal("actionModal");
-            showConfirmDeleteModal(selectedCard);
+        executeOnMatch(".btn-delete", () => {
+            openModal("confirmDeleteModal");
         });
 
         executeOnMatch("#btn-cancel-delete", () => closeModal("confirmDeleteModal"));
@@ -168,7 +154,7 @@ async function loadStorageCards() {
 }
 
 async function loadReviewCards() {
-    //const heroContainer = document.querySelector("#hero-card-container");
+
     const mainContainer = document.querySelector("#review-card-container");
     const cards = await getReviewCards();
 
@@ -282,7 +268,7 @@ async function submitReply(button) {
 }
 
 
-function openModal(modalId, x, y) {
+function openModal(modalId) {
     const modal = document.getElementById(modalId);
     const overlay = document.getElementById("modalOverlay");
 
@@ -293,21 +279,14 @@ function openModal(modalId, x, y) {
 
     if (overlay) {
         overlay.style.display = "block";
-        // Optional: close modal if overlay is clicked
         overlay.onclick = () => closeModal(modalId);
     }
 
     modal.style.display = "block";
-
-    if (x !== null && y !== null) {
-
-        modal.style.left = `${x}px`;
-        modal.style.top = `${y}px`;
-    } else {
-        modal.style.top = "";
-        modal.style.left = "";
-        modal.style.transform = "translate(-50%, -50%)";
-    }
+    modal.style.top = "50%";
+    modal.style.left = "50%";
+    modal.style.transform = "translate(-50%, -50%)";
+    
 
     console.log(`Modal ${modalId} opened.`);
 }
@@ -318,27 +297,18 @@ function closeModal(modalId) {
 
     if (modal) {
         modal.style.display = "none";
-        modal.classList.remove("action-modal", "modal-popup");
     }
 
     // Hide overlay if no other modals are visible
     if (overlay) {
         // Check if any other modals are open
-        const anyOpen = [...document.querySelectorAll(".modal-popup, .action-modal")]
-            .some(m => m.style.display === "block");
-        if (!anyOpen) {
+        const openModals = Array.from(document.querySelectorAll('[id$="Modal"]'))
+            .filter(m => m.style.display === "block");
+        if (openModals.length === 0) {
             overlay.style.display = "none";
             overlay.onclick = null;
         }
     }
-}
-
-function showActionModal(x, y) {
-    openModal("actionModal", x, y);
-}
-
-function showConfirmDeleteModal(card) {
-    openModal("confirmDeleteModal");
 }
 
 function deleteCard(card) {

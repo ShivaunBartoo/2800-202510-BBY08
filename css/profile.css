@@ -175,42 +175,12 @@ button:hover {
     position: relative;
 }
 
-.action-modal {
-    position: fixed;
-    width: auto;
-    z-index: 1001;
-    display: none;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-}
-
-#actionModal {
-    position: absolute;
-    background-color: var(--blue-light);
-    color: var(--blue-dark);
-    border-radius: 12px;
-    padding: 10px 0;
-    z-index: 1001;
-}
-
-.modal-option {
-    display: flex;
-    justify-content: center;
-    padding: 14px 16px;
-    border-bottom: 1px solid #2c2c2e;
-    cursor: pointer;
-}
-
 
 .modal-overlay {
     position: fixed;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000;
-}
-
-
-.modal-option:last-child {
-    border-bottom: none;
 }
 
 #confirmDeleteModal {

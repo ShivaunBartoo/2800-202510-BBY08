@@ -266,3 +266,15 @@
 .hidden {
     display: none;
 }
+
+.gm-ui-hover-effect {
+    display: none !important;
+}
+
+.storageCard {
+    color: var(--blue-text);
+    font-size: 16px;
+    text-align: center;
+}
+
+

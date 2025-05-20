@@ -1,3 +1,4 @@
+const { getYourCity } = require("./js/city.js");
 const express = require("express");
 const session = require("express-session");
 const pgSession = require("connect-pg-simple")(session);
@@ -5,6 +6,7 @@ const bcrypt = require("bcrypt");
 const fs = require("fs");
 const pg = require("pg");
 const dotenv = require("dotenv").config();
+const notificationUtils = require("./notification-emails");
 
 const ejs = require("ejs");
 
@@ -25,6 +27,11 @@ const config = {
 };
 
 const pgPool = new pg.Pool(config);
+
+setInterval(() => {
+    notificationUtils.sendNotifications();
+}, process.env.NOTIF_INTERVAL_IN_MINUTES * 60 * 1000)
+
 
 app.set("view engine", "ejs");
 
@@ -89,10 +96,16 @@ app.get("/login", function (req, res) {
 });
 
 // Route for browse page
-app.get("/browse", function (req, res) {
+app.get("/browse", async function (req, res) {
+    const  { lat, lon } = req.query;
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+    const city = await getYourCity(lat, lon, process.env.GOOGLE_MAPS_API_KEY);
+    
     res.render("browse", {
+        city,
         stylesheets: ["browse.css"],
         scripts: [],
+        apiKey
     });
 });
 
@@ -136,6 +149,7 @@ app.get("/contents/:id", function (req, res) {
                     other: other,
                     id: storageID,
                 });
+                client.end();
             }
         );
     });
@@ -196,11 +210,84 @@ app.get("/manage/:id", async (req, res) => {
 });
 
 // Route for profile page
-app.get("/profile", function (req, res) {
-    res.render("profile", {
-        stylesheets: ["profile.css"],
-        scripts: ["profile.js"],
+app.get("/profile", async function (req, res) {
+
+    const userId = req.session.userId;
+    if (!userId) {
+        return res.status(400).json({ error: "user ID is missing" });
+    }
+
+    const client = new pg.Client(config);
+    try {
+        await client.connect();
+
+        const result = await client.query(
+            `SELECT * FROM public.users WHERE "userId" = $1`,
+            [userId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: "user not found" });
+        }
+
+        const userInfo = result.rows[0];
+
+        res.render("profile", {
+            userInfo,
+            stylesheets: ["browse.css","reviews.css", "profile.css"],
+            scripts: ["profile.js"],
+        });
+    } catch (error) {
+        console.error("Error fetching storage:", error);
+        res.status(500).json({ error: "Internal server error" });
+    } finally {
+        await client.end();
+    }
+});
+
+// Route for create new fridge/pantry page
+
+app.get("/storage/createnew", (req, res) => {
+    res.render("create_new", {
+        stylesheets: ["create_new.css"],
+        scripts: ["imageUploadUtil.js", "create_new.js"],
     });
+});
+
+// Route for profile page
+app.get("/profile", async function (req, res) {
+
+    const userId = req.session.userId;
+    if (!userId) {
+        return res.status(400).json({ error: "user ID is missing" });
+    }
+
+    const client = new pg.Client(config);
+    try {
+        await client.connect();
+
+        const result = await client.query(
+            `SELECT * FROM public.users WHERE "userId" = $1`,
+            [userId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: "user not found" });
+        }
+
+        const userInfo = result.rows[0];
+
+        res.render("profile", {
+            userInfo,
+            stylesheets: ["browse.css","reviews.css", "profile.css"],
+            scripts: ["profile.js"],
+        });
+    } catch (error) {
+        console.error("Error fetching storage:", error);
+        res.status(500).json({ error: "Internal server error" });
+    } finally {
+        await client.end();
+    }
 });
 
 // Route for create new fridge/pantry page
@@ -251,6 +338,7 @@ app.post("/reviews/:storageId", async (req, res) => {
             (err, results) => {
                 if (err) {
                     console.log(err);
+                    client.end();
                     return;
                 }
                 res.redirect(`/reviews/${storageId}`);
@@ -298,9 +386,11 @@ app.get("/logout", function (req, res) {
     }
 });
 
-require("./api")(app);
-require("./authentication")(app);
-require("./create_manageStorage")(app);
+require('./api')(app);
+require('./authentication')(app);
+require('./create_manageStorage')(app);
+require('./profile_route')(app);
+
 
 // Page not found
 app.use(function (req, res, next) {
@@ -308,5 +398,5 @@ app.use(function (req, res, next) {
 });
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`[INFO] ${(new Date()).toUTCString()} - Server is running on http://localhost:${port}`);
 });

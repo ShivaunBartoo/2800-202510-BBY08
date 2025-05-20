@@ -1,4 +1,5 @@
 const { getDistance } = require("./js/userLocation");
+const { classify } = require("./js/food-classify");
 const fs = require("fs");
 const pg = require("pg");
 const ejs = require("ejs");
@@ -7,6 +8,8 @@ const cloudinary = require("cloudinary").v2;
 const express = require("express");
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
+
+const notificationUtils = require('./notification-emails');
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -26,6 +29,7 @@ const config = {
     },
 };
 
+
 module.exports = function (app) {
     app.get("/api/browse", async (req, res) => {
         const client = new pg.Client(config);
@@ -42,12 +46,19 @@ module.exports = function (app) {
 
             const lat = parseFloat(req.query.lat);
             const lon = parseFloat(req.query.lon);
+            const radius = req.query.radiusFilter === "none" || isNaN(parseFloat(req.query.radiusFilter))
+                ? null
+                : parseFloat(req.query.radiusFilter);
 
+            console.log('radius', radius);
             let renderedCards = await Promise.all(
                 storageResults.rows.map((row) => {
                     let distance = getDistance(lat, lon, parseFloat(row.coordinates.x), parseFloat(row.coordinates.y));
                     distance = distance.toFixed(1);
                     const isFavourite = favoriteIds.includes(row.storageId);
+
+                    if (radius !== null && !isFavourite && distance > radius) return null;
+
                     return ejs
                         .renderFile("views/partials/storage-card.ejs", {
                             row,
@@ -61,6 +72,9 @@ module.exports = function (app) {
                         }));
                 })
             );
+
+            renderedCards = renderedCards.filter(card => card !== null);
+
             //sort the cards by favourite/non-favourite, and then sort the sublists by distance.
             let sortByDistance = (arr) => arr.sort((a, b) => a.distance - b.distance);
             let favouriteCards = sortByDistance(renderedCards.filter((card) => card.isFavourite));
@@ -110,12 +124,14 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/api/donate', (req, res) => {
+    app.post("/api/donate", (req, res) => {
         let data = req.body;
         let sql = 'INSERT INTO "content" ("storageId", "itemName", "quantity", "bbd") VALUES ';
         let items = [];
+        let storageId;
         for (let i = 0; i < data.length; i++) {
             let info = data[i];
+            storageId = info.storageId;
             let str = "(" + info.storageId + ", '" + info.itemName + "', " + info.quantity + ", '" + info.bbd + "')";
             items.push(str);
         }
@@ -130,15 +146,20 @@ module.exports = function (app) {
             client.query(sql, (error, results) => {
                 if (error) {
                     console.log(error);
-                    res.send({ status: "fail", msg: "Unable to add item to DB" })
+                    client.end();
+                    res.send({ status: "fail", msg: "Unable to add item to DB" });
                 } else {
+
+                    // add notifications
+                    notificationUtils.generateNotifications(storageId);
+
                     res.send({ status: "success", msg: "Item added to DB" })
                 }
                 client.end();
             });
-
         });
     });
+
 
     app.post("/api/take", async (req, res) => {
         let data = req.body;
@@ -212,9 +233,9 @@ module.exports = function (app) {
             .then(() => {
                 res.send({ status: "success", msg: "Database successfully updated" });
             })
-            .catch(err =>{
+            .catch(err => {
                 console.log(err);
-                res.send({ status:"fail", msg: "Unable to remove items"});
+                res.send({ status: "fail", msg: "Unable to remove items" });
             });
     });
 
@@ -229,15 +250,16 @@ module.exports = function (app) {
 
             client.query(
                 `SELECT * 
-            FROM public.reviews AS r
-            JOIN public.users AS u ON r."userId" = u."userId"
-            WHERE r."storageId" = $1 
-            AND r."deletedDate" IS NULL 
-            ORDER BY r."createdAt" DESC
+                FROM public.reviews AS r
+                JOIN public.users AS u ON r."userId" = u."userId"
+                WHERE r."storageId" = $1 
+                AND r."deletedDate" IS NULL 
+                ORDER BY r."createdAt" DESC
                 `, [storageId],
                 async (error, results) => {
                     if (error) {
                         console.error(error);
+                        client.end();
                         return res.status(500).send("Query error");
                     }
 
@@ -247,15 +269,14 @@ module.exports = function (app) {
                         JOIN public.users AS u ON r."userId" = u."userId"
                         AND r."deletedDate" IS NULL 
                         ORDER BY r."createdAt" DESC`
-                    ) 
+                    )
                     try {
                         const renderedCards = await Promise.all(
-                            results.rows.map((row) =>
-                                {
-                                    const reviewReplies = replies.rows.filter(reply => reply.reviewId == row.reviewId);
-                                    
-                                    return ejs.renderFile("views/partials/review-card.ejs", { row, replies: reviewReplies });
-                                }
+                            results.rows.map((row) => {
+                                const reviewReplies = replies.rows.filter(reply => reply.reviewId == row.reviewId);
+
+                                return ejs.renderFile("views/partials/review-card.ejs", { row, replies: reviewReplies });
+                            }
                             )
                         );
 
@@ -271,15 +292,45 @@ module.exports = function (app) {
         });
     });
 
+    app.get('/api/fridgePoint', (req, res) => {
+
+
+        const client = new pg.Client(config);
+        client.connect((err) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            client.query("SELECT * FROM public.storage", async (error, results) => {
+                if (error) {
+                    console.log(error);
+                    client.end();
+                    return;
+                }
+                const points = results.rows.map(row => ({
+                    id: row.id,
+                    name: row.title,
+                    lat: parseFloat(row.coordinates.x),
+                    lon: parseFloat(row.coordinates.y)
+                }));
+
+                res.json(points);
+                client.end();
+            });
+        });
+    });
+
+
     app.get("/storageloc/:id", async (req, res) => {
         const storageId = req.params.id;
         const client = new pg.Client(config);
         await client.connect();
         const seperate = await client.query(
             `
-            SELECT CAST(coordinates[0] AS FLOAT) AS latitude, CAST(coordinates[1] AS FLOAT) AS longitude
-            FROM storage WHERE "storageId" = $1`,
+SELECT CAST(coordinates[0] AS FLOAT) AS latitude, CAST(coordinates[1] AS FLOAT) AS longitude
+FROM storage WHERE "storageId" = $1`,
             [storageId]);
+
         res.json(seperate.rows[0]);
         client.end();
 
@@ -320,6 +371,15 @@ module.exports = function (app) {
             ]);
         }
         res.status(200).send();
+        client.end();
+    });
+
+    //query should be uri encoded.
+    //eg /api/classify?input=${encodeURIComponent(myString)}
+    app.get("/api/classify", async (req, res) => {
+        const input = req.query.input;
+        const response = await classify(input);
+        res.send(response);
     });
 
     app.get("/api/session", (req, res) => {

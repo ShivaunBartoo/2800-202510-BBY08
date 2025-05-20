@@ -1,6 +1,6 @@
 <%-include('partials/header')%>
 <%- include('partials/contents-tab', {selected: 'manage'}) %>
-    <!-- Body of manage page -->
+
     <div id="body-container">
         <form id="storageForm" enctype="multipart/form-data" onsubmit="return false;">
             <input type="hidden" id="storageId" value="<%= storage.storageId %>">
@@ -25,7 +25,7 @@
                         <option value="1" <%=storage.storageType==1 ? 'selected' : '' %>>Community Fridge</option>
                         <option value="2" <%=storage.storageType==2 ? 'selected' : '' %>>Community Pantry</option>
                     </select>
-                    <button class="edit-btn" onclick="toggleEdit('storageTypeSelect')">
+                    <button class="edit-btn" id="type-btn" >
                         <span class="material-icons edit-icon">edit</span>
                     </button>
                 </div>
@@ -33,7 +33,7 @@
             <div class="section">
                 <div class="address-header">
                     <label>Address:</label>
-                    <button class="edit-btn" onclick="toggleAddressEdit()">
+                    <button class="edit-btn" id="address-btn" >
                         <span class="material-icons" class="edit-icon">edit</span></button>
                 </div>
                 <div class="field-group">
@@ -41,15 +41,15 @@
                         <div class="address-field">
 
                             <label for="street">Street:</label>
-                            <input type="text" id="street" value=" <%= storage.street || ''%>" disabled />
+                            <input type="text" id="street" value="<%= storage.street || ''%>" disabled />
                         </div>
                         <div class="address-field">
                             <label for="city">City:</label>
-                            <input type="text" id="city" value=" <%= storage.city || ''%>" disabled />
+                            <input type="text" id="city" value="<%= storage.city || ''%>" disabled />
                         </div>
                         <div class="address-field">
                             <label for="province">Province:</label>
-                            <input type="text" id="province" value=" <%= storage.province || ''%>" disabled />
+                            <input type="text" id="province" value="<%= storage.province || ''%>" disabled />
 
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                     <input type="datetime-local" id="lastCleaned"
                         value="<%= storage.lastCleaned ? storage.lastCleaned.toISOString().slice(0, 16) : '' %>"
                         disabled />
-                    <button class="edit-btn" onclick="toggleEdit('lastCleaned')">
+                    <button class="edit-btn" id="clean-btn">
                         <span class="material-icons" class="edit-icon">edit</span></button>
                 </div>
             </div>
@@ -82,7 +82,7 @@
                     <div id="photoPreview" style="<%= storage.image ? '' : 'display: none;' %>">
                         <% if (typeof storage.image !='undefined' ) { %>
                             <img id="previewImage" src="<%= storage.image ? storage.image : '#' %>" alt="Preview"
-                                style="max-width: 200px; max-height: 200px;">
+                                style="max-width: 200px; max-height: 180px;">
                             <% } %>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
                 <div class="field-group">
                     <input type="text" id="description" value="<%= storage.description %>" disabled />
                     <button class="edit-btn">
-                        <span class="material-icons" class="edit-icon" onclick="toggleEdit('description')">edit</span></button>
+                        <span class="material-icons" class="edit-icon" id="description-btn" >edit</span></button>
                 </div>
             </div>
 
@@ -113,7 +113,7 @@
             <h3>Confirm Deletion</h3>
             <div class="modal-buttons">
                 <button type="submit" class="confirm-btn" id="confirmDelete">Confirm</button>
-                <button class="cancel-btn" type="button" onclick="closeModal()">Cancel</button>
+                <button class="cancel-btn" type="button" >Cancel</button>
             </div>
         </div>
     </div>

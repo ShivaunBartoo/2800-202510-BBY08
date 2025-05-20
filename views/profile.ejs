@@ -1,49 +1,83 @@
 <%- include('partials/header') %>
-        <main>
-            <div id="user-section">
-                <div id="user-section-left">
-                    <div id="image-placeholder" aria-label="Profile picture placeholder"></div>
-                    <p>UserName</p>
-                </div>
-                <button>Edit</button>
+    <main>
+        <!-- <div id="user-section">
+            <div id="user-section-left">
+                <div id="image-placeholder" aria-label="Profile picture placeholder"></div>
+                <p>
+                    <%# userInfo.firstName %>
+                </p>
             </div>
-            <div class="container" id="infosec">
+            <button>Edit</button>
+        </div> -->
+        <div class="container" id="infosec">
+            <div id="profile-header-container">
                 <p>Profile</p>
-                <form id="infoform">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required /><br /><br />
+                <button id="profile-edit-btn" >Edit</button>
+            </div>
+            <form id="infoform" enctype="multipart/form-data" onsubmit="return false;">
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" value="<%=userInfo.firstName %>"
+                    disabled /><br /><br />
 
-                    <label for="gmail">Email:</label>
-                    <input type="email" id="gmail" name="gmail" required /><br /><br />
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" value="<%=userInfo.lastName %>" disabled /><br /><br />
 
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required /><br /><br />
-                </form>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="<%= userInfo.email %>" disabled /><br /><br />
+
+                <div id="distance-filter-div">
+                    <p>Distance filter: <span id="radiusDisplay">None</span></p>
+                    <select id="distanceFilter">
+                        <option value="none" selected>No distance filter</option>
+                        <option value="5">5 km</option>
+                        <option value="10">10 km</option>
+                        <option value="20">20 km</option>
+                        <option value="50">50 km</option>
+                    </select>
+                    <button id="apply-btn" >Apply</button>
+                </div>
+
+                <button id="change-password-btn" type="button" >Change Password</button>
+
+                <!-- Hidden Password Fields -->
+                <div id="change-password-container">
+                    <label for="old-password">Old Password:</label>
+                    <input type="password" id="oldPassword" name="oldPassword" /><br /><br />
+
+                    <label for="new-password">New Password:</label>
+                    <input type="password" id="newPassword" name="newPassword" /><br /><br />
+                </div>
+
                 <div id="notifs">
-                    <label for="enable-notifications">
-                        <input type="checkbox" id="enable-notifications" />
+                    <label for="notifications">
+                        <input type="checkbox" name="notifications" id="notifications" />
                         Enable notifications
                     </label>
-                    <button>Save</button>
                 </div>
-            </div>
-            <div id="locationinform">
-                <strong>Note:</strong>
-                <small>
-                    To get the most out of our location-based features, please allow the app to access your location.
-                </small>
-            </div>
+                <button type="submit" id="submit">Save</button>
+            </form>
+        </div>
 
-            <div class="container" id="addsec"><p>My Fridges</p></div>
-            <div class="container" id="myreviews">
-                <div id="myreviews-content">
-                    <p>My Reviews</p>
-                    <ul>
-                        <li class="no-reviews">No reviews yet</li>
-                    </ul>
-                </div>
-                <button id="expandrev" onclick="expandReviews()">Expand</button>
+        <div id="locationinform">
+            <strong>Note:</strong>
+            <small>
+                To get the most out of our location-based features, please allow the app to access your location.
+            </small>
+        </div>
+
+        <div class="container" id="addsec">
+            <p>My Fridges</p>
+            <section id="storage-card-container" class="card-container">
+            </section>
+        </div>
+        <div class="container" id="myreviews">
+            <div id="myreviews-content">
+                <p>My Reviews</p>
+                <section id="review-card-container">
+                </section>
             </div>
-            <div class="spacer"></div>
-        </main>
-<%- include('partials/footer') %>
+            <button id="expandrev" >Expand</button>
+        </div>
+        <div class="spacer"></div>
+    </main>
+    <%- include('partials/footer') %>

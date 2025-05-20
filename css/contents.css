@@ -203,3 +203,28 @@ tr {
 #distance {
     color: rgb(138, 134, 134);
 }
+
+.item-name-input {
+    display: flex;
+    gap: 10px;
+}
+
+/* .modal-content{
+    width: 80% !important; 
+} */
+
+#ai-good{
+    font-size: 2em;
+    color: greenyellow;
+}
+
+#ai-bad{
+    font-size: 2em;
+    color: red;
+}
+
+#ai-warning{
+    font-size: 0.8em;
+    font-style: italic;
+    color: var(--pink-dark-bold);
+}

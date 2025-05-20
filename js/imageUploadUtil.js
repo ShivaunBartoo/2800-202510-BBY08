@@ -9,7 +9,7 @@
  * @param {function} [onSelect] - Optional callback with the selected File object
  */
 
-function initImageUploadPreview(triggerId, inputId, previewContainerId, previewImageId, onSelect) {
+export async function initImageUploadPreview(triggerId, inputId, previewContainerId, previewImageId, onSelect) {
     
     const trigger = document.getElementById(triggerId);
     const input = document.getElementById(inputId);

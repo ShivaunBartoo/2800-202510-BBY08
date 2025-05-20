@@ -58,16 +58,13 @@ button:hover {
 }
 
 #myreviews {
-    height: 175px;
+    height: 350px;
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-#addsec {
-    height: 100px;
-}
 
 #infoform {
     margin-left: 15px;
@@ -81,17 +78,68 @@ button:hover {
     height: 20px;
 }
 
-#notifs {
-    margin-top: 10px;
-    width: calc(100% - 30px);
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: rgba(0, 0, 0, 0.664);
-    justify-self: center;
+#notifs input {
+    all: unset;
+    appearance: checkbox;
+    width: 16px;
+    height: 16px;
+    margin: 10px;
+    position: relative;
+    top: 1px;
 }
+
+#notifs label {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: calc(100% - 40px);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    flex-basis: auto;
+}
+
 
 #expandrev {
     align-self: flex-end;
+}
+
+#change-password-container {
+    display: none;
+    margin-top: 10px;
+}
+
+#profile-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.storage-card {
+    background-color: var(--blue-medium);
+}
+
+.review {
+    background-color: var(--blue-medium);
+}
+
+#distance-filter-div {
+    font-size: 1rem;
+    margin: 10px;
+}
+
+#change-password-btn {
+    width: 100px;
+    padding: 5px;
+    margin-top: 10px;
 }

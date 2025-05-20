@@ -1,0 +1,1493 @@
+Test 01
+model: distilbert,
+dataset: 0,
+inputs: input,
+parameters: { candidate_labels: ["food", "not food"] },
+test accuracy: 0.5689551219707583
+
+Test 02
+model: distilbert,
+dataset: 0,
+inputs: `The word "${input}" is a type of food.`,
+parameters: { candidate_labels: ["this is a food", "this is not a food"] }
+test accuracy: 0.5852329178554255
+
+Test 03
+model: distilbert,
+dataset: 0,
+inputs: `The word "${input}" is a type of food.`,
+parameters: { candidate_labels: ["true", "false"] }
+test accuracy: 0.5688011486355852
+
+Test04
+model: distilbert,
+dataset: 0,
+inputs: `"${input}" is edible. ${input} is a type of food.`,
+parameters: { candidate_labels: ["true", "false"] }
+test accuracy: 0.5644373646596583
+
+Test05
+model: distilbert,
+dataset: 0,
+inputs: `"${input}" is edible. ${input} is a type of food.`,
+parameters: { candidate_labels: ["this is food", "this is not food"] }
+test accuracy: 0.5853312655193049
+
+Test06
+model: distilbert,
+dataset: 0,
+inputs: `"${input}" is edible. ${input} is a type of food.`,
+parameters: { candidate_labels: ["food", "non-food"] }
+test accuracy: 0.5853674469924555
+
+Test07
+model: distilbert,
+dataset: 0,
+inputs: `"${input}" is edible. ${input} is a type of food.`,
+parameters: { candidate_labels: ["edible", "inanimate"] },
+test accuracy: 0.5644373646596583
+
+Test 08
+model: distilbert,
+dataset: 0,
+inputs: Examples: Apple: food, Car: non-food. Now classify [INPUT]:,
+parameters: {"candidate_labels":["food","non-food"]}
+test accuracy: 0.4821535799561477
+
+Test 09
+model: distilbert,
+dataset: 0,
+inputs: Is [INPUT] food? For example: Apple IS food, Car IS non-food. Now classify [INPUT]:,
+parameters: {"candidate_labels":["food","non-food"]}
+test accuracy: 0.5700552172777129
+
+Test 10
+model: distilbert,
+dataset: 0,
+candidate_labels: ["food", "non-food"],
+hypothesis_template: "This example is {}.",
+test accuracy: 0.5894686027270991
+
+Test 11
+model: distilbert,
+dataset: 0,
+template: This example is {}.,
+labels: ["edible","non-edible"]
+test accuracy: 0.5894686027270991
+
+Test 11
+model: distilbert,
+dataset: 0,
+template: This example is {}.,
+labels: ["edible","non-edible"]
+test accuracy: 0.6424058792067737
+
+Test 12
+model: distilbert,
+dataset: 0,
+input I ate an [INPUT] today.
+template: This example is {}.,
+labels: ["edible","non-edible"]
+test accuracy: 0.6421938742079386
+
+Test 13
+model: distilbert,
+dataset: 0,
+input I ate an [INPUT] today.
+template: This sentence is about {}.,
+labels: ["food","non-food"]
+test accuracy: 0.660091064325193
+
+Test 14
+model: distilbert,
+dataset: 0,
+input [INPUT] is edible.
+template: This sentence is {}.,
+labels: ["true","false"]
+test accuracy: 0.5386419717858477
+
+Test 15
+model: bart,
+dataset: 0,
+input I ate an [INPUT] today.
+template: This sentence is about {}.,
+labels: ["food","non-food"]
+test accuracy: 0.6352349810483979
+
+Test 16
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate an [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "This sentence is about {}.";
+const QUERY_INPUT_LABELS = "["food","non-food"]";
+test accuracy: 0.660091064325193
+
+Test 17
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate an [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "This sentence is {}.";
+const QUERY_INPUT_LABELS = "["logical","nonsense"]";
+test accuracy: 0.5363346498186995
+
+Test 18
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate one [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The subject that was eaten is {}.";
+const QUERY_INPUT_LABELS = "["food","non-food"]";
+test accuracy: 0.5927127919545988
+
+Test 19
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I had to run out to buy [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The sentence is about {}.";
+const QUERY_INPUT_LABELS = "["food","non-food"]";
+test accuracy: 0.5584590929310497
+
+Test 20
+model: bart,
+dataset: 0,
+const QUERY_INPUT = "I had to run out to buy [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The sentence is about {}.";
+const QUERY_INPUT_LABELS = "["food","non-food"]";
+test accuracy: 0.5718522769648854
+
+Test 21
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I enjoyed a [INPUT] for breakfast today.";
+const QUERY_INPUT_TEMPLATE = "This text is about {}.";
+const QUERY_INPUT_LABELS = "["food","non‑food"]";
+test accuracy: 0.5238543719780154
+
+Test 22
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate an [INPUT].";
+const QUERY_INPUT_TEMPLATE = "This text is about {}.";
+const QUERY_INPUT_LABELS = "["food","non‑food"]";
+test accuracy: 0.5431577476059518
+
+Test 24
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate an [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["food","non‑food"]";
+test accuracy: 0.6483375677248326
+
+Test 25
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I bought one [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["food","non‑food"]";
+test accuracy: 0.5858424015161467
+
+Test 26
+model: bart,
+dataset: 0,
+const QUERY_INPUT = "I bought one [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["food","non‑food"]";
+test accuracy: 0.6068581836979564
+
+Test 27
+model: bart,
+dataset: 0,
+const QUERY_INPUT = "I bought one [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+test accuracy: 0.6001023432103599
+
+Test 28
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate an [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+const THRESHOLD: 0.95,
+test accuracy: 0.7144492137722853
+errors: {"falsePositives":0,"falseNegatives":2}
+
+Test 28
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate an [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+const THRESHOLD: 0.9,
+test accuracy: 0.7144492137722853
+errors: {"falsePositives":0,"falseNegatives":1}
+
+Test 28
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate an [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+const THRESHOLD: 0.85,
+test accuracy: 0.7144492137722853
+errors: {"falsePositives":0,"falseNegatives":1}
+
+Test 28
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate an [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+const THRESHOLD: 0.8,
+test accuracy: 0.7144492137722853
+errors: {"falsePositives":0,"falseNegatives":1}
+
+Test 28
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate an [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+const THRESHOLD: 0.7,
+test accuracy: 0.7144492137722853
+errors: {"falsePositives":6,"falseNegatives":0}
+
+Test 28
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate an [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+const THRESHOLD: 0.8,
+test accuracy: 0.7144492137722853
+errors: {"falsePositives":0,"falseNegatives":1}
+
+Test 28
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate an [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+const THRESHOLD: 0.8,
+test accuracy: 0.7144492137722853
+errors: {"falsePositives":0,"falseNegatives":1}
+
+Test 29
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate one [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+const THRESHOLD: 0.8,
+test accuracy: 0.6631931662559509
+errors: {"falsePositives":4,"falseNegatives":6}
+
+Test 30
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+const THRESHOLD: 0.8,
+test accuracy: 0.7466568554319987
+errors: {"falsePositives":1,"falseNegatives":0}
+
+
+Test 31
+model: distilbert,
+dataset: 1,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+const THRESHOLD: 0.8,
+test accuracy: 0.672657603254685
+errors: {"falsePositives":13,"falseNegatives":2}
+
+Test 31
+model: distilbert,
+dataset: 1,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+const THRESHOLD: 0.85,
+test accuracy: 0.672657603254685
+errors: {"falsePositives":10,"falseNegatives":2}
+
+Test 31
+model: distilbert,
+dataset: 1,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+const THRESHOLD: 0.9,
+test accuracy: 0.672657603254685
+errors: {"falsePositives":6,"falseNegatives":3}
+
+Test 31
+model: distilbert,
+dataset: 1,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+const THRESHOLD: 0.95,
+test accuracy: 0.672657603254685
+errors: {"falsePositives":3,"falseNegatives":7}
+
+Test 32
+model: distilbert,
+dataset: 1,
+const QUERY_INPUT = "I love having [INPUT] for lunch.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+const THRESHOLD: 0.9,
+test accuracy: 0.5119636405545932
+errors: {"falsePositives":97,"falseNegatives":0}
+
+Test 33
+model: distilbert,
+dataset: 1,
+const QUERY_INPUT = "[INPUT] for lunch.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = "["edible","non-edible"]";
+const THRESHOLD: 0.9,
+test accuracy: 0.6142889782786369
+errors: {"falsePositives":17,"falseNegatives":16}
+
+Test 34
+model: bart,
+dataset: 1,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = '"['edible','non-edible']"';
+const THRESHOLD: 0.9,
+test accuracy: 0.5354616576089308
+errors: {"falsePositives":34,"falseNegatives":21}
+
+Test 36
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I like to have [INPUT] for lunch.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = '"['edible','non-edible']"';
+const THRESHOLD: 0.9,
+test accuracy: 0.6774918771371609
+errors: {"falsePositives":0,"falseNegatives":6}
+
+Test 36
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "[INPUT] is an important part of my diet.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = '"['edible','non-edible']"';
+const THRESHOLD: 0.9,
+test accuracy: 0.6639657616615295
+errors: {"falsePositives":2,"falseNegatives":2}
+
+Test 37
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = '"['edible','non-edible']"';
+const THRESHOLD: 0.9,
+test accuracy: 0.7524062264256361
+errors: {"falsePositives":0,"falseNegatives":1}
+
+Test 37
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = '"['edible','non-edible']"';
+const THRESHOLD: 0.9,
+test accuracy: 0.7259067834877386
+errors: {"falsePositives":0,"falseNegatives":5}
+
+Test 37
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate some [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = '"['edible','non-edible']"';
+const THRESHOLD: 0.9,
+test accuracy: 0.7366000704649018
+errors: {"falsePositives":0,"falseNegatives":2}
+
+Test 38
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate some [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = '"['food','non-edible']"';
+const THRESHOLD: 0.9,
+test accuracy: 0.5984035352381264
+errors: {"falsePositives":17,"falseNegatives":0}
+
+Test 38
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate some [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = '"['food','inedible']"';
+const THRESHOLD: 0.9,
+test accuracy: 0.5875235606984395
+errors: {"falsePositives":17,"falseNegatives":0}
+
+Test 38
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = '"['food','inedible']"';
+const THRESHOLD: 0.9,
+test accuracy: 0.5879258150007667
+errors: {"falsePositives":17,"falseNegatives":0}
+
+Test 38
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = '"['food','non-food']"';
+const THRESHOLD: 0.9,
+test accuracy: 0.5993574043599571
+errors: {"falsePositives":17,"falseNegatives":0}
+
+Test 39
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject that was eaten was {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+test accuracy: 0.7056447194843758
+errors: {"falsePositives":3,"falseNegatives":0}
+
+Test 38
+model: distilbert,
+dataset: 0,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+test accuracy: 0.7466568554319987
+errors: {"falsePositives":1,"falseNegatives":0}
+
+Test 38
+model: https://router.huggingface.co/hf-inference/models/typeform/distilbert-base-uncased-mnli,
+dataset: 0,
+const QUERY_INPUT = "undefined";
+const QUERY_INPUT_TEMPLATE = "undefined";
+const QUERY_INPUT_LABELS = undefined;
+const THRESHOLD: undefined,
+test accuracy: 0.7466568554319987
+errors: {"falsePositives":0,"falseNegatives":24}
+
+Test 38
+model: https://router.huggingface.co/hf-inference/models/typeform/distilbert-base-uncased-mnli,
+dataset: 0,
+const QUERY_INPUT = "undefined";
+const QUERY_INPUT_TEMPLATE = "undefined";
+const QUERY_INPUT_LABELS = undefined;
+const THRESHOLD: undefined,
+test accuracy: 0.7466568554319987
+errors: {"falsePositives":0,"falseNegatives":24}
+
+Test 39
+model: https://router.huggingface.co/hf-inference/models/typeform/distilbert-base-uncased-mnli,
+dataset: 0,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+test accuracy: 0.7466568554319987
+errors: {"falsePositives":1,"falseNegatives":0}
+
+Test 40
+model: https://router.huggingface.co/hf-inference/models/typeform/distilbert-base-uncased-mnli,
+dataset: 0,
+const QUERY_INPUT = "Is it ok to eat [INPUT].";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+test accuracy: 0.5924088068124724
+errors: {"falsePositives":16,"falseNegatives":0}
+
+Test 40
+model: https://router.huggingface.co/hf-inference/models/typeform/distilbert-base-uncased-mnli,
+dataset: 0,
+const QUERY_INPUT = "Is it ok to eat [INPUT].";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["food","non-edible"];
+const THRESHOLD: 0.9,
+test accuracy: 0.6112071624616298
+errors: {"falsePositives":12,"falseNegatives":0}
+
+Test 40
+model: https://router.huggingface.co/hf-inference/models/typeform/distilbert-base-uncased-mnli,
+dataset: 0,
+const QUERY_INPUT = "[INPUT] at the grocery store";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["food","non-edible"];
+const THRESHOLD: 0.9,
+test accuracy: 0.5985951220116964
+errors: {"falsePositives":10,"falseNegatives":5}
+
+Test 41
+model: https://router.huggingface.co/hf-inference/models/typeform/distilbert-base-uncased-mnli,
+dataset: 0,
+const QUERY_INPUT = "This morning I had a [INPUT] with my coffee.";
+const QUERY_INPUT_TEMPLATE = "This statement is about {}.";
+const QUERY_INPUT_LABELS = ["food","non-food"];
+const THRESHOLD: 0.9,
+test accuracy: 0.6918431593150627
+errors: {"falsePositives":3,"falseNegatives":1}
+
+Test 42
+model: https://router.huggingface.co/hf-inference/models/typeform/distilbert-base-uncased-mnli,
+dataset: 0,
+const QUERY_INPUT = "I really enjoyed a [INPUT] today.";
+const QUERY_INPUT_TEMPLATE = "The text describes something {}.";
+const QUERY_INPUT_LABELS = ["edible","inedible"];
+const THRESHOLD: 0.9,
+test accuracy: 0.6794592883528733
+errors: {"falsePositives":0,"falseNegatives":1}
+
+Test 43
+model: https://router.huggingface.co/hf-inference/models/typeform/distilbert-base-uncased-mnli,
+dataset: 0,
+const QUERY_INPUT = "At dinner, I served [INPUT].";
+const QUERY_INPUT_TEMPLATE = "This sentence refers to {}.";
+const QUERY_INPUT_LABELS = ["something you eat","something you don’t eat"];
+const THRESHOLD: 0.9,
+test accuracy: 0.5531865198437761
+errors: {"falsePositives":17,"falseNegatives":6}
+
+Test 44
+model: https://router.huggingface.co/hf-inference/models/typeform/distilbert-base-uncased-mnli,
+dataset: 0,
+const QUERY_INPUT = "Is [INPUT] something you can eat?";
+const QUERY_INPUT_TEMPLATE = "{} is something you can eat.";
+const QUERY_INPUT_LABELS = ["True","False"];
+const THRESHOLD: 0.9,
+test accuracy: 0.597329475530764
+errors: {"falsePositives":8,"falseNegatives":11}
+
+Test 45
+model: https://router.huggingface.co/hf-inference/models/typeform/distilbert-base-uncased-mnli,
+dataset: 0,
+const QUERY_INPUT = "Hey, want a [INPUT]?";
+const QUERY_INPUT_TEMPLATE = "This is about {}.";
+const QUERY_INPUT_LABELS = ["food","non-food"];
+const THRESHOLD: 0.9,
+test accuracy: 0.5433949697308424
+errors: {"falsePositives":7,"falseNegatives":13}
+
+Test 45
+model: https://router.huggingface.co/hf-inference/models/typeform/distilbert-base-uncased-mnli,
+dataset: 0,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible","food"];
+const THRESHOLD: 0.9,
+test accuracy: 0.45598564060722907
+errors: {"falsePositives":16,"falseNegatives":23}
+
+Test 46
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+test accuracy: 0.4146341463414634
+errors: {"falsePositives":0,"falseNegatives":24}
+
+Test 46
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+test accuracy: 0.4146341463414634
+errors: {"falsePositives":0,"falseNegatives":24}
+
+Test 46
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "I ate a [INPUT] for lunch today.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+test accuracy: 0.8178499370086484
+errors: {"falsePositives":0,"falseNegatives":10}
+
+Test 47
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "I bought [INPUT] at the store.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+test accuracy: 0.012977543400555121
+errors: {"falsePositives":0,"falseNegatives":24}
+
+Test 47
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "I put [INPUT] in my refrigerator.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+test accuracy: 0.0157930850982666
+errors: {"falsePositives":0,"falseNegatives":24}
+
+Test 47
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "[INPUT] placed on the kitchen table.";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+test accuracy: 0
+errors: {"falsePositives":0,"falseNegatives":24}
+
+Test 47
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "[INPUT].";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+test accuracy: 0.501688342268874
+errors: {"falsePositives":0,"falseNegatives":5}
+
+Test 47
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "delicious [INPUT].";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+errors: {"falsePositives":1,"falseNegatives":1}
+
+Test 47
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "delicious [INPUT].";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+errors: {"falsePositives":1,"falseNegatives":1,"accuracy":"95.12%"}
+accuracy: 95.12%
+
+Test 47
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "delicious [INPUT].";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+errors: {"falsePositives":1,"falseNegatives":1,"accuracy":"95.12%"}
+accuracy: 95.12%
+
+Test 47
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "tasty [INPUT].";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+errors: {"falsePositives":1,"falseNegatives":1,"accuracy":"95.12%"}
+accuracy: 95.12%
+
+Test 48
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 1,
+const QUERY_INPUT = "delicious [INPUT].";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+errors: {"falsePositives":1,"falseNegatives":6,"accuracy":"96.63%"}
+accuracy: 96.63%
+
+Test 49
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 1,
+const QUERY_INPUT = "[INPUT] for lunch";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+errors: {"falsePositives":0,"falseNegatives":90,"accuracy":"56.73%"}
+accuracy: 56.73%
+
+Test 50
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "a plate of tasty [INPUT]";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+errors: {"falsePositives":1,"falseNegatives":1,"accuracy":"95.12%"}
+accuracy: 95.12%
+
+Test 51
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 1,
+const QUERY_INPUT = "a plate of tasty [INPUT]";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+errors: {"falsePositives":7,"falseNegatives":2,"accuracy":"95.67%"}
+accuracy: 95.67%
+
+Test 52
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "I'm hungry for [INPUT]";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+errors: {"falsePositives":0,"falseNegatives":23,"accuracy":"43.90%"}
+accuracy: 43.90%
+
+Test 53
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "Some delicious [INPUT]";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+errors: {"falsePositives":0,"falseNegatives":3,"accuracy":"92.68%"}
+accuracy: 92.68%
+
+Test 54
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "Delicious [INPUT]";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+errors: {"falsePositives":0,"falseNegatives":6,"accuracy":"85.37%"}
+accuracy: 85.37%
+
+Test 54
+model: https://bnqjgs7r11kf8y8v.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "delicious [INPUT]";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+errors: {"falsePositives":0,"falseNegatives":6,"accuracy":"85.37%"}
+accuracy: 85.37%
+
+Test 55
+model: https://el3jnvq87xefbu7g.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 0,
+const QUERY_INPUT = "delicious [INPUT]";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+errors: {"falsePositives":0,"falseNegatives":3,"accuracy":"92.68%"}
+accuracy: 92.68%
+
+Test 56
+model: https://el3jnvq87xefbu7g.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 1,
+const QUERY_INPUT = "delicious [INPUT]";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+errors: {"falsePositives":0,"falseNegatives":11,"accuracy":"94.71%"}
+accuracy: 94.71%
+
+Test 57
+model: https://jt7cjgx3amnf5tos.us-east-1.aws.endpoints.huggingface.cloud,
+dataset: 1,
+const QUERY_INPUT = "delicious [INPUT]";
+const QUERY_INPUT_TEMPLATE = "The subject is {}.";
+const QUERY_INPUT_LABELS = ["edible","non-edible"];
+const THRESHOLD: 0.9,
+errors: {"falsePositives":0,"falseNegatives":16,"accuracy":"92.31%"}
+accuracy: 92.31%
+
+Test 58
+model 1: Bart
+  queryInput: Some delicious [INPUT].
+  parameters: {"candidate_labels":["food","not-food"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":2,"falseNegatives":0,"accuracy":"95.12%"}
+
+Test 59
+model 1: Distilbert Finetuned 3
+  queryInput: delicious [INPUT]
+  parameters: {}
+  threshold: 0.9
+model 2: Distilbert Uncased
+  queryInput: I ate a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 3: Bart
+  queryInput: Some delicious [INPUT].
+  parameters: {"candidate_labels":["food","not-food"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":2,"falseNegatives":0,"accuracy":"95.12%"}
+
+Test 60
+model 1: Distilbert Finetuned 3
+  queryInput: delicious [INPUT]
+  parameters: {}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":17,"falseNegatives":2,"accuracy":"53.66%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: I ate an [INPUT] today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 2: Distilbert Uncased
+  queryInput: I ate a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 3: Bart
+  queryInput: Some delicious [INPUT].
+  parameters: {"candidate_labels":["food","not-food"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 61
+model 1: Bart
+  queryInput: I have some [INPUT].
+  parameters: {"candidate_labels":["food","not food"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":10,"falseNegatives":1,"accuracy":"73.17%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: I have some [INPUT].
+  parameters: {"candidate_labels":["food","not food"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":10,"falseNegatives":7,"accuracy":"58.54%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: Would you like a [INPUT]?
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":3,"falseNegatives":1,"accuracy":"90.24%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: Would you like a [INPUT]?
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The sentence is about something {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":14,"falseNegatives":17,"accuracy":"24.39%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: Would you like a [INPUT]?
+  parameters: {"candidate_labels":["food","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":11,"falseNegatives":8,"accuracy":"53.66%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: Would you like a [INPUT]?
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":3,"falseNegatives":1,"accuracy":"90.24%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: Would you like a [INPUT]?
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 2: Distilbert Uncased
+  queryInput: I ate a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 3: Bart
+  queryInput: Some delicious [INPUT].
+  parameters: {"candidate_labels":["food","not-food"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: Would you like a [INPUT]?
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 2: Distilbert Uncased
+  queryInput: I ate a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 3: Bart
+  queryInput: Some delicious [INPUT].
+  parameters: {"candidate_labels":["food","not-food"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 1,
+errors: {"falsePositives":16,"falseNegatives":1,"accuracy":"91.83%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: Would you like a [INPUT]?
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 2: Distilbert Uncased
+  queryInput: I ate a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 3: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 4: Bart
+  queryInput: Some delicious [INPUT].
+  parameters: {"candidate_labels":["food","not-food"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":15,"falseNegatives":0,"accuracy":"63.41%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: Would you like a [INPUT]?
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":3,"falseNegatives":1,"accuracy":"90.24%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: I ate a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":0,"falseNegatives":0,"accuracy":"100.00%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 61
+model 1: Bart
+  queryInput: Some delicious [INPUT].
+  parameters: {"candidate_labels":["food","not-food"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":2,"falseNegatives":0,"accuracy":"95.12%"}
+
+Test 61
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 2: Distilbert Uncased
+  queryInput: I ate a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 3: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 4: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 5: Bart
+  queryInput: Some delicious [INPUT].
+  parameters: {"candidate_labels":["food","not-food"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 62
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 2: Distilbert Uncased
+  queryInput: I ate a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 3: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 4: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 5: Bart
+  queryInput: Some delicious [INPUT].
+  parameters: {"candidate_labels":["food","not-food"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 62
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 2: Distilbert Uncased
+  queryInput: I ate a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 3: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 4: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 5: Bart
+  queryInput: Some delicious [INPUT].
+  parameters: {"candidate_labels":["food","not-food"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 1,
+errors: {"falsePositives":13,"falseNegatives":2,"accuracy":"92.79%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 2: Distilbert Uncased
+  queryInput: I ate a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 3: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 4: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 5: Bart
+  queryInput: Some delicious [INPUT].
+  parameters: {"candidate_labels":["food","not-food"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 2: Distilbert Uncased
+  queryInput: I ate a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 3: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 4: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+model 5: Bart
+  queryInput: Some delicious [INPUT].
+  parameters: {"candidate_labels":["food","not-food"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 65
+model 1: Distilbert Food
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: undefined
+  threshold: undefined
+dataset: 0,
+errors: {"falsePositives":0,"falseNegatives":24,"accuracy":"41.46%"}
+
+Test 65
+model 1: Distilbert Food
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: undefined
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":17,"falseNegatives":6,"accuracy":"43.90%"}
+
+Test 65
+model 1: Distilbert Food
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: undefined
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":17,"falseNegatives":6,"accuracy":"43.90%"}
+
+Test 65
+model 1: Distilbert Food
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: undefined
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":17,"falseNegatives":6,"accuracy":"43.90%"}
+
+Test 65
+model 1: Distilbert Food
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: undefined
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":0,"falseNegatives":10,"accuracy":"75.61%"}
+
+Test 65
+model 1: Distilbert Food
+  queryInput: I enjoyed some [INPUT] for breakfast today.
+  parameters: undefined
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":0,"falseNegatives":7,"accuracy":"82.93%"}
+
+Test 65
+model 1: Distilbert Food
+  queryInput: I enjoyed some [INPUT] for breakfast today.
+  parameters: undefined
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":0,"falseNegatives":7,"accuracy":"82.93%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 2: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 3: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 4: Distilbert Food
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: undefined
+  threshold: 0.9
+model 5: Distilbert Food
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: undefined
+  threshold: undefined
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 2: Distilbert Food
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: undefined
+  threshold: 0.9
+model 3: Distilbert Food
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: undefined
+  threshold: undefined
+dataset: 0,
+errors: {"falsePositives":0,"falseNegatives":4,"accuracy":"90.24%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 2: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 3: Distilbert Food
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: undefined
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":2,"falseNegatives":0,"accuracy":"95.12%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 2: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 3: Distilbert Food
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: undefined
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":0,"falseNegatives":7,"accuracy":"82.93%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 2: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 3: Distilbert Food
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: undefined
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":0,"falseNegatives":4,"accuracy":"90.24%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 2: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 3: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 2: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 3: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 4: Distilbert Food
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: undefined
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":0,"falseNegatives":4,"accuracy":"90.24%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 2: Distilbert Food
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: undefined
+  threshold: 0.9
+model 3: Distilbert Food
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: undefined
+  threshold: undefined
+dataset: 0,
+errors: {"falsePositives":0,"falseNegatives":21,"accuracy":"48.78%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 2: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 3: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 4: Distilbert Uncased
+  queryInput: I ate some [INPUT] for dinner today
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 5: Distilbert Food
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: undefined
+  threshold: 0.9
+dataset: 0,
+errors: {"falsePositives":0,"falseNegatives":4,"accuracy":"90.24%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 2: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 3: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 4: Distilbert Uncased
+  queryInput: I ate some [INPUT] for dinner today
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 2: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 3: Distilbert Uncased
+  queryInput: I'm going to eat some [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 4: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 5: Distilbert Uncased
+  queryInput: I ate some [INPUT] for dinner today
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 6: Distilbert Food
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: undefined
+  threshold: undefined
+dataset: 0,
+errors: {"falsePositives":0,"falseNegatives":4,"accuracy":"90.24%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 2: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 3: Distilbert Uncased
+  queryInput: I'm going to eat some [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 4: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 5: Distilbert Uncased
+  queryInput: I ate some [INPUT] for dinner today
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+dataset: 0,
+errors: {"falsePositives":1,"falseNegatives":0,"accuracy":"97.56%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 2: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 3: Distilbert Uncased
+  queryInput: I'm going to eat some [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 4: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 5: Distilbert Uncased
+  queryInput: I ate some [INPUT] for dinner today
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+dataset: 0,
+errors: {"falsePositives":0,"falseNegatives":0,"accuracy":"100.00%"}
+
+Test 65
+model 1: Distilbert Uncased
+  queryInput: I enjoyed a [INPUT] for breakfast today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 2: Distilbert Uncased
+  queryInput: I'd like a [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 3: Distilbert Uncased
+  queryInput: I'm going to eat some [INPUT] for lunch today.
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 4: Distilbert Uncased
+  queryInput: I had a [INPUT] for dinner today!
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+model 5: Distilbert Uncased
+  queryInput: I ate some [INPUT] for dinner today
+  parameters: {"candidate_labels":["edible","non-edible"],"hypothesis_template":"The subject is {}.","multi_label":false}
+  threshold: undefined
+dataset: 1,
+errors: {"falsePositives":2,"falseNegatives":4,"accuracy":"97.12%"}

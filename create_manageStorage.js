@@ -78,7 +78,6 @@ module.exports = function (app) {
         const address = `${street}, ${city}, ${province}, Canada`;
 
         const coords = await geocodeAddress(address);
-        console.log(coords);
 
         if (!storageId) {
             return res.status(400).json({ error: 'Storage ID is required' });
@@ -102,7 +101,6 @@ module.exports = function (app) {
                 const oldPublicId = existing.rows[0]?.imgPublicId;
 
                 const cloudResult = await uploadPhotoCloud(req.file.buffer, oldPublicId, 'storage_img');
-                console.log('cloud result', cloudResult);
 
                 image = cloudResult.image;
                 imgPublicId = cloudResult.imgPublicId;
@@ -137,7 +135,6 @@ module.exports = function (app) {
 
             res.status(200).json(result.rows[0]);
 
-            console.log('server', result.rows[0]);
         } catch (err) {
             console.error('Update error:', err);
             res.status(500).json({ error: 'Internal server error' });
@@ -178,12 +175,9 @@ module.exports = function (app) {
         }
     });
 
-
-
-
     app.post('/storage/createnew', upload.single('photo'), async (req, res) => {
-        // const ownerId = req.session.userId;
-        const ownerId = '1';
+        
+        const ownerId = req.session.userId;
         if (!ownerId) {
             return res.status(400).json({ error: "userID is required" });
         }
@@ -192,7 +186,6 @@ module.exports = function (app) {
         const address = `${street}, ${city}, ${province}, Canada`;
 
         const coords = await geocodeAddress(address);
-        console.log(coords);
 
         const client = new pg.Client(config);
 
@@ -206,7 +199,6 @@ module.exports = function (app) {
             if (req.file) {
 
                 const cloudResult = await uploadPhotoCloud(req.file.buffer, oldPublicId = null, 'storage_img');
-                console.log('cloud result', cloudResult);
 
                 image = cloudResult.image;
                 imgPublicId = cloudResult.imgPublicId;
@@ -225,7 +217,6 @@ module.exports = function (app) {
             }
 
             res.json({ message: "Storage created", storage: createData.rows[0] });
-            console.log('new storage', createData.rows[0]);
 
         } catch (error) {
             console.error("Error creating storage:", error);

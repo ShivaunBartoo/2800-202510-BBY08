@@ -1,5 +1,7 @@
 import { getUserLocation, getDistance } from "./userLocation.js";
 
+const radiusFilter = localStorage.getItem('radiusFilter');
+
 initialize();
 
 //Check if user is logged in for the browse page.
@@ -17,6 +19,21 @@ async function checkLoginStatus() {
 
 async function initialize() {
     await checkLoginStatus();
+
+    const currentUrl = new URL(window.location.href);
+    const lat = currentUrl.searchParams.get("lat");
+    const lon = currentUrl.searchParams.get("lon");
+
+    if (!lat || !lon) {
+
+
+        const location = await getUserLocation();
+        const { lat, lon } = location;
+
+        window.location.href = `/browse?lat=${lat}&lon=${lon}`;
+        return;
+    }
+
     await loadCards();
     setupFilterButtons();
 }
@@ -45,9 +62,12 @@ function setupFilterButtons() {
     }
 }
 
+
+
+
 async function getCards() {
     let location = await getUserLocation();
-    const response = await fetch(`/api/browse?lat=${location.lat}&lon=${location.lon}`);
+    const response = await fetch(`/api/browse?lat=${location.lat}&lon=${location.lon}&radiusFilter=${radiusFilter}`);
     if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
     }
@@ -118,3 +138,86 @@ function addFavouriteButtonListener(element) {
         }
     });
 }
+
+
+let mapexist = false;
+
+async function makeMap() {
+    const currentUrl = new URL(window.location.href);
+    let lat = parseFloat(currentUrl.searchParams.get("lat"));
+    let lon = parseFloat(currentUrl.searchParams.get("lon"));
+    const userlocation = { lat, lng: lon };
+    const embed = new google.maps.Map(document.getElementById('map'),
+        {
+            zoom: 12,
+            center: userlocation,
+            mapId: "7d132bec7a563178eaf5cb41"
+
+        });
+
+    new google.maps.marker.AdvancedMarkerElement({
+        position: userlocation,
+        map: embed,
+        title: "You are here",
+
+    });
+
+    const storageCard = new InfoBubble({
+        minWidth: 160,
+        minHeight: 75,
+        shadowStyle: 1,
+        padding: 10,
+        borderRadius: 10,
+        arrowSize: 10,
+        borderWidth: 1,
+        borderColor: '#96aac4',
+        backgroundColor: '#ceddf1',
+        disableAutoPan: true,
+        hideCloseButton: true,
+        arrowPosition: 50,
+        backgroundClassName: 'infobubble-background',
+        arrowStyle: 0,
+    });
+
+    const result = await fetch('/api/fridgePoint');
+    const points = await result.json();
+    console.log(points);
+
+    points.forEach(point => {
+        const marker = new google.maps.marker.AdvancedMarkerElement({
+            position: { lat: point.lat, lng: point.lon },
+            map: embed,
+            title: point.name || "Fridge"
+        });
+
+        marker.addEventListener('click', () => {
+            console.log(point.name)
+            storageCard.setContent(`<div class="storageCard">
+            <strong>${point.name}</strong>
+            <a href=https://www.google.com/maps?q=${point.lat},${point.lon}> Directions </a>
+            </div>
+`);
+            storageCard.setPosition(marker.position);
+            storageCard.open(embed);
+        })
+
+    });
+
+}
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById("toggleMap");
+    const mapContainer = document.getElementById("mapContainer");
+
+    toggleBtn.addEventListener("click", () => {
+        const isHidden = mapContainer.style.display === "none";
+        mapContainer.style.display = isHidden ? "block" : "none";
+
+        if (isHidden && !mapexist) {
+            makeMap();
+            mapexist = true;
+        }
+    });
+});

@@ -1,3 +1,5 @@
+import { initImageUploadPreview } from './imageUploadUtil.js';
+
 const storageId = window.location.pathname.split("/")[2];
 
 localStorage.setItem('storageId', storageId);
@@ -7,6 +9,8 @@ if (!storageId) {
 
 document.addEventListener('DOMContentLoaded', function () {
 
+    registerEventListeners();
+    
     // Edit fridge name
     document.querySelector('.storage-title .edit-btn').addEventListener('click', () => {
         const nameEl = document.getElementById('storageName');
@@ -27,12 +31,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Handle form submit
     document.querySelector('.man-save-btn').addEventListener('click', async () => {
-        //const storageId = document.getElementById('storageId').value; // or wherever your storageId is stored
 
         const coverPhotoInput = document.getElementById('coverPhotoInput');
 
         const formData = new FormData();
-
 
         formData.append('title', document.getElementById('storageName').textContent.trim());
         formData.append('street', document.getElementById('street').value.trim());
@@ -60,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const result = await response.json();
             alert('Storage saved successfully!');
             console.log('client side', result);
+
             // Update preview image if new one was uploaded
             if (result.image) {
                 document.getElementById('previewImage').src = result.image;
@@ -82,8 +85,28 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+function registerEventListeners() {
+
+    document.addEventListener("click", (event) => {
+        const executeOnMatch = (selector, callback, arg) => {
+            if (event.target.closest(selector)) {
+                callback(arg);
+            }
+        };
+
+        executeOnMatch("#description-btn", toggleEdit, 'description');
+        executeOnMatch("#address-btn", toggleAddressEdit);
+        executeOnMatch("#type-btn", toggleEdit, 'storageTypeSelect');
+        executeOnMatch("#clean-btn", toggleEdit, 'lastCleaned');
+        executeOnMatch(".cancel-btn", closeModal);
+
+    });
+
+
+}
 
 function toggleEdit(fieldId) {
+    console.log(fieldId);
     const field = document.getElementById(fieldId);
     field.disabled = !field.disabled;
 
@@ -118,7 +141,7 @@ async function softDeleteStorage(storageId) {
 
         if (response.ok) {
             alert('Storage archived successfully!');
-            window.location.href = '/browse'; // Redirect after success
+            window.location.href = '/browse';
         } else {
             throw new Error('Failed to archive storage');
         }

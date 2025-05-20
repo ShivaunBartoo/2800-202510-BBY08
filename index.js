@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const fs = require("fs");
 const pg = require("pg");
 const dotenv = require("dotenv").config();
+
 const notificationUtils = require("./notification-emails");
 const authorization = require("./authorization.js");
 
@@ -14,12 +15,6 @@ const ejs = require("ejs");
 const saltRounds = 12;
 const app = express();
 const port = process.env.PORT || 3000;
-
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_CLOUD_KEY,
-    api_secret: process.env.CLOUDINARY_CLOUD_SECRET
-});
 
 
 const config = {
@@ -284,6 +279,7 @@ app.get("/reviews/:storageId", function (req, res) {
                 `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>`,
             ],
             id: storageId,
+            auth: auth, 
         });
     });
 });

@@ -28,7 +28,11 @@
 
 <body>
     <header>
-        <a href="/"><img id="header-logo" src="/img/becoolgs.png" /></a>
+        <% if (typeof headerImage !== "undefined") { %>
+        <a href="/"><img id="header-logo" src="<%=headerImage%>" /></a>
+        <% } else {%>
+        <a href="/"><img id="header-logo" src="/img/becool_dark.png" /></a>
+        <%}%>
         <div id="header-menu-button" class="material-icons">menu</div>
         <div id="header-menu">
             <div id="header-menu-options">

@@ -1,9 +1,43 @@
-<%-include('partials/header')%>
-<main>
-    <div id="jumbotron">
-        <div id="jumbotron-content"></div>
-        <img src="/img/index_curve.svg" />
-        
-    </div>
-</main>
-<%-include('partials/footer')%>
+<%-include('partials/header', {headerImage: "/img/becool_light.png"})%>
+    <main>
+        <div id="jumbotron">
+            <div id="jumbotron-container">
+    
+                <div id="jumbotron-text">
+                    <div class="header">Food Access Made Simple</div>
+    
+                    <strong>BeCool</strong> is a community-powered platform that fights food waste and insecurity through
+                    community
+                    fridges.
+                    Give, take, and share food to help build a healthier, more connected neighborhood!
+                </div>
+                <div id="jumbotron-art-container">
+                    <div id="jumbotron-buttons">
+                        <div class="button" id="explore-button">Check it Out</div>
+                        <div class="button" id="account-button">Create Account</div>
+                    </div>
+                    <img id="jumbotron-art" src="/img/hero_fridge.png" alt="artwork of a refrigerator" />
+                </div>
+            </div>
+            <img src="/img/index_curve.svg" />
+        </div>
+        <div id="mission-statement">
+            <div id="mission-text">
+    
+                <div id="mission-statement-container">
+                    <div class="header">
+                        Our Mission
+                    </div>
+                    <strong>BeCool</strong> started as a student project with the aim to decrease food insecurity and food
+                    waste in
+                    Canada by not
+                    only raising awareness of community fridges in the greater Vancouver area,
+                    but also by facilitating the accessibility and contribution of food to those fridges.
+    
+                </div>
+                <div class="button" id="mission-button">Learn More</div>
+                <div class="spacer"></div>
+            </div>
+        </div>
+    </main>
+    <%-include('partials/footer')%>

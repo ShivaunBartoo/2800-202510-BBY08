@@ -1,10 +1,114 @@
-#jumbotron{
-    height: 50vh;
+main {
+    overflow: hidden;
+}
+
+header {
+    background-color: var(--blue-dark);
+}
+
+.header-menu-option {
+    color: var(--blue-light);
+}
+#jumbotron {
     display: flex;
     flex-direction: column;
 }
 
-#jumbotron-content {
+#jumbotron img {
+    margin-top: -10px;
+}
+
+#jumbotron-container {
+    padding-top: 20px;
     background-color: var(--blue-dark);
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#jumbotron-art-container {
+    width: 85%;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#jumbotron-art {
+    height: 250px;
+    transform: translate(0px, 20px);
+}
+
+#jumbotron-text {
+    width: 90%;
+    text-align: center;
+    color: var(--blue-light);
+
+}
+
+.header {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+#jumbotron-text .header{
+    color: var(--pink-medium);
+    margin-bottom: 10px;
+}
+
+#jumbotron-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    transform: translate(0, -20px);
+
+}
+
+.button {
+    height: 40px;
+    width: 120px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--blue-dark);
+    background-color: var(--blue-medium);
+
+}
+
+.button#account-button {
+
+    color: var(--pink-text);
+    background-color: var(--pink-medium);
+}
+
+.button:hover {
+    filter: brightness(1.2);
+}
+
+#mission-text .header {
+    color: var(--blue-text);
+    margin: 5px;
+}
+
+#mission-statement-container {
+    font-size: 0.9em;
+    margin-top: -15px;
+    color: var(--blue-dark);
+    padding: 20px;
+    text-align: center;
+}
+
+#mission-button {
+    width: 140px;
+    background-color: var(--blue-light);
+    margin: 0 auto;
+}
+
+.spacer{
+    height: 20px;
 }

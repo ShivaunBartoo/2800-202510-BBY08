@@ -1,5 +1,17 @@
 const storageId = window.location.pathname.split("/")[2];
 
+let isLoggedIn = false;
+
+async function checkLoginStatus() {
+    try {
+        const response = await fetch("/api/session");
+        isLoggedIn = response.ok;
+    } catch (err) {
+        isLoggedIn = false;
+    }
+}
+
+
 function expandReview(element) {
     const body = element.previousElementSibling;
     if (body) {
@@ -35,6 +47,10 @@ function updateReadMoreButton() {
 
 // add review modal scripts
 function openModal() {
+    if (!isLoggedIn) {
+        alert("Please log in to add a review.");
+        return;
+    }
     document.getElementById("reviewModal").style.display = "flex";
 }
 
@@ -46,11 +62,26 @@ function closeModal() {
 document.addEventListener("DOMContentLoaded", () => {
     getReviews();
     registerEventListeners();
+
+    if (!isLoggedIn) {
+        // Hide or disable the "Add Review" button
+        const addReviewButton = document.querySelector("#add-review-button");
+        if (addReviewButton) {
+            addReviewButton.disabled = true;
+            addReviewButton.title = "Log in to add a review";
+            addReviewButton.classList.add("disabled"); // Optional styling
+        }
+    }
 });
 
 
 // Review functions
 async function submitReview() {
+    if (!isLoggedIn) {
+        alert("Please log in to submit a review.");
+        return;
+    }
+
     const storageId = window.location.pathname.split("/")[2];
     const review = {
         title: document.getElementById("reviewTitle").value.trim(),
@@ -136,6 +167,11 @@ function toggleReplyForm(button) {
 }
 
 async function submitReply(button) {
+    if (!isLoggedIn) {
+        alert("Please log in to reply to a review.");
+        return;
+    }
+
     const reviewDiv = button.closest(".review");
     const reviewId = reviewDiv.dataset.reviewId;
     const textarea = reviewDiv.querySelector("#reply-textarea");

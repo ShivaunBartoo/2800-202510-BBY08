@@ -4,9 +4,21 @@ const radiusFilter = localStorage.getItem('radiusFilter');
 
 initialize();
 
+//Check if user is logged in for the browse page.
+let isLoggedIn = false;
+
+async function checkLoginStatus() {
+    try {
+        const res = await fetch("/api/session");
+        isLoggedIn = res.ok;
+    } catch (err) {
+        isLoggedIn = false;
+    }
+}
 
 
 async function initialize() {
+    await checkLoginStatus();
 
     const currentUrl = new URL(window.location.href);
     const lat = currentUrl.searchParams.get("lat");
@@ -83,6 +95,15 @@ async function loadCards() {
     } else {
         console.log("No fridges to show.");
     }
+
+    if (!isLoggedIn) {
+    document.querySelectorAll(".card-favourite").forEach(btn => {
+        btn.disabled = true;
+        btn.title = "Log in to use favourites";
+        btn.classList.add("disabled"); // Optional: for styling
+    });
+}
+
 }
 
 function labelType(store) {
@@ -96,6 +117,12 @@ function labelType(store) {
 
 function addFavouriteButtonListener(element) {
     element.addEventListener("click", async (event) => {
+
+        if (!isLoggedIn) {
+            alert("Please log in to add favourites.");
+            return;
+        }
+
         const id = element.dataset.id;
         event.preventDefault();
         element.classList.toggle("active");

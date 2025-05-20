@@ -342,6 +342,10 @@ FROM storage WHERE "storageId" = $1`,
     });
 
     app.post("/api/favourite", async (req, res) => {
+        if (!req.session || !req.session.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+        }
+
         const id = req.body.id;
         const client = new pg.Client(config);
         await client.connect();
@@ -377,4 +381,13 @@ FROM storage WHERE "storageId" = $1`,
         const response = await classify(input);
         res.send(response);
     });
-}
+
+    app.get("/api/session", (req, res) => {
+        if (req.session && req.session.userId) {
+            res.status(200).json({ loggedIn: true, userId: req.session.userId });
+        } else {
+            res.status(401).json({ loggedIn: false });
+        }
+    });
+
+};

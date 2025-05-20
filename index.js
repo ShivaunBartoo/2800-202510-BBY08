@@ -270,7 +270,7 @@ app.get("/profile", async function (req, res) {
     const client = new pg.Client(config);
     try {
         await client.connect();
-        
+
 
         const result = await client.query(
             `SELECT * FROM public.users WHERE "userId" = $1`,
@@ -320,89 +320,7 @@ app.get("/reviews/:storageId", function (req, res) {
     });
 });
 
-app.post("/reviews/:storageId", upload.single('photo'), async (req, res) => {
-    const userId = req.session.userId;
-    const storageId = req.params.storageId;
-    
-    const { title, body, rating } = JSON.parse(req.body.review);
 
-    const client = new pg.Client(config);
-
-    client.connect((err) => {
-        if (err) {
-            console.log(err);
-            return;
-        }
-        if (req.file) {
-            uploadPhotoCloud(req.file.buffer, null, 'review_img')
-                .then(cloudResult => {
-                    insertReview(cloudResult.image);
-                })
-                .catch(err => {
-                    console.error("Image upload error:", err);
-                    res.status(500).send("Image upload failed");
-                });
-        } else {
-            insertReview(null);
-        }
-        function insertReview(imageUrl) {
-            client.query(
-                `
-        INSERT INTO public.reviews 
-       ( "userId", "storageId", "title", "body", "rating", "photo")
-        VALUES ($1, $2, $3, $4, $5, $6)
-      `,
-            [userId, storageId, title, body, rating],
-            (err, results) => {
-                if (err) {
-                    console.log(err);
-                    client.end();
-                    return;
-                }
-                res.redirect(`/reviews/${storageId}`);
-                client.end();
-            }
-        );
-    });
-});
-
-app.post("/replies", upload.single('photo'), async (req, res) => {
-    
-    const userId = req.session.userId;
-    console.log("Received body:", req.body);
-
-    const { reviewId, reply } = req.body;
-    const file = req.file;
-
-    console.log('reply img: ',file)
-    const client = new pg.Client(config);
-
-    try {
-   await client.connect();
-
-        let image = null;
-
-            if (file) {
-
-                const cloudResult = await uploadPhotoCloud(file.buffer, null, 'review_img');
-
-                image = cloudResult.image;
-            }
-        await client.query(
-            `
-        INSERT INTO public.replies 
-       ("userId", "reviewId", "body", "photo")
-        VALUES ($1, $2, $3, $4)
-      `,
-            [userId, reviewId, reply, image]
-        );
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error saving reply");
-    }
-    res.send("Reply added to database.");
-    client.end();
-});
 
 // Logout user and destroys current session
 app.get("/logout", function (req, res) {
@@ -421,8 +339,7 @@ require('./api')(app);
 require('./authentication')(app);
 require('./create_manageStorage')(app);
 require('./profile_route')(app);
-const { uploadPhotoCloud } = require('./utils');
-
+require('./review_reply')(app);
 
 
 // Page not found

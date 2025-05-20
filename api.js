@@ -266,7 +266,7 @@ module.exports = function (app) {
                                 {
                                     const reviewReplies = replies.rows.filter(reply => reply.reviewId == row.reviewId);
                                     
-                                    return ejs.renderFile("views/partials/review-card.ejs", { row, replies: reviewReplies });
+                                    return ejs.renderFile("views/partials/review-card.ejs", { row, replies: reviewReplies, page:'reviews' });
                                 }
                             )
                         );

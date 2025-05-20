@@ -45,6 +45,7 @@ function closeModal() {
 }
 
 // Main initialization
+
 document.addEventListener("DOMContentLoaded", () => {
     //upload picture for review
     initImageUploadPreview(
@@ -65,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function submitReview() {
     const storageId = window.location.pathname.split("/")[2];
 
-    const photoInput = document.getElementById('coverPhotoInput').files[0];
+    const photoInput = document.querySelector('.coverPhotoInput').files[0];
 
     const review = {
         title: document.getElementById("reviewTitle").value.trim(),
@@ -181,19 +182,15 @@ function toggleReplyForm(button) {
 }
 
 async function submitReply(button) {
-    console.log(button);
 
     try {
-
         const reviewDiv = button.closest(".review");
         const reviewId = reviewDiv.dataset.reviewId;
         const textarea = reviewDiv.querySelector(".reply-textarea");
         const replyText = textarea.value.trim();
-        const form = reviewDiv.querySelector(".reply-form");
+        const form = reviewDiv.querySelector(".reply-form-container");
         const fileInput = form.querySelector(".replycoverPhotoInput");
         const file = fileInput.files[0];
-
-        console.log('reply pic', file);
 
         if (!replyText) {
             alert("Reply cannot be empty.");
@@ -203,23 +200,18 @@ async function submitReply(button) {
         const formData = new FormData();
         formData.append('reviewId', reviewId);
         formData.append('reply', replyText);
+        
         if (file) {
             formData.append('photo', file);
         }
 
-
         const res = await fetch(`/replies`, {
             method: "POST",
-            //headers: { "Content-Type": "application/json" },
-            //body: JSON.stringify({ reviewId: parseInt(reviewId, 10), reply: replyText, storageId: storageId }),
             body: formData
         });
 
         if (res.ok) {
-            // const newReplyHTML = await res.text();
-            // console.log(newReplyHTML);
-            // reviewDiv.querySelector(".replies").insertAdjacentHTML("beforeend", newReplyHTML);
-            // textarea.value = "";
+        
             reviewDiv.querySelector(".reply-form-container").style.display = "none";
             getReviews();
         } else {
@@ -227,6 +219,6 @@ async function submitReply(button) {
         }
     } catch (err) {
         console.error("Submit Reply Error:", err);
-        //alert("An error occurred.");
     }
 };
+

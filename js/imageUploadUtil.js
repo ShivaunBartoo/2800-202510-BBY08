@@ -56,7 +56,8 @@ export async function initImageUploadPreview(trigger, input, previewContainer, p
         };
         reader.readAsDataURL(file);
     });
-    const removeImageBtn = document.getElementById('removeImageBtn');
+    
+    const removeImageBtn = document.querySelector('.removeImageBtn');
     if (removeImageBtn != null) {
         removeImageBtn.addEventListener('click', () => {
             input.value = ''; // clear file input

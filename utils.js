@@ -9,6 +9,8 @@ cloudinary.config({
  
  async function uploadPhotoCloud(fileBuffer, oldPublicId = null, folder = 'default_folder') {
     try {
+
+        //deleting photo in the cloud
         if (oldPublicId) {
             await cloudinary.uploader.destroy(oldPublicId);
         }

@@ -110,9 +110,10 @@ module.exports = function (app) {
 
             // Get reviews
             const reviewResult = await client.query(
-                `SELECT *
+                `SELECT r.*,u.*, s."title" AS storagetitle 
              FROM public.reviews AS r
              JOIN public.users AS u ON r."userId" = u."userId"
+             JOIN public.storage AS s ON r."storageId" = s."storageId"
              WHERE r."userId" = $1 AND r."deletedDate" IS NULL
              ORDER BY r."createdAt" DESC`,
                 [ownerId]
@@ -120,7 +121,7 @@ module.exports = function (app) {
 
             const reviewRows = reviewResult.rows;
             const reviewIds = reviewRows.map(r => r.reviewId);
-
+            
             if (reviewIds.length === 0) {
                 return res.json([]);
             }
@@ -143,7 +144,8 @@ module.exports = function (app) {
                     const reviewReplies = replies.filter(reply => reply.reviewId === review.reviewId);
                     return ejs.renderFile("views/partials/review-card.ejs", {
                         row: review,
-                        replies: reviewReplies
+                        replies: reviewReplies,
+                        page:'profile'
                     });
                 })
             );

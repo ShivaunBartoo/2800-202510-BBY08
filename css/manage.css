@@ -250,3 +250,43 @@ input[type="datetime-local"] {
     background-color: #F0F3FF;
 
 }
+
+.image-wrapper {
+  position: relative;
+  display: inline-block;
+  max-width: 200px;
+  max-height: 180px;
+}
+
+.previewImage {
+  max-width: 200px;
+  max-height: 180px;
+  border-radius: 4px;
+  display: block;
+}
+
+.removeImageBtn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: #ccc;
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+.removeImageBtn:hover {
+  background-color: #999;
+  color: white;
+}

@@ -8,15 +8,16 @@ main {
 }
 
 button {
-    height: 20px;
-    width: 75px;
+    height: auto;
+    width: auto;
+    white-space: nowrap;
     border-radius: 10px;
     border: none;
     background-color: var(--pink-accent);
     color: var(--pink-light);
     font-size: 0.8em;
     font-weight: bold;
-    padding: 0 10px;
+    padding: 5px 10px;
 }
 
 button:hover {
@@ -85,7 +86,6 @@ button:hover {
     width: 16px;
     height: 16px;
     margin: 10px;
-    position: relative;
     top: 1px;
 }
 
@@ -167,7 +167,72 @@ button:hover {
     transition: color 0.2s ease;
 }
 
-
 #create-new-storage .material-icons.add {
     margin-right: 5px;
 }
+
+.review {
+    position: relative;
+}
+
+.action-modal {
+    position: fixed;
+    width: auto;
+    z-index: 1001;
+    display: none;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+#actionModal {
+    position: absolute;
+    background-color: var(--blue-light);
+    color: var(--blue-dark);
+    border-radius: 12px;
+    padding: 10px 0;
+    z-index: 1001;
+}
+
+.modal-option {
+    display: flex;
+    justify-content: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid #2c2c2e;
+    cursor: pointer;
+}
+
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+
+.modal-option:last-child {
+    border-bottom: none;
+}
+
+#confirmDeleteModal {
+    position: fixed;
+    z-index: 1001;
+    background-color: var(--blue-medium);
+    padding: 20px;
+    border-radius: 12px;
+    width: 300px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    display: none;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+}
+
+.delete-modal {
+    text-align: center;
+}
+
+#action-btn  {
+    display:flex;
+    justify-content: space-around;
+}
+

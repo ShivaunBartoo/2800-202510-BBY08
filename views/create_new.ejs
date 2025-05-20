@@ -6,15 +6,15 @@
 
         <form id="newStorageForm">
             <div class="type-toggle">
-                <div id="fridgeBtn" class="type-btn active" >Fridge</div>
-                <div id="pantryBtn" class="type-btn" >Pantry</div>
+                <div id="fridgeBtn" class="type-btn active">Fridge</div>
+                <div id="pantryBtn" class="type-btn">Pantry</div>
                 <input type="hidden" id="storageType" name="storageType" value="1">
             </div>
 
             <div class="section">
                 <label>Name:</label>
                 <div class="field-group">
-                    <input type="text" name="title" id="title" placeholder="Enter name" required/>
+                    <input type="text" name="title" id="title" placeholder="Enter name" required />
 
                 </div>
             </div>
@@ -25,7 +25,7 @@
                     <div class="address-fields">
                         <div class="address-field">
                             <label for="street">Street:</label>
-                            <input type="text" name="street" id="street" placeholder="Enter street" required/>
+                            <input type="text" name="street" id="street" placeholder="Enter street" required />
                         </div>
                         <div class="address-field">
                             <label for="city">City:</label>
@@ -33,7 +33,7 @@
                         </div>
                         <div class="address-field">
                             <label for="province">Province:</label>
-                            <input type="text" name="province" id="province" placeholder="Enter Province" required/>
+                            <input type="text" name="province" id="province" placeholder="Enter Province" required />
 
                         </div>
                     </div>
@@ -45,11 +45,14 @@
                 <div class="photo-box">
                     <input type="file" name="photo" class="coverPhotoInput" accept="image/*" style="display: none;">
 
-                    <button type="button" class="upload-btn uploadTrigger" >
+                    <button type="button" class="upload-btn uploadTrigger">
                         <span class="material-icons" class="upload-icon">upload</span>
                     </button>
                     <div class="photoPreview" style="display: none;">
-                        <img class="previewImage" src="#" alt="Preview" style="max-width: 200px; max-height: 180px;">
+                        <div class="image-wrapper">
+                            <img class="previewImage" src="#" alt="Preview">
+                            <button type="button" class="removeImageBtn">x</button>
+                        </div>
                     </div>
                 </div>
             </div>

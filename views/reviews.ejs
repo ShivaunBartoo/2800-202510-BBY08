@@ -38,7 +38,11 @@
                         <span class="material-icons" class="upload-icon">upload</span>
                     </button>
                     <div class="photoPreview" style="display: none;">
-                        <img class="previewImage" src="#" alt="Preview" style="max-width: 200px; max-height: 180px;">
+                        <div class="image-wrapper" style="max-width: 200px; max-height: 180px">
+                            <img class="previewImage" src="#" alt="Preview" style="max-width: 200px; max-height: 180px;">
+                            <button type="button" class="removeImageBtn">x</button>
+                    
+                        </div>
                     </div>
                 </div>
                 </div>
@@ -51,7 +55,7 @@
 
             <div class="modal-actions">
                 <button class="close-modal-button">Cancel</button>
-                <button id="submit-review-button">Add</button>
+                <button type="button" id="submit-review-button">Add</button>
             </div>
         </div>
         </form>

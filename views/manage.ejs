@@ -1,122 +1,127 @@
 <%-include('partials/header')%>
-<%- include('partials/contents-tab', {selected: 'manage'}) %>
+    <%- include('partials/contents-tab', {selected: 'manage' }) %>
 
-    <div id="body-container">
-        <form id="storageForm" enctype="multipart/form-data" onsubmit="return false;">
-            <input type="hidden" id="storageId" value="<%= storage.storageId %>">
+        <div id="body-container">
+            <form id="storageForm" enctype="multipart/form-data" onsubmit="return false;">
+                <input type="hidden" id="storageId" value="<%= storage.storageId %>">
 
-            <div class="title-container">
-                <div class="storage-title">
-                    <input type="hidden" name="title" id="hiddenTitleInput" />
-                    <h2 contenteditable="false" id="storageName">
-                        <%= storage.title %>
-                    </h2>
-                    <button class="edit-btn">
-                        <span class="material-icons" class="edit-icon">edit</span></button>
+                <div class="title-container">
+                    <div class="storage-title">
+                        <input type="hidden" name="title" id="hiddenTitleInput" />
+                        <h2 contenteditable="false" id="storageName">
+                            <%= storage.title %>
+                        </h2>
+                        <button class="edit-btn">
+                            <span class="material-icons" class="edit-icon">edit</span></button>
+                    </div>
                 </div>
-            </div>
-            <div class="section">
-                <label id="storagetypeLabel">Storage Type:</label>
-                <div class="field-group">
-                    <span id="storageType">
-                        <%= storage.storageType===1 ? 'Fridge' : 'Pantry' %>
-                    </span>
-                    <select id="storageTypeSelect" disabled>
-                        <option value="1" <%=storage.storageType==1 ? 'selected' : '' %>>Community Fridge</option>
-                        <option value="2" <%=storage.storageType==2 ? 'selected' : '' %>>Community Pantry</option>
-                    </select>
-                    <button class="edit-btn" id="type-btn" >
-                        <span class="material-icons edit-icon">edit</span>
-                    </button>
+                <div class="section">
+                    <label id="storagetypeLabel">Storage Type:</label>
+                    <div class="field-group">
+                        <span id="storageType">
+                            <%= storage.storageType===1 ? 'Fridge' : 'Pantry' %>
+                        </span>
+                        <select id="storageTypeSelect" disabled>
+                            <option value="1" <%=storage.storageType==1 ? 'selected' : '' %>>Community Fridge</option>
+                            <option value="2" <%=storage.storageType==2 ? 'selected' : '' %>>Community Pantry</option>
+                        </select>
+                        <button class="edit-btn" id="type-btn">
+                            <span class="material-icons edit-icon">edit</span>
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <div class="section">
-                <div class="address-header">
-                    <label>Address:</label>
-                    <button class="edit-btn" id="address-btn" >
-                        <span class="material-icons" class="edit-icon">edit</span></button>
-                </div>
-                <div class="field-group">
-                    <div class="address-fields">
-                        <div class="address-field">
+                <div class="section">
+                    <div class="address-header">
+                        <label>Address:</label>
+                        <button class="edit-btn" id="address-btn">
+                            <span class="material-icons" class="edit-icon">edit</span></button>
+                    </div>
+                    <div class="field-group">
+                        <div class="address-fields">
+                            <div class="address-field">
 
-                            <label for="street">Street:</label>
-                            <input type="text" id="street" value="<%= storage.street || ''%>" disabled />
-                        </div>
-                        <div class="address-field">
-                            <label for="city">City:</label>
-                            <input type="text" id="city" value="<%= storage.city || ''%>" disabled />
-                        </div>
-                        <div class="address-field">
-                            <label for="province">Province:</label>
-                            <input type="text" id="province" value="<%= storage.province || ''%>" disabled />
+                                <label for="street">Street:</label>
+                                <input type="text" id="street" value="<%= storage.street || ''%>" disabled />
+                            </div>
+                            <div class="address-field">
+                                <label for="city">City:</label>
+                                <input type="text" id="city" value="<%= storage.city || ''%>" disabled />
+                            </div>
+                            <div class="address-field">
+                                <label for="province">Province:</label>
+                                <input type="text" id="province" value="<%= storage.province || ''%>" disabled />
 
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="section">
-                <label>Last cleaned:</label>
-                <div class="field-group">
+                <div class="section">
+                    <label>Last cleaned:</label>
+                    <div class="field-group">
 
-                    <input type="datetime-local" id="lastCleaned"
-                        value="<%= storage.lastCleaned ? storage.lastCleaned.toISOString().slice(0, 16) : '' %>"
-                        disabled />
-                    <button class="edit-btn" id="clean-btn">
-                        <span class="material-icons" class="edit-icon">edit</span></button>
-                </div>
-            </div>
-
-
-
-            <div class="section">
-                <label>Change cover photo:</label>
-                <div class="photo-box">
-                    <input type="file" class="coverPhotoInput" accept="image/*" style="display: none;">
-
-                    <button type="button" class="uploadTrigger upload-btn">
-                        <span class="material-icons upload-icon">upload</span>
-                    </button>
-
-                    <div class="photoPreview" style="<%= storage.image ? '' : 'display: none;' %>">
-                        <% if (typeof storage.image !='undefined' ) { %>
-                            <img class="previewImage" src="<%= storage.image ? storage.image : '#' %>" alt="Preview"
-                                style="max-width: 200px; max-height: 180px;">
-                            <% } %>
+                        <input type="datetime-local" id="lastCleaned"
+                            value="<%= storage.lastCleaned ? storage.lastCleaned.toISOString().slice(0, 16) : '' %>"
+                            disabled />
+                        <button class="edit-btn" id="clean-btn">
+                            <span class="material-icons" class="edit-icon">edit</span></button>
                     </div>
                 </div>
-            </div>
 
-            <div class="section">
-                <label>Description:</label>
 
-                <div class="field-group">
-                    <input type="text" id="description" value="<%= storage.description %>" disabled />
-                    <button class="edit-btn">
-                        <span class="material-icons" class="edit-icon" id="description-btn" >edit</span></button>
+
+                <div class="section">
+                    <label>Change cover photo:</label>
+                    <div class="photo-box">
+                        <input type="file" class="coverPhotoInput" accept="image/*" style="display: none;">
+
+                        <button type="button" class="uploadTrigger upload-btn">
+                            <span class="material-icons upload-icon">upload</span>
+                        </button>
+
+                        <div class="photoPreview" style="<%= storage.image ? '' : 'display: none;' %>">
+                            <div class="image-wrapper">
+
+                                <% if (typeof storage.image !='undefined' ) { %>
+                                    <img class="previewImage" src="<%= storage.image ? storage.image : '#' %>"
+                                        alt="Preview" style="max-width: 200px; max-height: 180px;">
+                                    <% } %>
+                                        <button type="button" class="removeImageBtn">x</button>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+
+                <div class="section">
+                    <label>Description:</label>
+
+                    <div class="field-group">
+                        <input type="text" id="description" value="<%= storage.description %>" disabled />
+                        <button class="edit-btn">
+                            <span class="material-icons" class="edit-icon" id="description-btn">edit</span></button>
+                    </div>
+                </div>
 
 
-            <div class="actions">
-                <button class="man-delete-btn">Delete</button>
-                <button class="man-save-btn" type="submit">Save</button>
-            </div>
-        </form>
+                <div class="actions">
+                    <button class="man-delete-btn">Delete</button>
+                    <button class="man-save-btn" type="submit">Save</button>
+                </div>
+            </form>
 
-    </div>
+        </div>
 
-    <!--Delete Confirmation Modal -->
-    <div id="deleteModal" class="modal">
-        <div class="modal-content">
-            <h3>Confirm Deletion</h3>
-            <div class="modal-buttons">
-                <button type="submit" class="confirm-btn" id="confirmDelete">Confirm</button>
-                <button class="cancel-btn" type="button" >Cancel</button>
+        <!--Delete Confirmation Modal -->
+        <div id="deleteModal" class="modal">
+            <div class="modal-content">
+                <h3>Confirm Deletion</h3>
+                <div class="modal-buttons">
+                    <button type="submit" class="confirm-btn" id="confirmDelete">Confirm</button>
+                    <button class="cancel-btn" type="button">Cancel</button>
+                </div>
             </div>
         </div>
-    </div>
-    </div>
+        </div>
 
-    <%-include('partials/footer')%>
+        <%-include('partials/footer')%>

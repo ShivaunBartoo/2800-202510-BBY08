@@ -15,6 +15,13 @@ const saltRounds = 12;
 const app = express();
 const port = process.env.PORT || 3000;
 
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_CLOUD_KEY,
+    api_secret: process.env.CLOUDINARY_CLOUD_SECRET
+});
+
+
 const config = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
@@ -28,11 +35,9 @@ const config = {
 };
 
 const pgPool = new pg.Pool(config);
-
 setInterval(() => {
     notificationUtils.sendNotifications();
 }, process.env.NOTIF_INTERVAL_IN_MINUTES * 60 * 1000)
-
 
 app.set("view engine", "ejs");
 
@@ -101,7 +106,6 @@ app.get("/browse", async function (req, res) {
     const { lat, lon } = req.query;
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
     const city = await getYourCity(lat, lon, process.env.GOOGLE_MAPS_API_KEY);
-
     res.render("browse", {
         city,
         stylesheets: ["browse.css"],
@@ -169,7 +173,6 @@ app.get("/map/:id", function (req, res) {
             auth: auth,
         });
     })
-
 });
 
 // Route for directions page
@@ -219,11 +222,8 @@ app.get("/manage/:id", (req, res) => {
                     });
                 }
             );
-
         });
-
     });
-
 });
 
 // Route for profile page
@@ -237,6 +237,7 @@ app.get("/profile", async function (req, res) {
     const client = new pg.Client(config);
     try {
         await client.connect();
+
 
         const result = await client.query(
             `SELECT * FROM public.users WHERE "userId" = $1`,
@@ -263,7 +264,6 @@ app.get("/profile", async function (req, res) {
 });
 
 // Route for create new fridge/pantry page
-
 app.get("/storage/createnew", (req, res) => {
     res.render("create_new", {
         stylesheets: ["create_new.css"],
@@ -284,68 +284,8 @@ app.get("/reviews/:storageId", function (req, res) {
                 `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>`,
             ],
             id: storageId,
-            auth: auth,
         });
-    })
-});
-
-app.post("/reviews/:storageId", async (req, res) => {
-    const userId = req.session.userId;
-    //if (!userId) return res.status(401).send('Not logged in');
-
-    const storageId = req.params.storageId;
-    const { title, body, rating } = req.body;
-    //const photo = req.file ? `/uploads/${req.file.filename}` : null;
-    const client = new pg.Client(config);
-
-    client.connect((err) => {
-        if (err) {
-            console.log(err);
-            return;
-        }
-        client.query(
-            `
-        INSERT INTO public.reviews 
-       ( "userId", "storageId", "title", "body", "rating")
-        VALUES ($1, $2, $3, $4, $5)
-      `,
-            [userId, storageId, title, body, rating],
-            (err, results) => {
-                if (err) {
-                    console.log(err);
-                    client.end();
-                    return;
-                }
-                res.redirect(`/reviews/${storageId}`);
-                client.end();
-            }
-        );
     });
-});
-
-app.post("/replies", async (req, res) => {
-    const userId = req.session.userId;
-    console.log("Received body:", req.body);
-    const { reviewId, reply } = req.body;
-
-    const client = new pg.Client(config);
-    client.connect();
-
-    try {
-        await client.query(
-            `
-        INSERT INTO public.replies 
-       ("userId", "reviewId", "body")
-        VALUES ($1, $2, $3)
-      `,
-            [userId, reviewId, reply]
-        );
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error saving reply");
-    }
-    res.send("Reply added to database.");
-    client.end();
 });
 
 // Logout user and destroys current session
@@ -365,6 +305,7 @@ require('./api')(app);
 require('./authentication')(app);
 require('./create_manageStorage')(app);
 require('./profile_route')(app);
+require('./review_reply')(app);
 
 
 // Page not found

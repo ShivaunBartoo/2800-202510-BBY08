@@ -8,6 +8,7 @@ const cloudinary = require("cloudinary").v2;
 const express = require("express");
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
+const Joi = require('joi');
 
 const notificationUtils = require('./notification-emails');
 
@@ -50,7 +51,6 @@ module.exports = function (app) {
                 ? null
                 : parseFloat(req.query.radiusFilter);
 
-            console.log('radius', radius);
             let renderedCards = await Promise.all(
                 storageResults.rows.map((row) => {
                     let distance = getDistance(lat, lon, parseFloat(row.coordinates.x), parseFloat(row.coordinates.y));
@@ -126,6 +126,25 @@ module.exports = function (app) {
 
     app.post("/api/donate", (req, res) => {
         let data = req.body;
+        const itemSchema = Joi.object({
+            itemName: Joi.string().min(1).max(100).required()
+        });
+
+        // Validate itemName in each object
+        const validationErrors = data
+            .map((item, index) => {
+                const { error } = itemSchema.validate({ itemName: item.itemName }, { abortEarly: false });
+                return error ? `Item ${index + 1}: ${error.details.map(d => d.message).join(", ")}` : null;
+            })
+            .filter(msg => msg !== null);
+
+        if (validationErrors.length > 0) {
+            return res.status(400).send({
+                status: "fail",
+                msg: validationErrors
+            });
+        }
+
         let sql = 'INSERT INTO "content" ("storageId", "itemName", "quantity", "bbd") VALUES ';
         let items = [];
         let storageId;
@@ -275,7 +294,7 @@ module.exports = function (app) {
                             results.rows.map((row) => {
                                 const reviewReplies = replies.rows.filter(reply => reply.reviewId == row.reviewId);
 
-                                return ejs.renderFile("views/partials/review-card.ejs", { row, replies: reviewReplies });
+                                return ejs.renderFile("views/partials/review-card.ejs", { row, replies: reviewReplies, page: 'reviews', currentUser: req.session.userId });
                             }
                             )
                         );
@@ -343,7 +362,7 @@ FROM storage WHERE "storageId" = $1`,
 
     app.post("/api/favourite", async (req, res) => {
         if (!req.session || !req.session.userId) {
-        return res.status(401).json({ error: "Unauthorized" });
+            return res.status(401).json({ error: "Unauthorized" });
         }
 
         const id = req.body.id;

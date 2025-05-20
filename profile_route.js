@@ -3,6 +3,8 @@ const saltRounds = 12;
 const pg = require("pg");
 const fs = require("fs");
 const ejs = require("ejs");
+const Joi = require('joi');
+
 
 const config = ({
     user: process.env.DB_USER,
@@ -16,20 +18,33 @@ const config = ({
     }
 });
 
-async function isOwner (req, res, next) {
+async function isOwner(req, res, next) {
     const ownerId = req.session.userId;
-        if (!ownerId) {
-            return res.status(400).json({ error: "owner ID is required" });
-        } else {
-            next();
-        }
+    if (!ownerId) {
+        return res.status(400).json({ error: "owner ID is required" });
+    } else {
+        next();
+    }
 }
 module.exports = function (app) {
 
-    app.post('/update-profile', async (req, res) => {
+    const updateProfileSchema = Joi.object({
+        firstName: Joi.string().min(1).max(100).required(),
+        lastName: Joi.string().min(1).max(100).required(),
+        email: Joi.string().email().required(),
+        oldPassword: Joi.string().min(4).optional().allow(''),
+        newPassword: Joi.string().min(4).optional().allow(''),
+        notifications: Joi.boolean().required()
+    });
 
+    app.post('/update-profile', async (req, res) => {
+        const { error, value } = updateProfileSchema.validate(req.body);
+
+        if (error) {
+            return res.status(400).json({ message: error.details[0].message });
+        }
         const userId = req.session.userId;
-        const { firstName, lastName, email, oldPassword, newPassword, notifications } = req.body;
+        const { firstName, lastName, email, oldPassword, newPassword, notifications } = value;
         const client = new pg.Client(config);
 
         try {
@@ -78,12 +93,12 @@ module.exports = function (app) {
 
     app.get('/ownedstorage', isOwner, async (req, res) => {
         const ownerId = req.session.userId;
-        
+
         const client = new pg.Client(config);
         try {
 
             await client.connect();
-            const ownedResult = await client.query(`SELECT * FROM public.storage WHERE "ownerId" = $1`, [ownerId]);
+            const ownedResult = await client.query(`SELECT * FROM public.storage WHERE "ownerId" = $1 AND "deletedDate" IS NULL`, [ownerId]);
 
             const renderedCards = await Promise.all(
                 ownedResult.rows.map((row) => {
@@ -91,7 +106,7 @@ module.exports = function (app) {
                     return ejs.renderFile("views/partials/storage-card.ejs", { row });
                 })
             );
-            // Send the array of rendered HTML
+            
             res.json(renderedCards);
         } catch (err) {
             console.error("Owned storage Template rendering error:", err);
@@ -103,30 +118,61 @@ module.exports = function (app) {
 
     app.get('/ownedReview', isOwner, async (req, res) => {
         const ownerId = req.session.userId;
-        
         const client = new pg.Client(config);
-        
+
         try {
-
             await client.connect();
-            const ownedResult = await client.query(`SELECT * FROM public.reviews WHERE "userId" = $1`, [ownerId]);
-            
-            const renderedCards = await Promise.all(
-                ownedResult.rows.map((row) => {
 
-                    return ejs.renderFile("views/partials/review-card.ejs", { row });
+            // Get reviews
+            const reviewResult = await client.query(
+                `SELECT r.*,u.*, s."title" AS storagetitle 
+             FROM public.reviews AS r
+             JOIN public.users AS u ON r."userId" = u."userId"
+             JOIN public.storage AS s ON r."storageId" = s."storageId"
+             WHERE r."userId" = $1 AND r."deletedDate" IS NULL
+             ORDER BY r."createdAt" DESC`,
+                [ownerId]
+            );
+
+            const reviewRows = reviewResult.rows;
+            const reviewIds = reviewRows.map(r => r.reviewId);
+
+            if (reviewIds.length === 0) {
+                return res.json([]);
+            }
+
+            // Get replies for those reviews
+            const replyResult = await client.query(
+                `SELECT *
+             FROM public.replies AS rp
+             JOIN public.users AS u ON rp."userId" = u."userId"
+             WHERE rp."reviewId" = ANY($1) AND rp."deletedDate" IS NULL
+             ORDER BY rp."createdAt" ASC`,
+                [reviewIds]
+            );
+
+            const replies = replyResult.rows;
+
+            // Render all reviews with replies
+            const renderedCards = await Promise.all(
+                reviewRows.map((review) => {
+                    const reviewReplies = replies.filter(reply => reply.reviewId === review.reviewId);
+                    return ejs.renderFile("views/partials/review-card.ejs", {
+                        row: review,
+                        replies: reviewReplies,
+                        page: 'profile'
+                    });
                 })
             );
 
-            // Send the array of rendered HTML
             res.json(renderedCards);
-            
+
         } catch (err) {
-            console.error(" Review template rendering error:", err);
-            res.status(500).json({ error: "Failed to render review templates" });
+            console.error("Error in /ownedReview:", err);
+            res.status(500).json({ error: "Server error" });
         } finally {
             client.end();
         }
     });
-    
+
 };

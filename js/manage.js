@@ -20,10 +20,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     initImageUploadPreview(
-        'uploadTrigger',
-        'coverPhotoInput',
-        'photoPreview',
-        'previewImage',
+        '.uploadTrigger',
+        '.coverPhotoInput',
+        '.photoPreview',
+        '.previewImage',
         (file) => {
             console.log('User selected file:', file);
         }
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Handle form submit
     document.querySelector('.man-save-btn').addEventListener('click', async () => {
 
-        const coverPhotoInput = document.getElementById('coverPhotoInput');
+        const coverPhotoInput = document.querySelector('.coverPhotoInput');
 
         const formData = new FormData();
 
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('storageType', document.getElementById('storageTypeSelect').value);
         formData.append('lastCleaned', document.getElementById('lastCleaned').value.trim());
         formData.append('description', document.getElementById('description').value.trim());
-
+console.log('lastcleaned', document.getElementById('lastCleaned').value.trim());
         // Append photo only if user selected one
         if (coverPhotoInput.files.length > 0) {
             formData.append('photo', coverPhotoInput.files[0]);
@@ -65,8 +65,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Update preview image if new one was uploaded
             if (result.image) {
-                document.getElementById('previewImage').src = result.image;
-                document.getElementById('photoPreview').style.display = 'block';
+                document.querySelector('.previewImage').src = result.image;
+                document.querySelector('.photoPreview').style.display = 'block';
             }
 
         } catch (err) {

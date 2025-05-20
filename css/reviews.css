@@ -15,11 +15,11 @@ main {
     color: var(--blue-dark);
     padding: 15px;
     border-radius: 10px;
-    position: static;
+    /* position: static; */
 }
 
 .review-header {
-    height: 50px;
+    height: auto;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -132,4 +132,83 @@ main {
     color: var(--blue-dark);
     font-style: italic;
     padding: 5px 10px;
+}
+
+.photo-box {
+    background: #CEDDF1;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.image-wrapper {
+  position: relative;
+  display: inline-block;
+  max-width: 100px;
+  max-height: 100px;
+}
+
+.replypreviewImage {
+  max-width: 100px;
+  max-height: 100px;
+  border-radius: 4px;
+  display: block;
+}
+
+.removeImageBtn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: #ccc;
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+.removeImageBtn:hover {
+  background-color: #999;
+  color: white;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+#confirmDeleteModal {
+    position: fixed;
+    z-index: 1001;
+    background-color: var(--blue-medium);
+    padding: 20px;
+    border-radius: 12px;
+    width: 300px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    display: none;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+}
+
+.delete-modal {
+    text-align: center;
+}
+
+#action-btn  {
+    display:flex;
+    justify-content: space-around;
 }

@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt");
 const saltRounds = 12;
 const pg = require("pg");
 const fs = require("fs");
+const Joi = require('joi');
+
 
 const config = ({
     user: process.env.DB_USER,
@@ -16,8 +18,34 @@ const config = ({
 });
 
 module.exports = function (app) {
+
+    const userSchema = Joi.object({
+        firstName: Joi.string().min(1).max(50).required(),
+        lastName: Joi.string().min(1).max(50).required(),
+        email: Joi.string().email().required(),
+        password: Joi.string().min(4).max(128).required()
+    });
+
+    const loginSchema = Joi.object({
+        email: Joi.string().email().required(),
+        password: Joi.string().min(4).max(128).required()
+    });
+
     app.post('/createUser', async (req, res) => {
-        let {firstName, lastName, email, password} = JSON.parse(atob(req.body.data));
+        let parsedData;
+
+        try {
+            parsedData = JSON.parse(atob(req.body.data));
+        } catch (err) {
+            return res.status(400).send({ status: "fail", msg: "Invalid data format" });
+        }
+
+        const { error, value } = userSchema.validate(parsedData);
+        if (error) {
+            return res.status(400).send({ status: "fail", msg: error.details[0].message });
+        }
+
+        const { firstName, lastName, email, password } = value;
 
         let hashedPassword = bcrypt.hashSync(password, saltRounds);
 
@@ -54,7 +82,20 @@ module.exports = function (app) {
     });
 
     app.post('/loggingIn', (req, res) => {
-        let {email, password} = JSON.parse(atob(req.body.data));
+        let parsedData;
+
+        try {
+            parsedData = JSON.parse(atob(req.body.data));
+        } catch (err) {
+            return res.status(400).send({ status: "fail", msg: "Invalid data format" });
+        }
+
+        const { error, value } = loginSchema.validate(parsedData);
+        if (error) {
+            return res.status(400).send({ status: "fail", msg: error.details[0].message });
+        }
+
+        const { email, password } = value;
 
         const client = new pg.Client(config);
         client.connect((err) => {

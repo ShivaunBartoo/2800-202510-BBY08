@@ -10,11 +10,20 @@
                 <div class="review-header-date">
                     <%= new Date(row.createdAt).toDateString() %>
                 </div>
+                <% if (page==='profile' ) { %>
+                    <div class="review-header-storage"> Storage name:
+                        <%=row.storagetitle%>
+                    </div>
+                    <% } %>
             </div>
         </div>
-        <div class="review-header-right">
-            <span class="review-action">report</span>
-        </div>
+        <% if (page==='profile' || row.userId === currentUser ) { %>
+            <div class="review-header-right">
+                <span class="review-action btn-delete">Delete</span>
+
+            </div>
+            <% } %>
+
     </div>
     <div class="review-title">
         <%= row.title %>
@@ -27,18 +36,18 @@
             <% } %>
     </div>
     <div class="review-body">
-        <% if (row.imageurl) { %>
-            <img src="<%= row.imageurl %>" class="review-image" />
+        <% if (row.photo) { %>
+            <img src="<%= row.photo %>" class="review-image" />
             <% } %>
-                    <div class="review-text">
-                        <%= row.body %>
-                    </div>
+                <div class="review-text">
+                    <%= row.body %>
+                </div>
     </div>
 
 
     <div class="replies">
         <% replies.filter(r=> r.reviewId === row.reviewId).forEach(reply => { %>
-            <div class="reply">
+            <div class="reply" data-reply-id="<%= reply.replyId %>">
                 <div class="review-header">
                     <div class="review-header-left">
                         <div>
@@ -50,21 +59,64 @@
                             </div>
                         </div>
                     </div>
-                    <div class="review-header-right">
-                        <span class="review-action">report</span>
-                    </div>
+                    <% if (page==='profile' || reply.userId === currentUser ) { %>
+                        <div class="review-header-right">
+                            <span class="review-action btn-delete">Delete</span>
+                            <!-- <span class="review-action more-button">...</span> -->
+                        </div>
+                        <% } %>
                 </div>
                 <div class="review-body">
-                    <div class="reply-text">
-                        <%= reply.body %>
-                    </div>
+                    <% if (reply.photo) { %>
+
+                        <img src="<%= reply.photo %>" alt="Review image" class="review-image" style="display: block" />
+                        <% } %>
+
+                            <div class="reply-text">
+                                <%= reply.body %>
+                            </div>
                 </div>
             </div>
             <% }) %>
                 <button class="reply-button">Reply</button>
-                <div class="reply-form-container" style="display: none;">
-                    <textarea id="reply-textarea" placeholder="Write your reply..."></textarea>
-                    <button class="submit-reply">Submit Reply</button>
-                </div>
+
+                <form class="reply-form-container" enctype="multipart/form-data" style="display: none;">
+                    <div class="reply-photo-box">
+                        <!-- File input (hidden) -->
+                        <input type="file" name="photo" class="replycoverPhotoInput" accept="image/*"
+                            style="display: none;">
+
+                        <!-- Trigger button -->
+                        <button type="button" class="upload-btn replyuploadTrigger">
+                            <span class="material-icons upload-icon">upload</span>
+                        </button>
+
+                        <!-- Image preview -->
+                        <div class="replyphotoPreview" style="display: none; position: relative">
+                            <div class="image-wrapper">
+                                <img class="replypreviewImage" src="#" alt="Preview">
+                                <button type="button" class="removeImageBtn">x</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <textarea class="reply-textarea" placeholder="Write your reply..."></textarea>
+                    <button type="button" class="submit-reply">Submit Reply</button>
+
+                </form>
+
+    </div>
+</div>
+<div id="modalOverlay" class="modal-overlay" style="display: none;"></div>
+
+
+<div id="confirmDeleteModal" style="display:none;">
+    <div class="delete-modal">
+        <h3>Confirm Deletion</h3>
+        <p>Are you sure you want to delete this review or reply?</p>
+        <div id="action-btn">
+            <button id="btn-confirm-delete">Yes, Delete</button>
+            <button id="btn-cancel-delete">Cancel</button>
+        </div>
     </div>
 </div>

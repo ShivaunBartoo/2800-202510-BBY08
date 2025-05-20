@@ -34,6 +34,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 20px;
 }
 
 #jumbotron-art {
@@ -112,4 +113,9 @@ header {
 
 .spacer{
     height: 20px;
+}
+
+/* tablet */
+@media (min-width: 700px) and (min-height: 1000px) {
+
 }

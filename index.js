@@ -161,11 +161,15 @@ app.get("/contents/:id", function (req, res) {
 
 app.get("/map/:id", function (req, res) {
     let storageID = req.params.id;
-    res.render("map", {
-        stylesheets: ["contents.css", "contents-modal.css"],
-        scripts: ["locational.js"],
-        id: storageID,
-    });
+    authorization.isAuthorized(storageID, req.session.userId).then(auth => {
+        res.render("map", {
+            stylesheets: ["contents.css", "contents-modal.css"],
+            scripts: ["locational.js"],
+            id: storageID,
+            auth: auth,
+        });
+    })
+
 });
 
 // Route for directions page
@@ -279,16 +283,19 @@ app.get("/storage/createnew", (req, res) => {
 ///route for reviews
 app.get("/reviews/:storageId", function (req, res) {
     const storageId = req.params.storageId;
-    res.render("reviews", {
-        stylesheets: ["reviews.css", "contents.css", "addreview.css"],
-        scripts: ["reviews.js"],
-        other: [
-            `<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    authorization.isAuthorized(storageId, req.session.userId).then(auth => {
+        res.render("reviews", {
+            stylesheets: ["reviews.css", "contents.css", "addreview.css"],
+            scripts: ["reviews.js"],
+            other: [
+                `<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
             integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">`,
-            `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>`,
-        ],
-        id: storageId,
-    });
+                `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>`,
+            ],
+            id: storageId,
+            auth: auth,
+        });
+    })
 });
 
 app.post("/reviews/:storageId", async (req, res) => {

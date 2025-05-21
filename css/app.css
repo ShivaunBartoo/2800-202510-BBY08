@@ -47,6 +47,8 @@ body {
     box-sizing: border-box;
     font-family: "Sunflower", sans-serif !important;
     background-color: var(--blue-background) !important;
+    scrollbar-gutter: stable;
+
 }
 
 main{

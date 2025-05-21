@@ -226,12 +226,7 @@ document.querySelector("#take-confirm").addEventListener("click", async function
     });
 
     if (response.status == 200) {
-        let table = document.getElementById("content-rows");
-        while (2 <= table.rows.length) {
-            table.deleteRow(1);
-        }
-        loadRows();
-        cancelTake();
+        window.location = window.location;
     } else {
         console.log("An error has occurred!");
     }

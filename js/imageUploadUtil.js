@@ -58,9 +58,10 @@ export async function initImageUploadPreview(trigger, input, previewContainer, p
     });
     
     const removeImageBtn = document.querySelector('.removeImageBtn');
-    console.log(removeImageBtn);
+    console.log(" remove button: ", removeImageBtn);
     if (removeImageBtn != null) {
         removeImageBtn.addEventListener('click', () => {
+            console.log("button: ", removeImageBtn);
             input.value = ''; // clear file input
             previewImage.src = '#'; // reset image src
             previewContainer.style.display = 'none'; // hide preview

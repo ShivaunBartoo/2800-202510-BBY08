@@ -135,7 +135,7 @@ document.querySelector("#addItem").addEventListener("click", function (e) {
     item.appendChild(itemName);
     item.appendChild(itemBBD);
     list.appendChild(item);
-    current="";
+    current = "";
     setClassificationResult("none");
     document.querySelector("#donate-btn").disabled = false;
 });
@@ -149,15 +149,18 @@ async function onTurnstileSuccess(token) {
     const res = await fetch('/challenge-point', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, action: currentAction}) 
+        body: JSON.stringify({ token, action: currentAction })
 
     });
     const result = await res.json();
     return result;
 }
 
-document.querySelector("#donate-btn").addEventListener("click", async function (e) { // add cloudflare
+document.querySelector("#donate-btn").addEventListener("click", function (e) { // add cloudflare
+    document.querySelector("#bot-checking-donate").classList.remove("hidden");
+    
     e.preventDefault();
+    
     //assigns currentAction as donate
     currentAction = "donate"
 
@@ -168,13 +171,13 @@ document.querySelector("#donate-btn").addEventListener("click", async function (
     turnstile.reset('#turnstile-widget');
     pending = true;
     //executes the widget to then get verified
-    turnstile.execute('#turnstile-widget', {action: currentAction});
+    turnstile.execute('#turnstile-widget', { action: currentAction });
 });
 
 //verified result gets used to determine which action was selected
 //this is important because if something malicious actually manages to
 //get one token it can't use it across all functions 
- window.onTurnstileVerified = async function (token) {
+window.onTurnstileVerified = async function (token) {
 
     if (!pending) return;
 
@@ -193,7 +196,8 @@ document.querySelector("#donate-btn").addEventListener("click", async function (
     ploader.classList.add("donate-hidden");
     nloader.classList.add("take-hidden");
     takeBtn.textContent = originalText;
-
+    document.querySelector("#bot-checking").classList.add("hidden");
+    document.querySelector("#bot-checking-donate").classList.add("hidden");
     //determines which function to call based on which button was pushed
     if (currentAction === "donate") {
         donateHandler();
@@ -202,8 +206,8 @@ document.querySelector("#donate-btn").addEventListener("click", async function (
     }
     //clears action so you can use other actions
     currentAction = null;
- };
-    function donateHandler() {
+};
+function donateHandler() {
 
     console.log("donate button clicked");
     let items = JSON.stringify(itemsToDonate);
@@ -240,18 +244,18 @@ document.querySelector("#take").addEventListener("click", function takeMode() {
     turnstile.reset('#turnstile-widget');
 
     const nloader = document.querySelector(".nuthaloader");
-    
 
-    
+
+
     takeBtn.textContent = "";
     nloader.classList.remove("take-hidden")
-
+    document.querySelector("#bot-checking").classList.remove("hidden");
     pending = true;
-    turnstile.execute('#turnstile-widget', {action: currentAction});
+    turnstile.execute('#turnstile-widget', { action: currentAction });
 
-    });
+});
 
-    function takeHandler() {
+function takeHandler() {
     let elements = document.getElementsByClassName("item-quantity");
     let quantities = Array.from(elements);
     quantities.forEach((qty) => {
@@ -264,7 +268,7 @@ document.querySelector("#take").addEventListener("click", function takeMode() {
     document.getElementById("take").classList.add("hidden");
     document.getElementById("take-cancel").classList.remove("hidden");
     document.getElementById("take-confirm").classList.remove("hidden");
-    }
+}
 
 document.querySelector("#take-cancel").addEventListener("click", function () {
     cancelTake();
@@ -315,7 +319,7 @@ document.querySelector("#take-confirm").addEventListener("click", async function
     }
 });
 
-function setClassificationResult(result){
+function setClassificationResult(result) {
     const loader = document.getElementById("ai-loader");
     const good = document.getElementById("ai-good");
     const bad = document.getElementById("ai-bad");
@@ -324,7 +328,7 @@ function setClassificationResult(result){
     good.classList.add("hidden");
     bad.classList.add("hidden");
     warning.classList.add("hidden");
-    switch(result){
+    switch (result) {
         case "loading":
             loader.classList.remove("hidden");
             break;
@@ -345,7 +349,7 @@ function setClassificationResult(result){
 let current = "";
 
 document.querySelector("#itemName").addEventListener("focusin", async (event) => {
-    if(event.target.value != current){
+    if (event.target.value != current) {
         setClassificationResult("none");
     }
 });
@@ -359,15 +363,15 @@ document.querySelector("#itemName").addEventListener("focusout", async (event) =
         let response = await fetch(`/api/classify?input=${encodeURIComponent(input)}`);
         let result = await response.json();
         console.log("score: " + JSON.stringify(result));
-        if(result.input == current){
-            if(result.isFood){
+        if (result.input == current) {
+            if (result.isFood) {
                 setClassificationResult("good");
             }
-            else{
+            else {
                 setClassificationResult("bad");
             }
         }
-        else{
+        else {
             console.log("stale result rejected.")
         }
     }

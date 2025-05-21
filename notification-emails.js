@@ -168,24 +168,28 @@ function updateNotifications(notificationIds) {
 function sendNotifications() {
 
   console.log(`[INFO] ${(new Date()).toUTCString()} - Sending Notifications`);
+  let bccList = [];
 
   getPendingNotifications().then(notifications => {
     notifications.forEach(note => {
       const storageId = note.storageId
       getRecipientList(storageId).then(recipients => {
         recipients.forEach(recipient => {
+          bccList.push(recipient.email);
           console.log("\t", recipient.email);
         });
 
         if (recipients.length > 0) {
           let mailOptions = {
             from: process.env.GMAIL,
-            bcc: recipients,
+            bcc: bccList,
             subject: `A donation has been made to ${note.title}!`,
-            html: ` <h1>The following items have been donated:</h1>
-                        <ul>
-                            ${note.body.map(x => `<li>${x}</li>`).join('\n')}
-                        </ul>`
+            html: ` <header><img src="https://res.cloudinary.com/dpepy3t5y/image/upload/v1747847802/becool_solid_wykhpi.png" alt="logo" style="height: 50px; display: flex; margin: 0 auto;"><h1 style="text-align: center;">The following items have been donated:</h1></header>
+                        <ul style="text-align: center; list-style: none;">
+                            ${note.body.map(x => `<li><h2>${x}</h2></li>`).join('\n')}
+                        </ul>
+                        <footer style="text-align: center;">If you would like to stop receiving these emails, simply turn off notifications in your profile!</footer>`
+                        
           };
 
           transporter.sendMail(mailOptions, function (error, info) {

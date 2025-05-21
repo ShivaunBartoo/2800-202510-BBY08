@@ -65,6 +65,11 @@
     font-size: 0.95em;
 }
 
+.button:hover {
+    filter: brightness(1.2);
+}
+
+
 .hidden {
     display: none;
     color: var(--pink-dark);

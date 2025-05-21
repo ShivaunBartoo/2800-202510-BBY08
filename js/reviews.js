@@ -49,7 +49,10 @@ function updateReadMoreButton() {
 
 // Main initialization
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    await checkLoginStatus();
+
+
     //upload picture for review
     initImageUploadPreview(
         '.uploadTrigger',
@@ -64,7 +67,6 @@ document.addEventListener("DOMContentLoaded", () => {
     registerEventListeners();
 
     if (!isLoggedIn) {
-        // Hide or disable the "Add Review" button
         const addReviewButton = document.querySelector("#add-review-button");
         if (addReviewButton) {
             addReviewButton.disabled = true;

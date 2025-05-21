@@ -5,7 +5,7 @@
     <div class="card-background-gradient"></div>
     <div class="card-content">
         <div class="card-content-left">
-            <% if(typeof isFavourite != "undefined") { %>
+            <% if(locals.authenticated && typeof isFavourite != "undefined") { %>
             <div class="card-favourite <%if(isFavourite){%>active<%}%> material-icons" 
                 data-id="<%= row.storageId %>">favorite</div>
             <% } %>

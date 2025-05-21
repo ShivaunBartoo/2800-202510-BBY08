@@ -1,14 +1,26 @@
-body {
+main {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    margin-top: 80px;
 }
 
 #tab-nav {
     height: 30px;
     background-color: var(--blue-light);
+    margin-bottom: 45px;
+    position: fixed;
+    left: 0;
+    top: var(--header-height);
+    width: 100%;
+}
+
+#tab-nav-contents{
+    height: 100%;
+    max-width: 500px;
+    margin: 0 auto;
     display: flex;
     justify-content: space-around;
-    margin-bottom: 45px;
 }
 
 .tab {
@@ -46,7 +58,7 @@ body {
 main {
     height: calc(100vh - 175px);
     display: grid;
-    grid-template-columns: 100vw;
+    grid-template-columns: 100%;
     grid-template-rows: auto 1fr auto auto;
     grid-template-areas:
         "title"
@@ -128,7 +140,6 @@ tr {
 
 #contact {
     grid-area: contact;
-    width: 100%;
     margin: 5%;
     display: flex;
     gap: 10px;
@@ -137,36 +148,10 @@ tr {
 }
 
 #main-contents {
-    display: block;
+    /* display: block; */
 }
 
-#map-content {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
 
-#map {
-    height: 100%;
-    width: 100%;
-}
-
-#maps-btn {
-    margin: 10px;
-    width: 300px;
-    height: 50px;
-    border-radius: 50px;
-    border: none;
-    background-color: var(--blue-text);
-    color: var(--pink-light);
-    font-size: 1.2em;
-    cursor: pointer;
-}
-
-#maps-btn:hover {
-    background-color: var(--blue-dark);
-}
 #donationList {
     width: 80%;
     border-collapse: collapse;
@@ -209,10 +194,6 @@ tr {
     gap: 10px;
 }
 
-/* .modal-content{
-    width: 80% !important; 
-} */
-
 #ai-good{
     font-size: 2em;
     color: greenyellow;
@@ -227,4 +208,8 @@ tr {
     font-size: 0.8em;
     font-style: italic;
     color: var(--pink-dark-bold);
+}
+
+.modal-content {
+    max-width: 1000px;
 }

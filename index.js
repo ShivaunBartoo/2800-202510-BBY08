@@ -162,7 +162,7 @@ app.get("/map/:id", function (req, res) {
     let storageID = req.params.id;
     authorization.isAuthorized(storageID, req.session.userId).then(auth => {
         res.render("map", {
-            stylesheets: ["contents.css", "contents-modal.css"],
+            stylesheets: ["contents.css", "contents-modal.css", "map.css"],
             scripts: ["locational.js"],
             id: storageID,
             auth: auth,

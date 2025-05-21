@@ -1,17 +1,28 @@
 #location-bar {
     height: 35px;
+    width: 100vw;
     background: var(--blue-light);
     color: var(--blue-dark);
     padding: 8px 16px;
     font-size: 14px;
     display: flex;
     flex-direction: row;
-    justify-content: baseline;
+    justify-content: center;
     align-items: center;
     font-size: 1.1em;
-    position: sticky;
+    position: fixed;
+    left: 0;
     top: var(--header-height);
     z-index: 9;
+}
+
+#location-bar-contents{
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: row;
+    justify-content:baseline;
+    align-items: center;
 }
 
 #location-bar .material-icons {
@@ -36,7 +47,6 @@
     align-items: center;
     justify-content: center;
     gap: 20px;
-    margin-bottom: 25px;
 }
 .storage-card {
     width: 90%;
@@ -167,8 +177,9 @@
 
 #filters {
     display: flex;
+    margin: 20px auto;
+    width: 90%;
     gap: 10px;
-    padding: 10px 16px;
     align-items: center;
     justify-content: space-between;
 }
@@ -277,4 +288,10 @@
     text-align: center;
 }
 
+#header-spacer{
+    height: calc(var(--header-height) + 35px);
+}
 
+.spacer{
+    height: 40px;
+}

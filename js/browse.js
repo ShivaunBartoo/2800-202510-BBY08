@@ -116,27 +116,29 @@ function labelType(store) {
 }
 
 function addFavouriteButtonListener(element) {
-    element.addEventListener("click", async (event) => {
-        event.preventDefault();
-        if (!isLoggedIn) {
-            alert("Please log in to add favourites.");
-            return;
-        }
+    if (element) {
+        element.addEventListener("click", async (event) => {
+            event.preventDefault();
+            if (!isLoggedIn) {
+                alert("Please log in to add favourites.");
+                return;
+            }
 
-        const id = element.dataset.id;
-        event.preventDefault();
-        element.classList.toggle("active");
-        const response = await fetch("/api/favourite", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ id }),
+            const id = element.dataset.id;
+            event.preventDefault();
+            element.classList.toggle("active");
+            const response = await fetch("/api/favourite", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ id }),
+            });
+            if (!response.ok) {
+                console.log("Error adding to favourites");
+            }
         });
-        if (!response.ok) {
-            console.log("Error adding to favourites");
-        }
-    });
+    }
 }
 
 

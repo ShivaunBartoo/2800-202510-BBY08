@@ -74,3 +74,9 @@
     display: none;
     color: var(--pink-dark);
 }
+
+#errormsg {
+    width: 100%;
+    text-align: center;
+    color: var(--pink-dark-bold);
+}

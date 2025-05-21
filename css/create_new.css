@@ -43,7 +43,7 @@ label {
 input[type="text"] {
   width: calc(100% - 40px);
   padding: 8px;
-  border: 1px solid #CEDDF1;
+  /* border: 1px solid #CEDDF1; */
   border-radius: 4px;
   margin-right: 5px;
   font-size: 16pt;
@@ -147,4 +147,19 @@ button {
 .removeImageBtn:hover {
   background-color: #999;
   color: white;
+}
+
+input[type="text"].error-input {
+  border: 2px solid #ac6872 !important;
+}
+input.error-input,
+textarea.error-input {
+  border: 2px solid #ac6872 !important;
+}
+.error-message {
+    color: var(--pink-accent);
+    margin: 10px;
+    display: none;
+    text-align: center;
+    font-size: 0.9rem ;
 }

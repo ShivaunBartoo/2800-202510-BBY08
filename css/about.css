@@ -8,6 +8,10 @@ h1 {
     margin-bottom: 30px;
 }
 
+li {
+    list-style: none;
+}
+
 .section {
     background-color: var(--blue-medium);
     border-radius: 8px;
@@ -52,3 +56,4 @@ h1 {
     transform: rotate(180deg);
     transition: transform 0.3s ease;
 }
+

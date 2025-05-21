@@ -162,7 +162,7 @@ app.get("/map/:id", function (req, res) {
     let storageID = req.params.id;
     authorization.isAuthorized(storageID, req.session.userId).then(auth => {
         res.render("map", {
-            stylesheets: ["contents.css", "contents-modal.css"],
+            stylesheets: ["contents.css", "contents-modal.css", "map.css"],
             scripts: ["locational.js"],
             id: storageID,
             auth: auth,
@@ -283,6 +283,31 @@ app.get("/reviews/:storageId", function (req, res) {
         });
     });
 });
+
+app.post("/challenge-point", async (req, res) => {
+       let token = req.body.token;
+       let action = req.body.action;
+       let key = process.env.TURNSTILE_SECRET_KEY;
+       
+       const ver = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        body: new URLSearchParams({
+            secret: key,
+            response: token,
+        }),
+       })
+         const result = await ver.json();
+
+         if (result.success && result.action === action) {
+            res.send({success: true});
+         } else {
+            res.send({success: false, reason: "not verified"})
+         }
+        
+         
+    });
+
+
 
 // Logout user and destroys current session
 app.get("/logout", function (req, res) {

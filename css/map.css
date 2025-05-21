@@ -1,0 +1,33 @@
+main{
+    max-width: unset;
+    margin-top: 30px;
+
+}
+
+#map-content {
+    height: calc(100vh - var(--header-height) - 30px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+}
+
+#maps-btn {
+    margin: 10px;
+    width: 300px;
+    height: 50px;
+    border-radius: 50px;
+    border: none;
+    background-color: var(--blue-text);
+    color: var(--pink-light);
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+#maps-btn:hover {
+    background-color: var(--blue-dark);
+}

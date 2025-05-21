@@ -1,9 +1,11 @@
 <%- include('partials/header') %>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/googlemaps/js-info-bubble@master/src/infobubble.css">
 <section id="location-bar">
-    <span class="material-icons">location_on</span>
-    <span>Current Location:&nbsp;</span>
-    <span id="location-bar-location"> <%= city %></span>
+    <div id="location-bar-contents">
+        <span class="material-icons">location_on</span>
+        <span>Current Location:&nbsp;</span>
+        <span id="location-bar-location"> <%= city %></span>
+    </div>
 </section>
 
 <%- include('partials/mapPop') %>

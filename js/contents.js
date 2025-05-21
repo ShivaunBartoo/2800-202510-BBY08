@@ -139,8 +139,72 @@ document.querySelector("#addItem").addEventListener("click", function (e) {
     setClassificationResult("none");
     document.querySelector("#donate-btn").disabled = false;
 });
+//currentAction is protection against inspect element goblins
+let currentAction = null; //copy from here
+let pending = false;
 
-document.querySelector("#donate-btn").addEventListener("click", function (e) {
+//sends challenge and receives token
+async function onTurnstileSuccess(token) {
+
+    const res = await fetch('/challenge-point', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, action: currentAction}) 
+
+    });
+    const result = await res.json();
+    return result;
+}
+
+document.querySelector("#donate-btn").addEventListener("click", async function (e) { // add cloudflare
+    e.preventDefault();
+    //assigns currentAction as donate
+    currentAction = "donate"
+
+    const ploader = document.querySelector(".persoloader")
+
+    ploader.classList.remove("donate-hidden");
+
+    turnstile.reset('#turnstile-widget');
+    pending = true;
+    //executes the widget to then get verified
+    turnstile.execute('#turnstile-widget', {action: currentAction});
+});
+
+//verified result gets used to determine which action was selected
+//this is important because if something malicious actually manages to
+//get one token it can't use it across all functions 
+ window.onTurnstileVerified = async function (token) {
+
+    if (!pending) return;
+
+    pending = false;
+
+    const ploader = document.querySelector(".persoloader")
+    const nloader = document.querySelector(".nuthaloader")
+
+    const result = await onTurnstileSuccess(token);
+
+    if (!result.success) {
+        alert("not verified");
+        return;
+    }
+
+    ploader.classList.add("donate-hidden");
+    nloader.classList.add("take-hidden");
+    takeBtn.textContent = originalText;
+
+    //determines which function to call based on which button was pushed
+    if (currentAction === "donate") {
+        donateHandler();
+    } else if (currentAction === "take") {
+        takeHandler();
+    }
+    //clears action so you can use other actions
+    currentAction = null;
+ };
+    function donateHandler() {
+
     console.log("donate button clicked");
     let items = JSON.stringify(itemsToDonate);
 
@@ -164,11 +228,30 @@ document.querySelector("#donate-btn").addEventListener("click", function (e) {
         },
         items
     );
-});
+} // to here
+
 
 var qtyList = [];
-
+let takeBtn = document.getElementById("take-text");
+let originalText = takeBtn.textContent.trim();
 document.querySelector("#take").addEventListener("click", function takeMode() {
+
+    currentAction = "take"
+    turnstile.reset('#turnstile-widget');
+
+    const nloader = document.querySelector(".nuthaloader");
+    
+
+    
+    takeBtn.textContent = "";
+    nloader.classList.remove("take-hidden")
+
+    pending = true;
+    turnstile.execute('#turnstile-widget', {action: currentAction});
+
+    });
+
+    function takeHandler() {
     let elements = document.getElementsByClassName("item-quantity");
     let quantities = Array.from(elements);
     quantities.forEach((qty) => {
@@ -181,7 +264,7 @@ document.querySelector("#take").addEventListener("click", function takeMode() {
     document.getElementById("take").classList.add("hidden");
     document.getElementById("take-cancel").classList.remove("hidden");
     document.getElementById("take-confirm").classList.remove("hidden");
-});
+    }
 
 document.querySelector("#take-cancel").addEventListener("click", function () {
     cancelTake();

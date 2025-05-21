@@ -31,33 +31,38 @@
 
 <body>
     <header>
-        <% if (typeof headerImage !== "undefined") { %>
-        <a href="/browse"><img id="header-logo" src="<%=headerImage%>" /></a>
-        <% } else {%>
-        <a href="/browse"><img id="header-logo" src="/img/becool_dark.png" /></a>
-        <%}%>
-        <div id="header-menu-button" class="material-icons">menu</div>
-        <div id="header-menu">
-            <div id="header-menu-options">
-                <a href="/profile" class="header-menu-option">
-                    <span>Account</span>
-                    <span class="material-icons">person</span>
-                </a>
-                <a href="/about" class="header-menu-option">
-                    <span>About Us</span>
-                    <span class="material-icons">info</span>
-                </a>
-                <% if(session.authenticated) { %>
-                <a href="/logout" class="header-menu-option">
-                    <span>Log Out</span>
-                    <span class="material-icons">logout</span>
-                </a>
-                <% } else { %>
-                <a href="/login" class="header-menu-option">
-                    <span>Log In</span>
-                    <span class="material-icons">login</span>
-                </a>
-                <%}%>
+        <div id="header-container">
+            <% if (typeof headerImage !== "undefined") { %>
+            <a href="/"><img id="header-logo" src="<%=headerImage%>" /></a>
+            <% } else {%>
+            <a href="/"><img id="header-logo" src="/img/becool_dark.png" /></a>
+            <%}%>
+            <div id="header-menu-button" class="material-icons">menu</div>
+            <div id="header-menu">
+                <div id="header-menu-options">
+
+                    <a href="/about" class="header-menu-option">
+                        <span>About Us</span>
+                        <span class="material-icons">info</span>
+                    </a>
+                    <% if(session.authenticated) { %>
+                    <a href="/profile" class="header-menu-option">
+                        <span>Account</span>
+                        <span class="material-icons">person</span>
+                    </a>
+                    <a href="/logout" class="header-menu-option">
+                        <span>Log Out</span>
+                        <span class="material-icons">logout</span>
+                    </a>
+                    <% } else { %>
+                    <a href="/login" class="header-menu-option">
+                        <span>Log In</span>
+                        <span class="material-icons">login</span>
+                    </a>
+                    <%}%>
+                </div>
             </div>
         </div>
     </header>
+    <div id="header-spacer"></div>
+    <main>

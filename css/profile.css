@@ -44,7 +44,7 @@ button:hover {
     padding: 5px 15px;
     padding-bottom: 15px;
     width: 90%;
-    background-color: var(--blue-light);
+    background-color: #dfe8f6;
     border-radius: 15px;
 }
 

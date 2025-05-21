@@ -86,8 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('submit').addEventListener('click', async () => {
 
-        let newPassword = document.getElementById('newPassword').value;
-        let oldPassword = document.getElementById('oldPassword').value;
+        let newPassword = document.getElementById('newPassword').value.trim();
+        let oldPassword = document.getElementById('oldPassword').value.trim();
 
         const data = {
             firstName: document.getElementById('firstName').value.trim(),

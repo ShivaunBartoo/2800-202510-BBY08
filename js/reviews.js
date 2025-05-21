@@ -278,8 +278,6 @@ function openModal(modalId) {
     modal.style.top = "50%";
     modal.style.left = "50%";
     modal.style.transform = "translate(-50%, -50%)";
-
-
     console.log(`Modal ${modalId} opened.`);
 }
 

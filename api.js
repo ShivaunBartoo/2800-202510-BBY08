@@ -337,7 +337,7 @@ module.exports = function (app) {
                     return;
                 }
                 const points = results.rows.map(row => ({
-                    id: row.id,
+                    id: row.storageId,
                     name: row.title,
                     lat: parseFloat(row.coordinates.x),
                     lon: parseFloat(row.coordinates.y)

@@ -195,7 +195,10 @@ module.exports = function (app) {
         description = description?.trim();
 
         const { error } = storageSchema.validate({ title, storageType, street, city, province, description });
-        if (error) return res.status(400).json({ error: error.details.map(e => e.message) });
+        if (error) return res.status(400).json({ 
+            error: error.details.map(e => e.message),
+            fields: error.details.map(e => e.context.key)
+         });
 
         const address = `${street}, ${city}, ${province}, Canada`;
 

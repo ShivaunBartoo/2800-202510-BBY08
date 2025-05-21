@@ -103,7 +103,7 @@ module.exports = function (app) {
             const renderedCards = await Promise.all(
                 ownedResult.rows.map((row) => {
 
-                    return ejs.renderFile("views/partials/storage-card.ejs", { row });
+                    return ejs.renderFile("views/partials/storage-card.ejs", { row, isAuthenticated: req.session.authenticated, });
                 })
             );
             

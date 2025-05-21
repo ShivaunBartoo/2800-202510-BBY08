@@ -1,3 +1,4 @@
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <%- include('partials/header') %>
     <%- include('partials/contents-tab', {selected: 'contents' }) %>
         <main id="main-contents">
@@ -27,7 +28,10 @@
             </span>
             <div id="buttons">
                 <button name="donate-item" value="donate-item" id="open-modal" class="contents-btns">Donate</button>
-                <button name="take-item" id="take" value="take-item">Take</button>
+               <button name="take-item" id="take" value="take-item">
+                    <span id="take-text"> Take </span>
+                    <span class="nuthaloader take-hidden"></span>
+                </button>
                 <button name="take-cancel" value="take-cancel" id="take-cancel" class="hidden"
                     style="background-color: var(--blue-accent); color: var(--blue-dark) ">Cancel</button>
                 <button name="take-confirm" value="take-confirm" id="take-confirm" class="hidden"
@@ -91,7 +95,13 @@
                     </div>
                     <div class="modal-actions">
                         <button id="modal-cancel">Cancel</button>
-                        <button id="donate-btn" disabled>Donate</button>
+                        <button id="donate-btn" disabled>
+                            Donate
+                            <span class="donate-hidden persoloader"></span>
+                        </button>
+                         <div id="turnstile-widget" class="cf-turnstile" data-sitekey="0x4AAAAAABdagb_F0YACWFyg"
+                            data-callback="onTurnstileVerified" data-mode="invisible">
+                        </div>
                     </div>
                 </div>
             </div>

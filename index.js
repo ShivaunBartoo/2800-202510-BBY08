@@ -348,6 +348,31 @@ app.post("/reviews/:storageId", async (req, res) => {
     });
 });
 
+app.post("/challenge-point", async (req, res) => {
+       let token = req.body.token;
+       let action = req.body.action;
+       let key = process.env.TURNSTILE_SECRET_KEY;
+       
+       const ver = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        body: new URLSearchParams({
+            secret: key,
+            response: token,
+        }),
+       })
+         const result = await ver.json();
+
+         if (result.success && result.action === action) {
+            res.send({success: true});
+         } else {
+            res.send({success: false, reason: "not verified"})
+         }
+        
+         
+    });
+
+
+
 app.post("/replies", async (req, res) => {
     const userId = req.session.userId;
     console.log("Received body:", req.body);

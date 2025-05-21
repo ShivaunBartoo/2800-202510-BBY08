@@ -228,3 +228,58 @@ tr {
     font-style: italic;
     color: var(--pink-dark-bold);
 }
+
+.persoloader {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-left: 35px; 
+  border-radius: 50%;
+  background-color: #ff0000;
+  box-shadow: 32px 0 #d3fbff, -32px 0 #d3fbff;
+  position: relative;
+  animation: flash 0.5s ease-out infinite alternate;
+}
+
+@keyframes flash {
+  0% {
+    background-color: rgba(80, 223, 255, 0.575);
+    box-shadow: 32px 0 rgba(255, 255, 255, 0.582), -32px 0 #d3fbff;
+  }
+  50% {
+    background-color: #4edeff;
+    box-shadow: 32px 0 rgba(255, 255, 255, 0.438), -32px 0 #FFF2;
+  }
+  100% {
+    background-color: rgba(80, 223, 255, 0.551);
+    box-shadow: 32px 0 #d3fbff, -32px 0 rgba(255, 255, 255, 0.476);
+  }
+}
+
+.donate-hidden {
+  display: none;
+}
+
+.nuthaloader {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-block;
+  border-top: 3px solid #FFF;
+  border-right: 3px solid transparent;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} 
+
+.take-hidden {
+    display: none;
+}

@@ -32,8 +32,8 @@ const { uploadPhotoCloud } = require('./utils');
 module.exports = function (app) {
 
     const reviewSchema = Joi.object({
-        title: Joi.string().max(100).required(),
-        body: Joi.string().max(1000).required(),
+        title: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(100).required(),
+        body: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(1000).required(),
         rating: Joi.number().integer().min(1).max(5).required(),
     });
 

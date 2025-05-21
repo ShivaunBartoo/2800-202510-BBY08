@@ -352,7 +352,8 @@ document.querySelector("#itemName").addEventListener("focusin", async (event) =>
 
 document.querySelector("#itemName").addEventListener("focusout", async (event) => {
     const input = event.target.value;
-    if (input && current != input) {
+    let aiRejected = document.getElementById("ai-good").classList.contains("hidden");
+    if (input && (current != input || aiRejected)) {
         current = input;
         setClassificationResult("loading");
         console.log(`getting score for ${input}.`)

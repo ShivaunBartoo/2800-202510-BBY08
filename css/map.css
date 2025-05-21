@@ -1,9 +1,11 @@
 main{
     max-width: unset;
+    margin-top: 30px;
+
 }
 
 #map-content {
-    height: 100%;
+    height: calc(100vh - var(--header-height) - 30px);
     display: flex;
     flex-direction: column;
     align-items: center;

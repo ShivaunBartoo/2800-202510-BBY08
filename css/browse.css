@@ -291,3 +291,7 @@
 #header-spacer{
     height: calc(var(--header-height) + 35px);
 }
+
+.spacer{
+    height: 40px;
+}

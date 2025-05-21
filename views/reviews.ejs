@@ -1,50 +1,50 @@
 <%- include('partials/header') %>
-<%- include('partials/contents-tab', {selected: 'reviews'}) %>
-<main>
+    <%- include('partials/contents-tab', {selected: 'reviews' }) %>
 
-    <!-- add review modal -->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong"
-        id="add-review-button">
-        Add a review
-    </button>
 
-    <div id="reviewModal" class="modal">
-        <div class="modal-content">
-            <div id="reviewHeader">
-                <h3>Add Review</h3>
-                <button type="button" class="btn-close close-modal-button" data-bs-dismiss="modal" aria-label="Close"
-                    ></button>
-            </div>
+        <!-- add review modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong"
+            id="add-review-button">
+            Add a review
+        </button>
 
-            <div class="form-group">
-                <label for="reviewTitle">Review Title</label>
-                <input type="text" id="reviewTitle" placeholder="Enter a title" />
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="reviewRating">Rating</label>
-                    <input id="reviewRating" type="number" name="rating" min="1" max="5"
-                        placeholder="Rating (1–5)" />
+        <div id="reviewModal" class="modal">
+            <div class="modal-content">
+                <div id="reviewHeader">
+                    <h3>Add Review</h3>
+                    <button type="button" class="btn-close close-modal-button" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
 
                 <div class="form-group">
-                    <label for="reviewImage">Upload Picture</label>
-                    <input type="file" id="reviewImage" accept="image/*" />
+                    <label for="reviewTitle">Review Title</label>
+                    <input type="text" id="reviewTitle" placeholder="Enter a title" />
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label for="reviewText">Your Review</label>
-                <textarea id="reviewText" rows="4" placeholder="Write your review..."></textarea>
-            </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reviewRating">Rating</label>
+                        <input id="reviewRating" type="number" name="rating" min="1" max="5"
+                            placeholder="Rating (1–5)" />
+                    </div>
 
-            <div class="modal-actions">
-                <button class="close-modal-button">Cancel</button>
-                <button id="submit-review-button">Add</button>
+                    <div class="form-group">
+                        <label for="reviewImage">Upload Picture</label>
+                        <input type="file" id="reviewImage" accept="image/*" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="reviewText">Your Review</label>
+                    <textarea id="reviewText" rows="4" placeholder="Write your review..."></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="close-modal-button">Cancel</button>
+                    <button id="submit-review-button">Add</button>
+                </div>
             </div>
         </div>
-    </div>
 
         <div id="reviews-container">
         </div>
@@ -53,5 +53,5 @@
         </div>
 
         <div class="spacer"></div>
-    </main>
-<%- include('partials/footer') %>
+
+        <%- include('partials/footer') %>

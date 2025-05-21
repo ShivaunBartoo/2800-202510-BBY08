@@ -6,7 +6,7 @@ header {
     z-index: 10;
     display: flex;
     justify-content: center;
-    position: sticky;
+    position: fixed;
 }
 
 #header-container {
@@ -67,11 +67,13 @@ header {
     color: var(--blue-text);
 }
 
+#header-spacer{
+    height: var(--header-height);
+}
+
 /* tablet */
 @media (min-width: 700px) {
-    header{
-        background-color: transparent;
-    }
+
     #header-menu-button {
         display: none;
     }

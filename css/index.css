@@ -1,5 +1,6 @@
 main {
     width: 100vw;
+    max-width: unset;
     overflow: hidden;
 }
 
@@ -118,7 +119,7 @@ header {
     height: 400px;
     margin-top: -10px;
     z-index: 1;
-    opacity: 0.2;
+    opacity: 0.1;
     transform: translate(20px, -120px);
 }
 
@@ -204,7 +205,6 @@ header {
 
     #jumbotron-circle {
     height: 380px;
-    opacity: 0.1;
     transform: translate(0px, -100px);
 }
 }

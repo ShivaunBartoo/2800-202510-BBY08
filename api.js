@@ -37,7 +37,13 @@ module.exports = function (app) {
         try {
             await client.connect();
 
-            const storageResults = await client.query('SELECT * FROM public.storage WHERE "deletedDate" IS NULL');
+            const storageResults = await client.query(`SELECT s.*,
+	        (select MAX(c."donatedAt") > (Now() - interval '24 hours')
+	        from public.content AS c
+	        where c."storageId" = s."storageId"
+	        ) AS restocked
+            FROM public.storage AS s
+            WHERE s."deletedDate" IS NULL`);
 
             let favoriteIds = [];
             const favResults = await client.query('SELECT "storageId" FROM public.favourites WHERE "userId" = $1', [
@@ -405,7 +411,7 @@ FROM storage WHERE "storageId" = $1`,
         if (req.session && req.session.userId) {
             res.status(200).json({ loggedIn: true, userId: req.session.userId });
         } else {
-            res.status(401).json({ loggedIn: false });
+            res.status(200).json({ loggedIn: false });
         }
     });
 

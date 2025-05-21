@@ -117,7 +117,7 @@ function labelType(store) {
 
 function addFavouriteButtonListener(element) {
     element.addEventListener("click", async (event) => {
-
+        event.preventDefault();
         if (!isLoggedIn) {
             alert("Please log in to add favourites.");
             return;

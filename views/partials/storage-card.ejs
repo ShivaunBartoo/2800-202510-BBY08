@@ -24,7 +24,9 @@
                 </span>
             </div>
             <span class="card-footer">
-                <div class="card-footer-restocked hidden"><span>RESTOCKED</span></div>
+                <% if (row.restocked) { %>
+                <div class="card-footer-restocked"><span>RESTOCKED</span></div>
+                <% } %>
                 <% if(typeof distance != "undefined") { %>
                 <div class="card-distance"><%= distance %> km</div>
                 <% } %>

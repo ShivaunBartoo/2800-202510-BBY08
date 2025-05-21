@@ -187,6 +187,7 @@ async function makeMap() {
 
     points.forEach(point => {
         const marker = new google.maps.marker.AdvancedMarkerElement({
+            id: point.id,
             position: { lat: point.lat, lng: point.lon },
             map: embed,
             title: point.name || "Fridge"
@@ -195,7 +196,7 @@ async function makeMap() {
         marker.addEventListener('click', () => {
             console.log(point.name)
             storageCard.setContent(`<div class="storageCard">
-            <strong>${point.name}</strong>
+            <a href="/contents/${point.id}"> <strong>${point.name}</strong> </a>
             <a href=https://www.google.com/maps?q=${point.lat},${point.lon}> Directions </a>
             </div>
 `);

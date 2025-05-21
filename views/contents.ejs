@@ -26,9 +26,11 @@
             <span id="take-error" class="hidden">Uh oh! You cannot take more than the available quantity.</span>
             <span id="distance-error" class="hidden">You must be within 2km of this location to donate or take items.
             </span>
+            <span id="bot-checking" class="hidden">Checking for bot attacks - Hang tight!
+            </span>
             <div id="buttons">
                 <button name="donate-item" value="donate-item" id="open-modal" class="contents-btns">Donate</button>
-               <button name="take-item" id="take" value="take-item">
+                <button name="take-item" id="take" value="take-item">
                     <span id="take-text"> Take </span>
                     <span class="nuthaloader take-hidden"></span>
                 </button>
@@ -47,66 +49,70 @@
                     <div>Contact the <span id="contact-type">fridge</span> manager</div>
                 </div>
             </div>
-        </main>
-        <div>
-            <div id="contentsmodal" class="modal">
-                <div class="modal-content">
-                    <div id="donateheader">
-                        <h3>Donate item</h3>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                            id="close-modal"></button>
-                    </div>
-                    <div class="item-name-input">
-                        <input type="text" id="itemName" placeholder="Enter item name" />
-                        <div id="ai-loader" class="loader hidden"></div>
-                        <div id="ai-good" class="material-icons hidden">check</div>
-                        <div id="ai-bad" class="material-icons hidden">close</div>
-                    </div>
-                    <div id="ai-warning" class="hidden">Sorry, we don't recognize that food item. Please try again.</div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="qty">Quantity:</label>
-                            <div class="qty-input">
-                                <input type="number" id="qty" value="0" min="0" />
+            </main>
+            <div>
+                <div id="contentsmodal" class="modal">
+                    <div class="modal-content">
+                        <div id="donateheader">
+                            <h3>Donate item</h3>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                id="close-modal"></button>
+                        </div>
+                        <div class="item-name-input">
+                            <input type="text" id="itemName" placeholder="Enter item name" />
+                            <div id="ai-loader" class="loader hidden"></div>
+                            <div id="ai-good" class="material-icons hidden">check</div>
+                            <div id="ai-bad" class="material-icons hidden">close</div>
+                        </div>
+                        <div id="ai-warning" class="hidden">Sorry, we don't recognize that food item. Please try again.
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="qty">Quantity:</label>
+                                <div class="qty-input">
+                                    <input type="number" id="qty" value="0" min="0" />
+                                </div>
+                            </div>
+
+                            <div class="form-group" id="bbd-gr">
+                                <label for="bbd">Best Before Date:</label>
+                                <input type="date" id="bbd" />
                             </div>
                         </div>
-
-                        <div class="form-group" id="bbd-gr">
-                            <label for="bbd">Best Before Date:</label>
-                            <input type="date" id="bbd" />
+                        <div id="donate-errors" class="hidden">
+                            <p id="name-error">Uh oh! Something went wrong. </p>
+                            <p id="qty-error">Item Name cannot be empty and must be recognizable as food, item quantity
+                                cannot be 0, and BBD cannot be
+                                expired.
+                            </p>
                         </div>
-                    </div>
-                    <div id="donate-errors" class="hidden">
-                        <p id="name-error">Uh oh! Something went wrong. </p>
-                        <p id="qty-error">Item Name cannot be empty and must be recognizable as food, item quantity cannot be 0, and BBD cannot be
-                            expired.
-                        </p>
-                    </div>
-                    <button id="addItem">Add Item</button>
-                    <div id="itempreview">
-                        <p><strong>Items for donation:</strong></p>
-                        <table id="donationList">
-                            <tr>
-                                <th>Qty</th>
-                                <th>Item</th>
-                                <th>BBD</th>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="modal-actions">
-                        <button id="modal-cancel">Cancel</button>
-                        <button id="donate-btn" disabled>
-                            Donate
-                            <span class="donate-hidden persoloader"></span>
-                        </button>
-                         <div id="turnstile-widget" class="cf-turnstile" data-sitekey="0x4AAAAAABdagb_F0YACWFyg"
-                            data-callback="onTurnstileVerified" data-mode="invisible">
+                        <button id="addItem">Add Item</button>
+                        <div id="itempreview">
+                            <p><strong>Items for donation:</strong></p>
+                            <table id="donationList">
+                                <tr>
+                                    <th>Qty</th>
+                                    <th>Item</th>
+                                    <th>BBD</th>
+                                </tr>
+                            </table>
+                        </div>
+                        <span id="bot-checking-donate" class="hidden">Checking for bot attacks - Hang tight!
+                            </span>
+                        <div class="modal-actions">
+                            <button id="modal-cancel">Cancel</button>
+                            <button id="donate-btn" disabled>
+                                Donate
+                                <span class="donate-hidden persoloader"></span>
+                            </button>
+                            <div id="turnstile-widget" class="cf-turnstile" data-sitekey="0x4AAAAAABdagb_F0YACWFyg"
+                                data-callback="onTurnstileVerified" data-mode="invisible">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <script type="module" src="/js/contents.js"></script>
-        <script src="/js/locational.js"></script>
-        <%- include('partials/content-help')%>
-        <%- include('partials/footer')%>
+            <script type="module" src="/js/contents.js"></script>
+            <script src="/js/locational.js"></script>
+            <%- include('partials/content-help')%>
+                <%- include('partials/footer')%>

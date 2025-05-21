@@ -63,49 +63,64 @@ document.querySelector("#create-submit")?.addEventListener("click", function (e)
     let email = document.getElementById("email");
     let pword = document.getElementById("password");
     let confirm = document.getElementById("confirm-password");
-
+    let error = false;
     if (firstName.value == "") {
-        firstName.style.backgroundColor = "#ac6872";
+        firstName.style.border = "solid #ac6872";
         document.getElementById("errormsg").classList.remove("hidden");
-        return;
+        showError("Highlighted fields cannot be empty.");
+        error = true;
     }
-
     if (lastName.value == "") {
-        lastName.style.backgroundColor = "#ac6872";
+        lastName.style.border = "solid #ac6872";
         document.getElementById("errormsg").classList.remove("hidden");
-        return;
+        showError("Highlighted fields cannot be empty.");
+        error = true;
     }
-
     if (email.value == "") {
-        email.style.backgroundColor = "#ac6872";
+        email.style.border = "solid #ac6872";
         document.getElementById("errormsg").classList.remove("hidden");
-        return;
+        showError("Highlighted fields cannot be empty.");
+        error = true;
     }
-
+    if (pword.value == "") {
+        pword.style.border = "solid #ac6872";
+        document.getElementById("errormsg").classList.remove("hidden");
+        showError("Highlighted fields cannot be empty.");
+        error = true;
+    }
+    if (confirm.value == "") {
+        confirm.style.border = "solid #ac6872";
+        document.getElementById("errormsg").classList.remove("hidden");
+        showError("Highlighted fields cannot be empty.");
+        error = true;
+    }
     if (!pword.value == confirm.value) {
-        pword.style.backgroundColor = "#ac6872";
-        confirm.style.backgroundColor = "#ac6872";
+        pword.style.border = "solid #ac6872";
+        confirm.style.border = "solid #ac6872";
         document.getElementById("pwderror").classList.remove("hidden");
-        return;
+        showError("Highlighted fields cannot be empty.");
+        error = true;
     } else {
         var password = pword.value;
     }
-    const vars = { firstName: firstName.value, lastName: lastName.value, email: email.value, password: password };
-    let data = btoa(JSON.stringify(vars));
-    let body = "data=" + data;
+    if (!error) {
+        const vars = { firstName: firstName.value, lastName: lastName.value, email: email.value, password: password };
+        let data = btoa(JSON.stringify(vars));
+        let body = "data=" + data;
 
-    ajaxPOST(
-        "/createUser",
-        function (data) {
-            if (data) {
-                let dataParsed = JSON.parse(data);
-                if (dataParsed.status == "fail") {
-                    alert(dataParsed.msg);
-                } else {
-                    window.location.replace("/browse");
+        ajaxPOST(
+            "/createUser",
+            function (data) {
+                if (data) {
+                    let dataParsed = JSON.parse(data);
+                    if (dataParsed.status == "fail") {
+                        alert(dataParsed.msg);
+                    } else {
+                        window.location.replace("/browse");
+                    }
                 }
-            }
-        },
-        body
-    );
+            },
+            body
+        );
+    }
 });

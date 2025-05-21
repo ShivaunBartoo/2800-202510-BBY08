@@ -78,8 +78,7 @@
                 </div>
             </div>
             <% }) %>
-                <button class="reply-button">Reply</button>
-
+                <span class="reply-button review-action">Reply</span>
                 <form class="reply-form-container" enctype="multipart/form-data" style="display: none;">
                     <div class="reply-photo-box">
                         <!-- File input (hidden) -->
@@ -95,7 +94,7 @@
                         <div class="replyphotoPreview" style="display: none; position: relative">
                             <div class="image-wrapper">
                                 <img class="replypreviewImage" src="#" alt="Preview">
-                                <button type="button" class="removeImageBtn">x</button>
+                                <button id="<%= row.reviewId %>"type="button" class="removeImageBtn">x</button>
                             </div>
                         </div>
                     </div>

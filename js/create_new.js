@@ -1,4 +1,4 @@
-import { initImageUploadPreview } from './imageUploadUtil.js';
+import { initImageUploadPreview, displayError } from './imageUploadUtil.js';
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -27,21 +27,24 @@ document.addEventListener('DOMContentLoaded', function () {
             formData.set('photo', coverPhotoInput.files[0]);
         }
 
-
         fetch(`/storage/createnew/`, {
             method: 'POST',
             body: formData
         })
-            .then(res => res.json())
-            .then(() => {
+            .then(async res => {
+                const data = await res.json();
+
+                if (!res.ok) {
+                    
+                    displayError(data.error);  
+                    throw new Error(data.error);     
+                }
 
                 alert('Storage created in database');
                 window.location.href = '/profile';
             })
-
             .catch(error => {
-                console.error('error', error);
-                alert('Error: ' + error.message);
+                console.error('Submission error:', error);
             });
     });
 });
@@ -60,9 +63,7 @@ function registerEventListeners() {
         executeOnMatch(".cre-back-btn", () => {
             window.location.href = '/profile';
         });
-
     });
-
 }
 
 function selectType(type) {
@@ -78,7 +79,5 @@ function selectType(type) {
         pantryBtn.classList.add('active');
         fridgeBtn.classList.remove('active');
         storageTypeInput.value = 2;
-
-
     }
 }

@@ -212,11 +212,13 @@ async function makeMap() {
 document.addEventListener("DOMContentLoaded", () => {
     const toggleBtn = document.getElementById("toggleMap");
     const mapContainer = document.getElementById("mapContainer");
+    const cardContainer = document.getElementById("main-card-container")
 
     toggleBtn.addEventListener("click", () => {
         const isHidden = mapContainer.style.display === "none";
+        
         mapContainer.style.display = isHidden ? "block" : "none";
-
+        cardContainer.style.display = isHidden ? "none" : "flex";
         if (isHidden && !mapexist) {
             makeMap();
             mapexist = true;

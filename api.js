@@ -38,10 +38,13 @@ module.exports = function (app) {
             await client.connect();
 
             const storageResults = await client.query(`SELECT s.*,
-	        (select MAX(c."donatedAt") > (Now() - interval '24 hours')
-	        from public.content AS c
-	        where c."storageId" = s."storageId"
-	        ) AS restocked
+	        (SELECT MAX(c."donatedAt") > (Now() - interval '24 hours')
+	        FROM public.content AS c
+	        WHERE c."storageId" = s."storageId"
+	        ) AS restocked,
+			(SELECT AVG(r."rating")::numeric(10,1) 
+			FROM public.reviews AS r
+			Where r."storageId" = s."storageId")
             FROM public.storage AS s
             WHERE s."deletedDate" IS NULL`);
 

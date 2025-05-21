@@ -155,7 +155,8 @@ async function onTurnstileSuccess(token) {
     const result = await res.json();
     return result;
 }
-
+const closebtn = document.querySelector("#close-modal");
+closebtn.disabled = false
 document.querySelector("#donate-btn").addEventListener("click", function (e) { // add cloudflare
     document.querySelector("#bot-checking-donate").classList.remove("hidden");
     
@@ -165,6 +166,9 @@ document.querySelector("#donate-btn").addEventListener("click", function (e) { /
     currentAction = "donate"
 
     const ploader = document.querySelector(".persoloader")
+
+    closebtn.disabled = true;
+    
 
     ploader.classList.remove("donate-hidden");
 
@@ -224,6 +228,7 @@ function donateHandler() {
                     while (2 <= table.rows.length) {
                         table.deleteRow(1);
                     }
+                    
                     loadRows();
                     resetValues();
                     document.getElementById("contentsmodal").style.display = "none";
@@ -232,6 +237,7 @@ function donateHandler() {
         },
         items
     );
+    closebtn.disabled = false;
 } // to here
 
 

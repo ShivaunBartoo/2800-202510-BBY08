@@ -55,7 +55,7 @@ module.exports = function (app) {
                 console.log("Error connecting to database in /createUser:", err);
                 return;
             }
-            client.query(`INSERT INTO "users" ("firstName", "lastName", "email", "password") VALUES ($1, $2, $3, $4)`, [firstName, lastName, email, hashedPassword], (error, results) => {
+            client.query(`INSERT INTO "users" ("firstName", "lastName", "email", "password") VALUES ($1, $2, $3, $4) RETURNING "userId"`, [firstName, lastName, email, hashedPassword], (error, results) => {
                 if (error) {
                     if (firstName == null || lastName == null || email == null || password == null) {
                         console.log("Validation error in /createUser: All fields are required.");
@@ -65,6 +65,7 @@ module.exports = function (app) {
                     res.send({ status: "fail", msg: "Unable to create user." });
                     return;
                 } else {
+                    req.session.userId = results.rows[0].userId;
                     req.session.authenticated = true;
                     req.session.userFirstName = firstName;
                     req.session.lastName = lastName;

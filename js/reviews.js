@@ -51,21 +51,25 @@ function updateReadMoreButton() {
 document.addEventListener("DOMContentLoaded", async () => {
     await checkLoginStatus();
 
-    //upload picture for review
-    initImageUploadPreview(".uploadTrigger", ".coverPhotoInput", ".photoPreview", ".previewImage", (file) => {
-        console.log("User selected file:", file);
-    });
-    getReviews();
-    registerEventListeners();
-
-    if (!isLoggedIn) {
-        const addReviewButton = document.querySelector("#add-review-button");
-        if (addReviewButton) {
-            addReviewButton.disabled = true;
-            addReviewButton.title = "Log in to add a review";
-            addReviewButton.classList.add("disabled");
-        }
+    // Disable Add Review button if not logged in
+    const addReviewButton = document.querySelector("#add-review-button");
+    if (!isLoggedIn && addReviewButton) {
+        addReviewButton.disabled = true;
+        addReviewButton.title = "Log in to add a review";
+        addReviewButton.classList.add("disabled");
+        addReviewButton.style.pointerEvents = "none";
     }
+
+    initImageUploadPreview(
+        '.uploadTrigger',
+        '.coverPhotoInput',
+        '.photoPreview',
+        '.previewImage',
+        (file) => console.log('User selected file:', file)
+    );
+
+    await getReviews();
+    registerEventListeners();
 });
 
 // Review functions
@@ -284,7 +288,6 @@ function openModal(modalId) {
     modal.style.top = "50%";
     modal.style.left = "50%";
     modal.style.transform = "translate(-50%, -50%)";
-
     console.log(`Modal ${modalId} opened.`);
 }
 

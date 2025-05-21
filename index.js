@@ -105,7 +105,7 @@ app.get("/browse", async function (req, res) {
         city,
         stylesheets: ["browse.css"],
         scripts: [],
-        apiKey
+        apiKey,
     });
 });
 

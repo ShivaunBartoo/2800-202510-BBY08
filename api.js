@@ -70,6 +70,7 @@ module.exports = function (app) {
                             row,
                             distance,
                             isFavourite,
+                            isAuthenticated: req.session.authenticated,
                         })
                         .then((html) => ({
                             html,

@@ -216,31 +216,27 @@ tr {
 
 .persoloader {
     display: inline-block;
-    width: 16px;
-    height: 16px;
     margin-left: 35px;
-    border-radius: 50%;
-    background-color: #ff0000;
-    box-shadow: 32px 0 #d3fbff, -32px 0 #d3fbff;
     position: relative;
-    animation: flash 0.5s ease-out infinite alternate;
+    width: 45px;
+    aspect-ratio: 1;
+    --c: no-repeat linear-gradient(var(--blue-accent) 0 0);
+    background: 
+      var(--c) 0%   50%,
+      var(--c) 50%  50%,
+      var(--c) 100% 50%;
+    background-size: 20% 100%;
+    animation: l1 1s infinite linear;
+    
+  
 }
 
-@keyframes flash {
-    0% {
-        background-color: rgba(80, 223, 255, 0.575);
-        box-shadow: 32px 0 rgba(255, 255, 255, 0.582), -32px 0 #d3fbff;
-    }
-
-    50% {
-        background-color: #4edeff;
-        box-shadow: 32px 0 rgba(255, 255, 255, 0.438), -32px 0 #FFF2;
-    }
-
-    100% {
-        background-color: rgba(80, 223, 255, 0.551);
-        box-shadow: 32px 0 #d3fbff, -32px 0 rgba(255, 255, 255, 0.476);
-    }
+@keyframes l1 {
+    0%  {background-size: 20% 100%,20% 100%,20% 100%}
+    33% {background-size: 20% 10% ,20% 100%,20% 100%}
+    50% {background-size: 20% 100%,20% 10% ,20% 100%}
+    66% {background-size: 20% 100%,20% 100%,20% 10% }
+    100%{background-size: 20% 100%,20% 100%,20% 100%}
 }
 
 .donate-hidden {

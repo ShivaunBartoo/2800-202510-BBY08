@@ -186,7 +186,13 @@ module.exports = function (app) {
             return res.status(400).json({ error: "userID is required" });
         }
 
-        const { storageType, title, street, city, province, description } = req.body;
+        let { storageType, title, street, city, province, description } = req.body;
+
+        title = title?.trim();
+        street = street?.trim();
+        city = city?.trim();
+        province = province?.trim();
+        description = description?.trim();
 
         const { error } = storageSchema.validate({ title, storageType, street, city, province, description });
         if (error) return res.status(400).json({ error: error.details.map(e => e.message) });

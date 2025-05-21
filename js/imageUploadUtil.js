@@ -11,11 +11,6 @@
 
 export async function initImageUploadPreview(trigger, input, previewContainer, previewImage, onSelect) {
 
-    // const trigger = document.querySelector(triggerId);
-    // const input = document.querySelector(inputId);
-    // const previewContainer = document.querySelector(previewContainerId);
-    // const previewImage = document.querySelector(previewImageId);
-
     if (typeof trigger === 'string') trigger = document.querySelector(trigger);
     if (typeof input === 'string') input = document.querySelector(input);
     if (typeof previewContainer === 'string') previewContainer = document.querySelector(previewContainer);
@@ -57,17 +52,16 @@ export async function initImageUploadPreview(trigger, input, previewContainer, p
         reader.readAsDataURL(file);
     });
     
-    const removeImageBtn = document.querySelector('.removeImageBtn');
-    console.log(" remove button: ", removeImageBtn);
-    if (removeImageBtn != null) {
-        removeImageBtn.addEventListener('click', () => {
-            console.log("button: ", removeImageBtn);
+    document.querySelectorAll('.removeImageBtn').forEach(button =>{
+    if (button != null) {
+        button.addEventListener('click', () => {
             input.value = ''; // clear file input
             previewImage.src = '#'; // reset image src
             previewContainer.style.display = 'none'; // hide preview
             if (onSelect) onSelect(null); // optional: signal no image
         });
     }
+    })
 }
 
 export function displayError(msg) {

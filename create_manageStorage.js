@@ -52,15 +52,15 @@ const { uploadPhotoCloud } = require('./utils');
 module.exports = function (app) {
 
     const storageSchema = Joi.object({
-        title: Joi.string().max(100).required(),
+        title: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(50).required(),
         storageType: Joi.string().valid("1", "2").required(),
-        street: Joi.string().max(200).required(),
-        city: Joi.string().max(100).required(),
-        province: Joi.string().max(50).required(),
+        street: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(50).required(),
+        city: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(50).required(),
+        province: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(50).required(),
         lastCleaned: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
             .optional()
             .allow(""),
-        description: Joi.string().max(1000).optional().allow("")
+        description: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(1000).optional().allow("")
     });
 
     const deleteSchema = Joi.object({
@@ -70,6 +70,7 @@ module.exports = function (app) {
     app.put('/manage/storage', upload.single('photo'), async (req, res) => {
         const { storageId } = req.query;
         const { title, storageType, street, city, province, lastCleaned, description } = req.body;
+
         const { error } = storageSchema.validate({ title, storageType, street, city, province, lastCleaned, description });
         if (error) return res.status(400).json({ error: error.details.map(e => e.message) });
 

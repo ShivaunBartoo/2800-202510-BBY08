@@ -58,6 +58,7 @@ export async function initImageUploadPreview(trigger, input, previewContainer, p
     });
     
     const removeImageBtn = document.querySelector('.removeImageBtn');
+    console.log(removeImageBtn);
     if (removeImageBtn != null) {
         removeImageBtn.addEventListener('click', () => {
             input.value = ''; // clear file input
@@ -66,4 +67,10 @@ export async function initImageUploadPreview(trigger, input, previewContainer, p
             if (onSelect) onSelect(null); // optional: signal no image
         });
     }
+}
+
+export function displayError(msg) {
+    const errorDiv = document.getElementById("error");
+    errorDiv.textContent = msg;
+    errorDiv.style.display = "block";
 }

@@ -193,7 +193,7 @@ main {
 #confirmDeleteModal {
     position: fixed;
     z-index: 1001;
-    background-color: var(--blue-medium);
+    background-color: var(--blue-background);
     padding: 20px;
     border-radius: 12px;
     width: 300px;
@@ -210,5 +210,29 @@ main {
 
 #action-btn  {
     display:flex;
+    flex-direction: row;
     justify-content: space-around;
+    
+}
+#action-btn button {
+border-radius: 5px;
+padding: 5px 20px;
+border: none;
+}
+#btn-confirm-delete {
+    background-color: var(--pink-accent);
+    color: var(--pink-text);
+}
+
+#btn-cancel-delete {
+    background-color: var(--blue-accent);
+    color: var(--blue-dark);
+}
+
+.error-message {
+    color: var(--pink-accent);
+    margin: 10px;
+    display: none;
+    text-align: center;
+    font-size: 0.9rem ;
 }

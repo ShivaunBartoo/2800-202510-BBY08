@@ -1,4 +1,4 @@
-import { initImageUploadPreview } from './imageUploadUtil.js';
+import { initImageUploadPreview, displayError } from './imageUploadUtil.js';
 
 function expandReviews() {
 
@@ -111,7 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const result = await response.json();
-            alert(result.message);
+            displayError(result.message);
+            //alert(result.message);
         } catch (err) {
             console.error("Error submitting form:", err);
             alert("Submission failed.");
@@ -203,7 +204,6 @@ function toggleReplyForm(button) {
     const input = form.querySelector('.replycoverPhotoInput');
     const previewContainer = form.querySelector('.replyphotoPreview');
     const previewImage = form.querySelector('.replypreviewImage');
-    const removeBtn = form.querySelector('.replyremoveImageBtn');
 
     initImageUploadPreview(
         trigger,
@@ -214,15 +214,6 @@ function toggleReplyForm(button) {
             console.log('User selected file:', file);
         }
     );
-
-    // remove listener to avoid duplicate bindings
-    if (removeBtn) {
-        removeBtn.addEventListener("click", () => {
-            previewImage.src = "#";
-            previewContainer.style.display = "none";
-            input.value = ""; // clear input
-        });
-    }
 }
 
 async function submitReply(button) {
@@ -255,10 +246,8 @@ async function submitReply(button) {
         });
 
         if (res.ok) {
-
             reviewDiv.querySelector(".reply-form-container").style.display = "none";
             loadReviewCards();
-
         } else {
             alert("Failed to submit reply.");
         }

@@ -1,4 +1,4 @@
-import { initImageUploadPreview } from './imageUploadUtil.js';
+import { initImageUploadPreview, displayError } from './imageUploadUtil.js';
 
 const storageId = window.location.pathname.split("/")[2];
 
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (addReviewButton) {
             addReviewButton.disabled = true;
             addReviewButton.title = "Log in to add a review";
-            addReviewButton.classList.add("disabled"); 
+            addReviewButton.classList.add("disabled");
         }
     }
 });
@@ -111,6 +111,8 @@ async function submitReview() {
             closeModal("reviewModal");
             await getReviews();
         } else {
+            const data = await res.json();
+            displayError(data.error);
             alert("Failed to submit review. Please try again");
         }
     } catch (err) {
@@ -195,7 +197,6 @@ function toggleReplyForm(button) {
     const input = form.querySelector('.replycoverPhotoInput');
     const previewContainer = form.querySelector('.replyphotoPreview');
     const previewImage = form.querySelector('.replypreviewImage');
-    const removeBtn = form.querySelector('.replyremoveImageBtn');
 
     initImageUploadPreview(
         trigger,
@@ -205,16 +206,7 @@ function toggleReplyForm(button) {
         (file) => {
             console.log('User selected file:', file);
         }
-    );
-
-    // remove listener to avoid duplicate bindings
-    if (removeBtn) {
-        removeBtn.addEventListener("click", () => {
-            previewImage.src = "#";
-            previewContainer.style.display = "none";
-            input.value = ""; // clear input
-        });
-    }
+    );  
 }
 
 async function submitReply(button) {
@@ -255,6 +247,8 @@ async function submitReply(button) {
             reviewDiv.querySelector(".reply-form-container").style.display = "none";
             getReviews();
         } else {
+            const data = await res.json();
+            displayError(data.error);
             alert("Failed to submit reply.");
         }
     } catch (err) {
@@ -298,7 +292,7 @@ function closeModal(modalId) {
     }
 
     // Hide overlay if no other modals are visible
-   if (overlay) {
+    if (overlay) {
         // Check if any other modals are open
         const openModals = Array.from(document.querySelectorAll('[id$="Modal"]'))
             .filter(m => m.style.display === "block");

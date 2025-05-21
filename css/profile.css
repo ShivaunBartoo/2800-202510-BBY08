@@ -7,7 +7,7 @@ main {
     gap: 20px;
 }
 
-button {
+#infosec button {
     height: auto;
     width: auto;
     white-space: nowrap;
@@ -20,7 +20,7 @@ button {
     padding: 5px 10px;
 }
 
-button:hover {
+#infosec button:hover {
     background-color: var(--pink-dark);
     cursor: pointer;
 }
@@ -133,6 +133,8 @@ button:hover {
 .review {
     background-color: var(--blue-medium);
     margin-bottom: 20px;
+    position: relative;
+
 }
 
 #distance-filter-div {
@@ -169,40 +171,5 @@ button:hover {
 
 #create-new-storage .material-icons.add {
     margin-right: 5px;
-}
-
-.review {
-    position: relative;
-}
-
-
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-}
-
-#confirmDeleteModal {
-    position: fixed;
-    z-index: 1001;
-    background-color: var(--blue-medium);
-    padding: 20px;
-    border-radius: 12px;
-    width: 300px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-    display: none;
-    transform: translate(-50%, -50%);
-    top: 50%;
-    left: 50%;
-}
-
-.delete-modal {
-    text-align: center;
-}
-
-#action-btn  {
-    display:flex;
-    justify-content: space-around;
 }
 

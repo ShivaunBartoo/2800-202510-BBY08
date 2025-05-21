@@ -31,4 +31,5 @@ cloudinary.config({
     }
 }
 
+
 module.exports = { uploadPhotoCloud };

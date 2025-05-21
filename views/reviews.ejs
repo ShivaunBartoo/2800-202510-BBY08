@@ -2,10 +2,12 @@
     <%- include('partials/contents-tab', {selected: 'reviews' }) %>
 
         <!-- add review modal -->
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong"
+        <% if(session.authenticated){ %>
+        <button type="button" class="review-button" data-toggle="modal" data-target="#exampleModalLong"
             id="add-review-button">
             Add a review
         </button>
+        <% } %>
 
         <div id="reviewModal" class="modal">
             <form enctype="multipart/form-data">
@@ -15,18 +17,21 @@
                         <button type="button" class="btn-close close-modal-button" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                     </div>
-                    <div id="error" class="error-message"></div>
 
                     <div class="form-group">
-                        <label for="reviewTitle">Review Title</label>
+                        <label for="reviewTitle" class="required">Review Title</label>
                         <input type="text" id="reviewTitle" placeholder="Enter a title" />
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="reviewRating">Rating</label>
-                            <input id="reviewRating" type="number" name="rating" min="1" max="5"
-                                placeholder="Rating (1–5)" />
+                            <label class="required">Rating</label>
+                            <div id="reviewRating" class="rating-radio-group">
+                                <% for(let i = 0; i < 5; i++) { %>
+                                    <input type="radio" class="star-rating" id="rating-<%= i %>" name="rating" value="<%= 5 - i %>">
+                                    <label for="rating-<%= i %>">★</label>
+                                <% } %>
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -51,9 +56,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="reviewText">Your Review</label>
+                        <label for="reviewText"  class="required">Your Review</label>
                         <textarea id="reviewText" rows="4" placeholder="Write your review..."></textarea>
                     </div>
+                    <div id="error" class="error-message"></div>
 
                     <div class="modal-actions">
                         <button class="close-modal-button">Cancel</button>

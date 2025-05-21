@@ -1,3 +1,7 @@
+html {
+    scrollbar-gutter: stable;
+}
+
 #location-bar {
     height: 35px;
     width: 100vw;

@@ -2,7 +2,7 @@
     width: 90vw;
     max-width: 400px;
     position: absolute;
-    z-index: 10;
+    z-index: 1;
     top: 150px;
     left: 50%;
     transform: translateX(-50%);

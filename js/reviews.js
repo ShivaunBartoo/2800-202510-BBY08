@@ -1,4 +1,4 @@
-import { initImageUploadPreview, displayError } from './imageUploadUtil.js';
+import { initImageUploadPreview, displayError } from "./imageUploadUtil.js";
 
 const storageId = window.location.pathname.split("/")[2];
 
@@ -12,7 +12,6 @@ async function checkLoginStatus() {
         isLoggedIn = false;
     }
 }
-
 
 function expandReview(element) {
     const body = element.previousElementSibling;
@@ -52,17 +51,10 @@ function updateReadMoreButton() {
 document.addEventListener("DOMContentLoaded", async () => {
     await checkLoginStatus();
 
-
     //upload picture for review
-    initImageUploadPreview(
-        '.uploadTrigger',
-        '.coverPhotoInput',
-        '.photoPreview',
-        '.previewImage',
-        (file) => {
-            console.log('User selected file:', file);
-        }
-    );
+    initImageUploadPreview(".uploadTrigger", ".coverPhotoInput", ".photoPreview", ".previewImage", (file) => {
+        console.log("User selected file:", file);
+    });
     getReviews();
     registerEventListeners();
 
@@ -82,48 +74,74 @@ async function submitReview() {
         alert("Please log in to submit a review.");
         return;
     }
+    // document.querySelector("#submit-review-button").disabled = true;
     const storageId = window.location.pathname.split("/")[2];
 
-    const photoInput = document.querySelector('.coverPhotoInput').files[0];
+    const photoInput = document.querySelector(".coverPhotoInput").files[0];
+
+    let reviewTitle = document.getElementById("reviewTitle");
+    let reviewRating = document.querySelector('input[name="rating"]:checked');
+    let reviewText = document.getElementById("reviewText");
 
     const review = {
-        title: document.getElementById("reviewTitle").value.trim(),
-        body: document.getElementById("reviewText").value.trim(),
-        rating: parseInt(document.getElementById("reviewRating").value.trim(), 10),
+        title: reviewTitle.value.trim(),
+        body: reviewText.value.trim(),
+        rating: reviewRating ? parseInt(reviewRating.value, 10) : null,
     };
-    const formData = new FormData();
 
-    if (photoInput) {
-        formData.append('photo', photoInput);
+    let emptyField = false;
+    if (reviewTitle.value.trim() == "") {
+        reviewTitle.style.border = "solid #ac6872";
+        displayError("Highlighted fields cannot be empty.");
+        emptyField = true;
     }
-    formData.append("review", JSON.stringify(review));
 
+    if (!reviewRating) {
+        document.querySelector("#reviewRating").style.border = "solid #ac6872";
+        displayError("Highlighted fields cannot be empty.");
+        emptyField = true;
+    }
+    if (reviewText.value.trim() == "") {
+        reviewText.style.border = "solid #ac6872";
+        displayError("Highlighted fields cannot be empty.");
+        emptyField = true;
+    }
 
-    try {
-        console.log(storageId);
-        const res = await fetch(`/reviews/${storageId}`, {
-            method: "POST",
-            body: formData
-        });
+    if (!emptyField) {
+        const formData = new FormData();
 
-        if (res.ok) {
-            resetReviewForm();
-            closeModal("reviewModal");
-            await getReviews();
-        } else {
-            const data = await res.json();
-            displayError(data.error);
-            alert("Failed to submit review. Please try again");
+        if (photoInput) {
+            formData.append("photo", photoInput);
         }
-    } catch (err) {
-        console.log(err);
+        formData.append("review", JSON.stringify(review));
+
+        try {
+            console.log(storageId);
+            const res = await fetch(`/reviews/${storageId}`, {
+                method: "POST",
+                body: formData,
+            });
+
+            if (res.ok) {
+                resetReviewForm();
+                closeModal("reviewModal");
+                await getReviews();
+            } else {
+                const data = await res.json();
+                console.log(data);
+                displayError(data.error);
+            }
+        } catch (err) {
+            console.log(err);
+        }
     }
 }
 
 function resetReviewForm() {
     document.getElementById("reviewTitle").value = "";
     document.getElementById("reviewText").value = "";
-    document.getElementById("reviewRating").value = "";
+    // Uncheck all rating radio buttons
+    document.querySelectorAll('input[name="rating"]').forEach(radio => radio.checked = false);
 }
 
 async function getReviews() {
@@ -134,20 +152,18 @@ async function getReviews() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const reviews = await response.text();
-        document.getElementById('reviews-container').innerHTML = reviews;
+        document.getElementById("reviews-container").innerHTML = reviews;
     } catch (error) {
-        console.error('Error fetching reviews:', error);
-        document.getElementById('reviews-container').innerHTML =
-            '<p>Error loading reviews. Please try again later.</p>';
+        console.error("Error fetching reviews:", error);
+        document.getElementById("reviews-container").innerHTML =
+            "<p>Error loading reviews. Please try again later.</p>";
     }
 }
 let selectedCard = null;
 
 //replies
 function registerEventListeners() {
-
     document.addEventListener("click", (event) => {
-
         const executeOnMatch = (selector, callback) => {
             if (event.target.closest(selector)) {
                 callback(event.target);
@@ -180,8 +196,6 @@ function registerEventListeners() {
             deleteCard(selectedCard);
             closeModal("confirmDeleteModal");
         });
-
-
     });
 
     document.addEventListener("DOMContentLoaded", updateReadMoreButton);
@@ -189,24 +203,17 @@ function registerEventListeners() {
 }
 
 function toggleReplyForm(button) {
-
     const form = button.nextElementSibling;
     form.style.display = form.style.display == "none" ? "block" : "none";
 
-    const trigger = form.querySelector('.replyuploadTrigger');
-    const input = form.querySelector('.replycoverPhotoInput');
-    const previewContainer = form.querySelector('.replyphotoPreview');
-    const previewImage = form.querySelector('.replypreviewImage');
+    const trigger = form.querySelector(".replyuploadTrigger");
+    const input = form.querySelector(".replycoverPhotoInput");
+    const previewContainer = form.querySelector(".replyphotoPreview");
+    const previewImage = form.querySelector(".replypreviewImage");
 
-    initImageUploadPreview(
-        trigger,
-        input,
-        previewContainer,
-        previewImage,
-        (file) => {
-            console.log('User selected file:', file);
-        }
-    );  
+    initImageUploadPreview(trigger, input, previewContainer, previewImage, (file) => {
+        console.log("User selected file:", file);
+    });
 }
 
 async function submitReply(button) {
@@ -230,20 +237,19 @@ async function submitReply(button) {
         }
 
         const formData = new FormData();
-        formData.append('reviewId', reviewId);
-        formData.append('reply', replyText);
+        formData.append("reviewId", reviewId);
+        formData.append("reply", replyText);
 
         if (file) {
-            formData.append('photo', file);
+            formData.append("photo", file);
         }
 
         const res = await fetch(`/replies`, {
             method: "POST",
-            body: formData
+            body: formData,
         });
 
         if (res.ok) {
-
             reviewDiv.querySelector(".reply-form-container").style.display = "none";
             getReviews();
         } else {
@@ -254,7 +260,7 @@ async function submitReply(button) {
     } catch (err) {
         console.error("Submit Reply Error:", err);
     }
-};
+}
 
 function openModal(modalId) {
     if (!isLoggedIn) {
@@ -279,7 +285,6 @@ function openModal(modalId) {
     modal.style.left = "50%";
     modal.style.transform = "translate(-50%, -50%)";
 
-
     console.log(`Modal ${modalId} opened.`);
 }
 
@@ -294,8 +299,9 @@ function closeModal(modalId) {
     // Hide overlay if no other modals are visible
     if (overlay) {
         // Check if any other modals are open
-        const openModals = Array.from(document.querySelectorAll('[id$="Modal"]'))
-            .filter(m => m.style.display === "block");
+        const openModals = Array.from(document.querySelectorAll('[id$="Modal"]')).filter(
+            (m) => m.style.display === "block"
+        );
         if (openModals.length === 0) {
             overlay.style.display = "none";
             overlay.onclick = null;
@@ -310,15 +316,15 @@ function deleteCard(card) {
 
     fetch(isReply ? `/replies/${replyId}` : `/reviews/${reviewId}`, {
         method: "DELETE",
-    }).then(res => {
-        if (res.ok) {
-
-            card.remove();
-        } else {
-            alert("Failed to delete.");
-        }
-    }).catch(err => {
-        console.error("Delete failed:", err);
-    });
+    })
+        .then((res) => {
+            if (res.ok) {
+                card.remove();
+            } else {
+                alert("Failed to delete.");
+            }
+        })
+        .catch((err) => {
+            console.error("Delete failed:", err);
+        });
 }
-

@@ -3,11 +3,7 @@ const { classify } = require("./js/food-classify");
 const fs = require("fs");
 const pg = require("pg");
 const ejs = require("ejs");
-const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
-const express = require("express");
-const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage() });
 const Joi = require('joi');
 
 const notificationUtils = require('./notification-emails');
@@ -38,10 +34,13 @@ module.exports = function (app) {
             await client.connect();
 
             const storageResults = await client.query(`SELECT s.*,
-	        (select MAX(c."donatedAt") > (Now() - interval '24 hours')
-	        from public.content AS c
-	        where c."storageId" = s."storageId"
-	        ) AS restocked
+	        (SELECT MAX(c."donatedAt") > (Now() - interval '24 hours')
+	        FROM public.content AS c
+	        WHERE c."storageId" = s."storageId"
+	        ) AS restocked,
+			(SELECT AVG(r."rating")::numeric(10,1) 
+			FROM public.reviews AS r
+			Where r."storageId" = s."storageId")
             FROM public.storage AS s
             WHERE s."deletedDate" IS NULL`);
 
@@ -64,7 +63,6 @@ module.exports = function (app) {
                     const isFavourite = favoriteIds.includes(row.storageId);
 
                     if (radius !== null && !isFavourite && distance > radius) return null;
-
                     return ejs
                         .renderFile("views/partials/storage-card.ejs", {
                             row,
@@ -133,8 +131,10 @@ module.exports = function (app) {
 
     app.post("/api/donate", (req, res) => {
         let data = req.body;
+
         const itemSchema = Joi.object({
-            itemName: Joi.string().min(1).max(100).required()
+            itemName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required(),
+            quantity: Joi.string().number().integer().min(1).max(50).required()
         });
 
         // Validate itemName in each object
@@ -334,7 +334,7 @@ module.exports = function (app) {
                     return;
                 }
                 const points = results.rows.map(row => ({
-                    id: row.id,
+                    id: row.storageId,
                     name: row.title,
                     lat: parseFloat(row.coordinates.x),
                     lon: parseFloat(row.coordinates.y)

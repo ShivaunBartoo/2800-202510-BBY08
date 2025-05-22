@@ -173,3 +173,17 @@ main {
     margin-right: 5px;
 }
 
+input[type="text"].error-input {
+  border: 2px solid #ac6872;
+}
+input.error-input,
+textarea.error-input {
+  border: 2px solid #ac6872;
+}
+.error-message {
+    color: var(--pink-accent);
+    margin: 10px;
+    display: none;
+    text-align: center;
+    font-size: 0.9rem ;
+}

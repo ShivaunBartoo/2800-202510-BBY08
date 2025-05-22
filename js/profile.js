@@ -1,4 +1,28 @@
 import { initImageUploadPreview, displayError } from './imageUploadUtil.js';
+import { getUserLocation, getDistance } from "./userLocation.js";
+
+onPageStart()
+
+async function onPageStart() {
+
+    const currentUrl = new URL(window.location.href);
+    const lat = currentUrl.searchParams.get("lat");
+    const lon = currentUrl.searchParams.get("lon");
+
+    if (!lat || !lon) {
+
+        try {
+            const location = await getUserLocation();
+            const { lat, lon } = location;
+
+            window.location.href = `/profile?lat=${lat}&lon=${lon}`;
+
+        } catch (err) {
+            console.log("User denied locational access... continuing on without it")
+        }
+    }
+
+}
 
 function expandReviews() {
 
@@ -86,8 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('submit').addEventListener('click', async () => {
 
-        let newPassword = document.getElementById('newPassword').value;
-        let oldPassword = document.getElementById('oldPassword').value;
+        let newPassword = document.getElementById('newPassword').value.trim();
+        let oldPassword = document.getElementById('oldPassword').value.trim();
 
         const data = {
             firstName: document.getElementById('firstName').value.trim(),
@@ -96,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             notifications: document.getElementById('notifications').checked
         };
 
-        if (oldPassword && newPassword) {
+        if (oldPassword !== '' && newPassword !== '') {
             data.oldPassword = oldPassword;
             data.newPassword = newPassword;
         }
@@ -111,14 +135,31 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const result = await response.json();
-            displayError(result.message);
-            //alert(result.message);
+            if (result.error) {
+                displayError(result.error);
+                if (Array.isArray(result.fields)) {
+                    highlightErrorFields(result.fields);
+                }
+            } else {
+                showSuccess('Saved Change!!!');
+                togglePasswordFields();
+            }
+
         } catch (err) {
             console.error("Error submitting form:", err);
             alert("Submission failed.");
         }
     });
 });
+
+function showSuccess(message) {
+    const msgDiv = document.querySelector(".error-message"); // reuse same div
+    if (msgDiv) {
+        msgDiv.textContent = message;
+        msgDiv.style.display = "block";
+        msgDiv.style.color = "#142e4b";
+    }
+}
 
 async function getStorageCards() {
     const response = await fetch(`/ownedstorage`);
@@ -228,7 +269,11 @@ async function submitReply(button) {
         const file = fileInput.files[0];
 
         if (!replyText) {
-            alert("Reply cannot be empty.");
+            const errorDiv = form.querySelector(".reply-error-message");
+            if (errorDiv) {
+                errorDiv.textContent = "Reply cannot be empty.";
+                errorDiv.style.display = "block";
+            }
             return;
         }
 
@@ -275,7 +320,7 @@ function openModal(modalId) {
     modal.style.top = "50%";
     modal.style.left = "50%";
     modal.style.transform = "translate(-50%, -50%)";
-    
+
 
     console.log(`Modal ${modalId} opened.`);
 }

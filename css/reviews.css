@@ -1,5 +1,4 @@
 main {
-    overflow: scroll;
     display: flex;
     gap: 15px;
     flex-direction: column;
@@ -32,6 +31,7 @@ main {
     justify-content: center;
     align-items: center;
 }
+
 .review-header-avatar {
     height: 70%;
     border-radius: 50%;
@@ -42,6 +42,7 @@ main {
     font-weight: bold;
     color: var(--pink-text);
 }
+
 .review-header-date {
     font-weight: light;
     color: var(--pink-dark);
@@ -68,6 +69,7 @@ main {
     margin-right: -4px;
     color: var(--pink-accent);
 }
+
 .unfilled {
     color: var(--blue-medium);
 }
@@ -113,6 +115,7 @@ main {
     color: var(--blue-accent);
     cursor: pointer;
 }
+
 .reply {
     border-left: 1px solid black;
     margin-top: 10px;
@@ -121,11 +124,13 @@ main {
 }
 
 #reviews-container {
+    height: 100%;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
+    overflow: scroll;
 }
 
 .reply-text {
@@ -144,43 +149,43 @@ main {
 }
 
 .image-wrapper {
-  position: relative;
-  display: inline-block;
-  max-width: 100px;
-  max-height: 100px;
+    position: relative;
+    display: inline-block;
+    max-width: 100px;
+    max-height: 100px;
 }
 
 .replypreviewImage {
-  max-width: 100px;
-  max-height: 100px;
-  border-radius: 4px;
-  display: block;
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 4px;
+    display: block;
 }
 
 .removeImageBtn {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  background-color: #ccc;
-  border: none;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  font-size: 12px;
-  font-weight: bold;
-  color: #333;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
-  z-index: 10;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: #ccc;
+    border: none;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+    z-index: 10;
 }
 
 .removeImageBtn:hover {
-  background-color: #999;
-  color: white;
+    background-color: #999;
+    color: white;
 }
 
 .modal-overlay {
@@ -208,17 +213,18 @@ main {
     text-align: center;
 }
 
-#action-btn  {
-    display:flex;
+#action-btn {
+    display: flex;
     flex-direction: row;
     justify-content: space-around;
-    
 }
+
 #action-btn button {
-border-radius: 5px;
-padding: 5px 20px;
-border: none;
+    border-radius: 5px;
+    padding: 5px 20px;
+    border: none;
 }
+
 #btn-confirm-delete {
     background-color: var(--pink-accent);
     color: var(--pink-text);
@@ -234,5 +240,68 @@ border: none;
     margin: 10px;
     display: none;
     text-align: center;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.review-button {
+    border: none;
+    background-color: var(--blue-text);
+    color: var(--blue-light);
+    border-radius: 15px;
+    width: 200px;
+    height: 30px;
+    margin: 0 auto;
+}
+
+.review-button:hover {
+    filter: brightness(1.1);
+}
+
+#reviewRating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    align-items: first baseline;
+    gap: 2px;
+    height: 75px;
+}
+
+#reviewRating input[type="radio"] {
+    display: none;
+}
+
+#reviewRating label {
+    font-size: 2em;
+    color: var(--blue-medium);
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 0 2px;
+}
+
+#reviewRating input[type="radio"]:checked~label,
+#reviewRating label:hover,
+#reviewRating label:hover~label {
+    color: var(--pink-accent);
+}
+
+input[type="text"].error-input {
+  border: 2px solid #ac6872;
+}
+input.error-input,
+textarea.error-input {
+  border: 2px solid #ac6872;
+}
+.error-message {
+    color: var(--pink-accent);
+    margin: 10px;
+    display: none;
+    text-align: center;
     font-size: 0.9rem ;
+}
+
+.reply-error-message {
+    color: var(--pink-accent); 
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

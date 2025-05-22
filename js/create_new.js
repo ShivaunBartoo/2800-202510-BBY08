@@ -1,4 +1,4 @@
-import { initImageUploadPreview, displayError } from './imageUploadUtil.js';
+import { initImageUploadPreview, displayError, highlightErrorFields } from './imageUploadUtil.js';
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('newStorageForm').addEventListener('submit', (e) => {
         e.preventDefault();
+
+
         const form = e.target;
         const coverPhotoInput = document.querySelector('.coverPhotoInput');
 
@@ -35,12 +37,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 const data = await res.json();
 
                 if (!res.ok) {
-                    
-                    displayError(data.error);  
-                    throw new Error(data.error);     
+
+                    displayError(data.error);
+
+                    console.log(data.fields);
+                    if (Array.isArray(data.fields)) {
+                        highlightErrorFields(data.fields);
+                    }
+
+                    throw new Error(data.error);
                 }
 
-                alert('Storage created in database');
                 window.location.href = '/profile';
             })
             .catch(error => {
@@ -48,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 });
+
 
 function registerEventListeners() {
 

@@ -187,6 +187,7 @@ async function makeMap() {
 
     points.forEach(point => {
         const marker = new google.maps.marker.AdvancedMarkerElement({
+            id: point.id,
             position: { lat: point.lat, lng: point.lon },
             map: embed,
             title: point.name || "Fridge"
@@ -195,7 +196,7 @@ async function makeMap() {
         marker.addEventListener('click', () => {
             console.log(point.name)
             storageCard.setContent(`<div class="storageCard">
-            <strong>${point.name}</strong>
+            <a href="/contents/${point.id}"> <strong>${point.name}</strong> </a>
             <a href=https://www.google.com/maps?q=${point.lat},${point.lon}> Directions </a>
             </div>
 `);
@@ -212,11 +213,13 @@ async function makeMap() {
 document.addEventListener("DOMContentLoaded", () => {
     const toggleBtn = document.getElementById("toggleMap");
     const mapContainer = document.getElementById("mapContainer");
+    const cardContainer = document.getElementById("main-card-container")
 
     toggleBtn.addEventListener("click", () => {
         const isHidden = mapContainer.style.display === "none";
+        
         mapContainer.style.display = isHidden ? "block" : "none";
-
+        cardContainer.style.display = isHidden ? "none" : "flex";
         if (isHidden && !mapexist) {
             makeMap();
             mapexist = true;

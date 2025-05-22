@@ -41,15 +41,15 @@
                             <div class="address-field">
 
                                 <label for="street">Street:</label>
-                                <input type="text" id="street" value="<%= storage.street || ''%>" disabled />
+                                <input type="text" name="street" id="street" value="<%= storage.street || ''%>" disabled />
                             </div>
                             <div class="address-field">
                                 <label for="city">City:</label>
-                                <input type="text" id="city" value="<%= storage.city || ''%>" disabled />
+                                <input type="text" name="city" id="city" value="<%= storage.city || ''%>" disabled />
                             </div>
                             <div class="address-field">
                                 <label for="province">Province:</label>
-                                <input type="text" id="province" value="<%= storage.province || ''%>" disabled />
+                                <input type="text" name="province" id="province" value="<%= storage.province || ''%>" disabled />
 
                             </div>
                         </div>
@@ -97,19 +97,19 @@
                     <label>Description:</label>
 
                     <div class="field-group">
-                        <input type="text" id="description" value="<%= storage.description %>" disabled />
+                        <input type="text" name= "description" id="description" value="<%= storage.description %>" disabled />
                         <button class="edit-btn">
                             <span class="material-icons" class="edit-icon" id="description-btn">edit</span></button>
                     </div>
                 </div>
 
+            <div id="error" class="error-message"></div>
 
                 <div class="actions">
                     <button class="man-delete-btn">Delete</button>
                     <button class="man-save-btn" type="submit">Save</button>
                 </div>
             </form>
-
         </div>
 
     <div class="spacer"></div>

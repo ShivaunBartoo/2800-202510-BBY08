@@ -1,6 +1,9 @@
 body {
-    font-size: 16pt;
     color: var(--blue-dark);
+}
+
+main {
+    font-size: 16pt;
 }
 
 h1 {
@@ -8,8 +11,14 @@ h1 {
     margin-bottom: 30px;
 }
 
-li {
+.yes-bullet::marker {
     list-style: none;
+    content: "✔ ";
+}
+
+.no-bullet::marker {
+    list-style: none;
+    content: "✘ ";
 }
 
 .section {
@@ -45,7 +54,8 @@ li {
 .section.open .section-content {
     padding: 15px 20px;
     opacity: 1;
-    max-height: 1000px; /* adjust as needed */
+    max-height: 1000px;
+    /* adjust as needed */
 }
 
 .material-icons {
@@ -56,4 +66,3 @@ li {
     transform: rotate(180deg);
     transition: transform 0.3s ease;
 }
-

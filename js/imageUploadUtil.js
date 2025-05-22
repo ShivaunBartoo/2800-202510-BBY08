@@ -69,3 +69,20 @@ export function displayError(msg) {
     errorDiv.textContent = msg;
     errorDiv.style.display = "block";
 }
+
+export function highlightErrorFields(fields) {
+    // Clear previous error styles
+    document.querySelectorAll('.error-input').forEach(el => {
+        el.classList.remove('error-input');
+    });
+
+    fields.forEach(field => {
+        // Try select by name
+        const input = document.querySelector(`[name="${field}"]`);
+        if (input) {
+            input.classList.add('error-input');
+        } else {
+            console.warn(`Field "${field}" not found in form`);
+        }
+    });
+}

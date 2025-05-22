@@ -8,11 +8,12 @@
     </div>
 </section>
 
-<%- include('partials/mapPop') %>
+
 
 <div class="top-pick-title">Top Pick Near You!</div>
 
 <section id="hero-card-container" class="card-container">
+    <div class="loader" id="page-loader"></div>
 </section>
 
 <section id="filters">
@@ -31,6 +32,7 @@
 </section>
 <section id="main-card-container" class="card-container">
 </section>
+<%- include('partials/mapPop') %>
 <div class="spacer"></div>
 <script src="https://maps.googleapis.com/maps/api/js?key=<%= apiKey %>&libraries=marker"></script>
 <script type="module" src="../js/browse.js"></script>

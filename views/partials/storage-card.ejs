@@ -19,7 +19,12 @@
                 <div class="card-storage-type">community pantry</div>
                 <% } %>
                 <span class="card-rating-container">
-                    <span class="card-rating">4.5/5</span>
+                    
+                        <% if (row.avg) { %>
+                        <span class="card-rating"><%= row.avg %>/5</span>
+                        <% } else { %>
+                            <span class="card-rating">-/5</span>
+                            <% } %>
                     <span class="card-rating-icon material-icons">star</span>
                 </span>
             </div>

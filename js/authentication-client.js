@@ -4,7 +4,8 @@ function ajaxPOST(url, callback, data) {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             callback(this.responseText);
         } else {
-            showError("Invalid username or password.");
+            let parsedRes = JSON.parse(this.response)
+            showError(parsedRes.msg);
         }
     };
     xhr.open("POST", url);
@@ -43,7 +44,7 @@ document.querySelector("#login-submit")?.addEventListener("click", function (e) 
                 if (data) {
                     let dataParsed = JSON.parse(data);
                     if (dataParsed.status == "fail") {
-                        alert(dataParsed.msg);
+                        showError(dataParsed.msg);
                         return;
                     } else {
                         window.location.replace("/browse");

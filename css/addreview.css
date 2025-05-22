@@ -3,7 +3,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100% !important;
     height: 100%;
     display: flex;
     justify-content: center;
@@ -12,16 +12,24 @@
     z-index: 9999;
 }
 
+.modal > form {
+    width: 90% !important;
+    max-height: 90% !important;
+    overflow: scroll;
+    margin: 0 auto;
+    max-width: 1000px;
+}
+
 /* Modal box */
 .modal-content {
     background: #fff;
     padding: 1.5em;
     border-radius: 8px;
-    width: 95vw;
     font-size: 18pt;
     box-sizing: border-box;
     overflow-x: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 100% !important;
 }
 
 /* Header */

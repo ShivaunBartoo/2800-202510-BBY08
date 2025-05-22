@@ -1,6 +1,9 @@
 body {
-    font-size: 16pt;
     color: var(--blue-dark);
+}
+
+main {
+    font-size: 16pt;
 }
 
 h1 {

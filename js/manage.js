@@ -140,7 +140,6 @@ async function softDeleteStorage(storageId) {
         });
 
         if (response.ok) {
-            alert('Storage archived successfully!');
             window.location.href = '/browse';
         } else {
             throw new Error('Failed to archive storage');

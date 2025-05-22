@@ -3,11 +3,7 @@ const { classify } = require("./js/food-classify");
 const fs = require("fs");
 const pg = require("pg");
 const ejs = require("ejs");
-const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
-const express = require("express");
-const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage() });
 const Joi = require('joi');
 
 const notificationUtils = require('./notification-emails');

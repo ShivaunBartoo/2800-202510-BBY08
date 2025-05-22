@@ -98,7 +98,7 @@ main {
 }
 
 #contents>table {
-    width: 90%;
+    min-width: 60%;
     border-collapse: collapse;
     margin: 0 auto;
     font-size: 1.1em;
@@ -110,6 +110,10 @@ tr {
     text-align: left;
     height: 2em;
     border-bottom: 1px solid var(--blue-medium);
+}
+
+tr > :last-child {
+    text-align: right !important;
 }
 
 #buttons {

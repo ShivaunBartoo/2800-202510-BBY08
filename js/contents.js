@@ -135,6 +135,11 @@ document.querySelector("#addItem").addEventListener("click", function (e) {
         return;
     }
 
+    if (qty.value % 1 != 0) {
+        showError("Item quantity cannot be fractional.");
+        return;
+    }
+
     if (bbdDate == `Invalid Date` || bbdDate < today) {
         showError("Best Before Date cannot be expired.");
         return;
@@ -254,19 +259,32 @@ document.querySelector("#take-confirm").addEventListener("click", async function
     document.querySelector("#take-confirm").disabled = true;
     let error = false;
     qtyList.forEach((item) => {
-        let subQty = parseInt(document.querySelector(`[data-itemid~="${item.id}"]`).value);
-        let newQty = item.qty - subQty;
-        if (newQty < 0) {
-            document.querySelector(`[data-itemid~="${item.id}"]`).style.backgroundColor = "#ac6872";
+        let subQty = parseFloat(document.querySelector(`[data-itemid~="${item.id}"]`).value);
+        if (subQty < 0) {
+            document.querySelector(`[data-itemid~="${item.id}"]`).style.border = `1px solid var(--pink-accent)`;
             document.getElementById("take-error").classList.remove("hidden");
             error = true;
             return;
         }
+        if (subQty % 1 !== 0) {
+            document.querySelector(`[data-itemid~="${item.id}"]`).style.border = `1px solid var(--pink-accent)`;
+            document.getElementById("decimal-error").classList.remove("hidden");
+            error = true;
+            return;
+        }
+        let newQty = item.qty - subQty;
+        if (newQty < 0) {
+            newQty = 0;
+        }
         item["qty"] = newQty;
     });
     if (error) {
+        console.log("trigger");
+        document.querySelector("#take-confirm").disabled = false;
         return;
     }
+
+    document.querySelector('#take-confirm').innerHTML = `<div id="take-loader"></div>`;
 
     const response = await fetch("/api/take", {
         method: "POST",
@@ -278,6 +296,7 @@ document.querySelector("#take-confirm").addEventListener("click", async function
 
     if (response.status == 200) {
         document.querySelector("#take-confirm").disabled = false;
+        document.querySelector('#take-confirm').innerHTML = `Confirm`;
         window.location = window.location;
     } else {
         console.log("An error has occurred!");

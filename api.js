@@ -136,8 +136,10 @@ module.exports = function (app) {
 
     app.post("/api/donate", (req, res) => {
         let data = req.body;
+
         const itemSchema = Joi.object({
-            itemName: Joi.string().min(1).max(100).required()
+            itemName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required(),
+            quantity: Joi.string().number().integer().min(1).max(50).required()
         });
 
         // Validate itemName in each object

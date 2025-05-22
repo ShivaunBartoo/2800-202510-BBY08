@@ -47,8 +47,6 @@
     border: none;
     cursor: pointer;
     width: 100%;
-    margin-top: 10px;
-    margin-bottom: 5px;
     opacity: 0.8;
 }
 .form-container input[type="button"]:hover {
@@ -70,6 +68,16 @@
     filter: brightness(1.2);
 }
 
+.login-button-container{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.loader{
+    height: 50px;
+    --c: no-repeat linear-gradient(var(--pink-accent) 0 0);
+}
 
 .hidden {
     display: none;

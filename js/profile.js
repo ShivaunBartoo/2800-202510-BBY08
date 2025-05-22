@@ -302,7 +302,7 @@ const submitBtn = document.querySelector(".submit-reply");
 
     } catch (err) {
         console.error("Submit Reply Error:", err);
-            submitBtn.disabled = true;
+            submitBtn.disabled = false;
 
     }
 }

@@ -1,4 +1,3 @@
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <%- include('partials/header') %>
     <%- include('partials/contents-tab', {selected: 'contents' }) %>
         <div id="main-contents">
@@ -23,7 +22,8 @@
                     </tr>
                 </table>
             </div>
-            <span id="take-error" class="hidden">Uh oh! You cannot take more than the available quantity.</span>
+            <span id="take-error" class="hidden">You cannot take a negative amount of items.</span>
+            <span id="decimal-error" class="hidden">You cannot take a fractional amount of items.</span>
             <span id="distance-error" class="hidden">You must be within 2km of this location to donate or take items.
             </span>
             <span id="bot-checking" class="hidden">Checking for bot attacks - Hang tight!
@@ -32,7 +32,6 @@
                 <button name="donate-item" value="donate-item" id="open-modal" class="contents-btns">Donate</button>
                 <button name="take-item" id="take" value="take-item">
                     <span id="take-text"> Take </span>
-                    <span class="nuthaloader take-hidden"></span>
                 </button>
                 <button name="take-cancel" value="take-cancel" id="take-cancel" class="hidden"
                     style="background-color: var(--blue-accent); color: var(--blue-dark) ">Cancel</button>
@@ -91,8 +90,6 @@
                                 </tr>
                             </table>
                         </div>
-                        <span id="bot-checking-donate" class="hidden">Checking for bot attacks - Hang tight!
-                            </span>
                         <div class="modal-actions">
                             <button id="modal-cancel">Cancel</button>
                             <button id="donate-btn" disabled>

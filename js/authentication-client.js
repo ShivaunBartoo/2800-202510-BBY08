@@ -34,10 +34,10 @@ document.querySelector("#login-submit")?.addEventListener("click", function (e) 
         showError("Highlighted fields cannot be empty.");
     }
     if (email.value && password.value) {
+        document.querySelector(".loader").classList.remove("hidden");
         const vars = { email: email.value, password: password.value };
         let data = btoa(JSON.stringify(vars));
         let body = "data=" + data;
-
         ajaxPOST(
             "/loggingIn",
             function (data) {
@@ -105,6 +105,7 @@ document.querySelector("#create-submit")?.addEventListener("click", function (e)
         var password = pword.value;
     }
     if (!error) {
+        document.querySelector(".loader").classList.remove("hidden");
         const vars = { firstName: firstName.value, lastName: lastName.value, email: email.value, password: password };
         let data = btoa(JSON.stringify(vars));
         let body = "data=" + data;

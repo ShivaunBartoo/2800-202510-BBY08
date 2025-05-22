@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         } catch (err) {
             console.error('Save error:', err);
-            submitBtn.disabled = true;
+            submitBtn.disabled = false;
 
         }
     });

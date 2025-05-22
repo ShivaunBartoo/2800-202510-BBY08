@@ -63,9 +63,6 @@ module.exports = function (app) {
                     const isFavourite = favoriteIds.includes(row.storageId);
 
                     if (radius !== null && !isFavourite && distance > radius) return null;
-
-                    console.log("session:" + req.session.isAuthenticated);
-
                     return ejs
                         .renderFile("views/partials/storage-card.ejs", {
                             row,

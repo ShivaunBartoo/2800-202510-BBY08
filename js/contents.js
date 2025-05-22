@@ -3,6 +3,8 @@ import { getUserLocation, getDistance } from "./userLocation.js";
 const itemsToDonate = [];
 const storageId = window.location.pathname.split("/")[2];
 
+let disabled = true;
+
 function initialize() {
     checkDistance();
     loadRows();
@@ -31,10 +33,12 @@ async function checkDistance() {
     document.getElementById("distance").innerHTML = `${distance}km Away`;
 
     if (distance > 7) {
+        disabled = true;
         document.querySelector("#open-modal").disabled = true;
         document.querySelector("#take").disabled = true;
         document.querySelector("#distance-error").classList.remove("hidden");
     } else {
+        disabled = false;
         document.getElementById("distance-error").classList.add("hidden");
     }
 }
@@ -71,6 +75,9 @@ function ajaxPOST(url, callback, data) {
 }
 
 document.querySelector("#open-modal").addEventListener("click", function (e) {
+    if (disabled) {
+        return;
+    }
     document.getElementById("contentsmodal").style.display = "flex";
 });
 
@@ -162,7 +169,7 @@ closebtn.disabled = false;
 
 document.querySelector("#donate-btn").addEventListener("click", function (e) {
     document.querySelector("#donate-btn").disabled = true;
-     donateHandler(); 
+    donateHandler();
     e.preventDefault();
     closebtn.disabled = true;
 });
@@ -170,9 +177,13 @@ document.querySelector("#donate-btn").addEventListener("click", function (e) {
 
 function donateHandler() {
 
+    if (disabled) {
+        return;
+    }
+
     console.log("donate button clicked");
     let items = JSON.stringify(itemsToDonate);
-    console.log("items: ",items);
+    console.log("items: ", items);
     ajaxPOST(
         `/api/donate`,
         function (data) {
@@ -196,7 +207,7 @@ function donateHandler() {
         items
     );
     closebtn.disabled = false;
-} 
+}
 
 
 var qtyList = [];
@@ -205,6 +216,9 @@ document.querySelector("#take").addEventListener("click", function takeMode() {
 });
 
 function takeHandler() {
+    if (disabled) {
+        return;
+    }
     let elements = document.getElementsByClassName("item-quantity");
     let quantities = Array.from(elements);
     quantities.forEach((qty) => {

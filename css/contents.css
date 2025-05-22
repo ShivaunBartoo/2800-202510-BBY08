@@ -175,12 +175,7 @@ tr {
     margin-left: 0.3em;
 }
 
-#donate-errors {
-    color: red;
-    text-align: center;
-}
-
-#distance-error, #take-error {
+#distance-error, #take-error, #add-item-error {
     display: flex;
     justify-self: center;
     padding: 0.5em;

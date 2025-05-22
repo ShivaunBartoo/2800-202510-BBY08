@@ -94,25 +94,42 @@ function resetValues() {
 document.querySelector("#modal-cancel").addEventListener("click", function (e) {
     resetValues();
     document.getElementById("contentsmodal").style.display = "none";
-    document.getElementById("donate-errors").classList.add("hidden");
+    document.getElementById("add-item-error").classList.add("hidden");
 });
 
 document.querySelector("#close-modal").addEventListener("click", function (e) {
+    document.getElementById("add-item-error").classList.add("hidden");
     resetValues();
     document.getElementById("contentsmodal").style.display = "none";
 });
 
+function showError(message) {
+    const element = document.getElementById("add-item-error");
+    element.classList.remove("hidden");
+    element.innerHTML = message;
+}
+
 document.querySelector("#addItem").addEventListener("click", function (e) {
-    document.getElementById("donate-errors").classList.add("hidden");
+    document.getElementById("add-item-error").classList.add("hidden");
     let name = document.getElementById("itemName");
     let qty = document.getElementById("qty");
     let bbd = document.getElementById("bbd");
-
+    console.log("qty", qty.value);
     let today = new Date().setHours(0, 0, 0);
     let bbdDate = new Date(bbd.value);
     let aiRejected = document.getElementById("ai-good").classList.contains("hidden");
-    if (aiRejected || name.value == "" || qty.value == 0 || bbdDate == `Invalid Date` || bbdDate < today) {
-        document.getElementById("donate-errors").classList.remove("hidden");
+    if (aiRejected || name.value == "") {
+        showError("Item Name cannot be empty and must be recognized as food.");
+        return;
+    }
+
+    if (1 > qty.value || qty.value > 50) {
+        showError("Item quantity must be between 1 and 50.");
+        return;
+    }
+
+    if (bbdDate == `Invalid Date` || bbdDate < today) {
+        showError("Best Before Date cannot be expired.");
         return;
     }
 
@@ -159,16 +176,16 @@ const closebtn = document.querySelector("#close-modal");
 closebtn.disabled = false
 document.querySelector("#donate-btn").addEventListener("click", function (e) { // add cloudflare
     document.querySelector("#bot-checking-donate").classList.remove("hidden");
-    
+
     e.preventDefault();
-    
+
     //assigns currentAction as donate
     currentAction = "donate"
 
     const ploader = document.querySelector(".persoloader")
 
     closebtn.disabled = true;
-    
+
 
     ploader.classList.remove("donate-hidden");
 
@@ -228,7 +245,7 @@ function donateHandler() {
                     while (2 <= table.rows.length) {
                         table.deleteRow(1);
                     }
-                    
+
                     loadRows();
                     resetValues();
                     document.getElementById("contentsmodal").style.display = "none";

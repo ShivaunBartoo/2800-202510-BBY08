@@ -305,3 +305,19 @@ textarea.error-input {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+.submit-reply {
+    border: none;
+    background: none;
+    color: var(--pink-dark);
+    font-style: italic;
+}
+
+.upload-btn {
+    background: lightgray;
+    opacity: 0.5;
+    text-align: center;
+    border-radius: 7px;
+    border: none;
+    margin: 5px;
+}

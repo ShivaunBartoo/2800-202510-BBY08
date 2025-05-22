@@ -44,7 +44,7 @@ document.querySelector("#login-submit")?.addEventListener("click", function (e) 
                 if (data) {
                     let dataParsed = JSON.parse(data);
                     if (dataParsed.status == "fail") {
-                        alert(dataParsed.msg);
+                        showError(dataParsed.msg);
                         return;
                     } else {
                         window.location.replace("/browse");

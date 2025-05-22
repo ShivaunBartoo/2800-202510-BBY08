@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     throw new Error(data.error);
                 }
 
-                alert('Storage created in database');
                 window.location.href = '/profile';
             })
             .catch(error => {

@@ -68,6 +68,8 @@ module.exports = function (app) {
 
                     if (radius !== null && !isFavourite && distance > radius) return null;
 
+                    console.log("session:" + req.session.isAuthenticated);
+
                     return ejs
                         .renderFile("views/partials/storage-card.ejs", {
                             row,

@@ -1,4 +1,28 @@
 import { initImageUploadPreview, displayError } from './imageUploadUtil.js';
+import { getUserLocation, getDistance } from "./userLocation.js";
+
+onPageStart()
+
+async function onPageStart() {
+
+const currentUrl = new URL(window.location.href);
+    const lat = currentUrl.searchParams.get("lat");
+    const lon = currentUrl.searchParams.get("lon");
+
+    if (!lat || !lon) {
+
+        try {
+        const location = await getUserLocation();
+        const { lat, lon } = location;
+
+        window.location.href = `/profile?lat=${lat}&lon=${lon}`;
+        
+        } catch(err) {
+            console.log("User denied locational access... continuing on without it")
+        }
+    }
+
+}
 
 function expandReviews() {
 

@@ -41,7 +41,10 @@ module.exports = function (app) {
         const { error, value } = updateProfileSchema.validate(req.body);
 
         if (error) {
-            return res.status(400).json({ message: error.details[0].message });
+            return res.status(400).json({ 
+                error: error.details.map(e => e.message),
+            fields: error.details.map(e => e.context.key)
+            });
         }
         const userId = req.session.userId;
         const { firstName, lastName, email, oldPassword, newPassword, notifications } = value;

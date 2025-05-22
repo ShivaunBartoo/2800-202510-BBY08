@@ -283,3 +283,24 @@ main {
 #reviewRating label:hover~label {
     color: var(--pink-accent);
 }
+
+input[type="text"].error-input {
+  border: 2px solid #ac6872;
+}
+input.error-input,
+textarea.error-input {
+  border: 2px solid #ac6872;
+}
+.error-message {
+    color: var(--pink-accent);
+    margin: 10px;
+    display: none;
+    text-align: center;
+    font-size: 0.9rem ;
+}
+
+.reply-error-message {
+    color: var(--pink-accent); 
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

@@ -1,4 +1,4 @@
-import { initImageUploadPreview, displayError } from "./imageUploadUtil.js";
+import { initImageUploadPreview, displayError, highlightErrorFields } from "./imageUploadUtil.js";
 
 const storageId = window.location.pathname.split("/")[2];
 
@@ -134,6 +134,10 @@ async function submitReview() {
                 const data = await res.json();
                 console.log(data);
                 displayError(data.error);
+
+                if (Array.isArray(data.fields)) {
+                    highlightErrorFields(data.fields);
+                }
             }
         } catch (err) {
             console.log(err);
@@ -236,9 +240,14 @@ async function submitReply(button) {
         const file = fileInput.files[0];
 
         if (!replyText) {
-            alert("Reply cannot be empty.");
+            const errorDiv = form.querySelector(".reply-error-message");
+            if (errorDiv) {
+                errorDiv.textContent = "Reply cannot be empty.";
+                errorDiv.style.display = "block";
+            }
             return;
         }
+      
 
         const formData = new FormData();
         formData.append("reviewId", reviewId);

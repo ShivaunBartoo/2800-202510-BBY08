@@ -1,4 +1,4 @@
-import { initImageUploadPreview, displayError } from './imageUploadUtil.js';
+import { initImageUploadPreview, displayError, highlightErrorFields } from './imageUploadUtil.js';
 
 function expandReviews() {
 
@@ -111,14 +111,29 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const result = await response.json();
-            displayError(result.message);
-            //alert(result.message);
+            if (result.error) {
+                displayError(result.error);
+                if (Array.isArray(result.fields)) {
+                    highlightErrorFields(result.fields);
+                }
+            }
+            showSuccess('Saved Change!!!');
+            togglePasswordFields();
         } catch (err) {
             console.error("Error submitting form:", err);
             alert("Submission failed.");
         }
     });
 });
+
+function showSuccess(message) {
+    const msgDiv = document.querySelector(".error-message"); // reuse same div
+    if (msgDiv) {
+        msgDiv.textContent = message;
+        msgDiv.style.display = "block";
+        msgDiv.style.color = "#142e4b";
+    }
+}
 
 async function getStorageCards() {
     const response = await fetch(`/ownedstorage`);
@@ -228,7 +243,11 @@ async function submitReply(button) {
         const file = fileInput.files[0];
 
         if (!replyText) {
-            alert("Reply cannot be empty.");
+            const errorDiv = form.querySelector(".reply-error-message");
+            if (errorDiv) {
+                errorDiv.textContent = "Reply cannot be empty.";
+                errorDiv.style.display = "block";
+            }
             return;
         }
 
@@ -275,7 +294,7 @@ function openModal(modalId) {
     modal.style.top = "50%";
     modal.style.left = "50%";
     modal.style.transform = "translate(-50%, -50%)";
-    
+
 
     console.log(`Modal ${modalId} opened.`);
 }

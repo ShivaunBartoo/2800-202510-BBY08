@@ -51,7 +51,10 @@ module.exports = function (app) {
 
         const { error } = reviewSchema.validate({ title, body, rating });
         if (error) {
-            return res.status(400).json({ error: error.details[0].message });
+            return res.status(400).json({
+                error: error.details.map(e => e.message),
+            fields: error.details.map(e => e.context.key) 
+        });
         }
 
         const client = new pg.Client(config);

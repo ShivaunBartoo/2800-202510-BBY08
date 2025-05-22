@@ -36,7 +36,6 @@ async function initialize() {
 
     await loadCards();
     setupFilterButtons();
-    document.querySelector("#page-loader").classList.add("hidden");
 }
 
 function setupFilterButtons() {

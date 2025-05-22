@@ -338,7 +338,9 @@ require('./review_reply')(app);
 
 // Page not found
 app.use(function (req, res, next) {
-    res.status(404).render("404");
+    res.status(404).render("404", {
+            stylesheets: ["404.css"]
+    });
 });
 
 app.listen(port, () => {

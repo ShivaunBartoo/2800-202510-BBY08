@@ -29,8 +29,8 @@ async function isOwner(req, res, next) {
 module.exports = function (app) {
 
     const updateProfileSchema = Joi.object({
-        firstName: Joi.string().min(1).max(100).required(),
-        lastName: Joi.string().min(1).max(100).required(),
+        firstName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required(),
+        lastName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required(),
         email: Joi.string().email().required(),
         oldPassword: Joi.string().min(4).optional().allow(''),
         newPassword: Joi.string().min(4).optional().allow(''),
@@ -103,7 +103,7 @@ module.exports = function (app) {
             const renderedCards = await Promise.all(
                 ownedResult.rows.map((row) => {
 
-                    return ejs.renderFile("views/partials/storage-card.ejs", { row });
+                    return ejs.renderFile("views/partials/storage-card.ejs", { row, isAuthenticated: req.session.authenticated, });
                 })
             );
             

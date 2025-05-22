@@ -131,27 +131,6 @@ module.exports = function (app) {
 
     app.post("/api/donate", (req, res) => {
         let data = req.body;
-
-        const itemSchema = Joi.object({
-            itemName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required(),
-            quantity: Joi.number().integer().min(1).max(50).required()
-        });
-
-        // Validate itemName in each object
-        const validationErrors = data
-            .map((item, index) => {
-                const { error } = itemSchema.validate({ itemName: item.itemName }, { abortEarly: false });
-                return error ? `Item ${index + 1}: ${error.details.map(d => d.message).join(", ")}` : null;
-            })
-            .filter(msg => msg !== null);
-
-        if (validationErrors.length > 0) {
-            return res.status(400).send({
-                status: "fail",
-                msg: validationErrors
-            });
-        }
-
         let sql = 'INSERT INTO "content" ("storageId", "itemName", "quantity", "bbd") VALUES ';
         let items = [];
         let storageId;

@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => {
                 console.error('Submission error:', error);
-                submitBtn.disabled = true;
+                submitBtn.disabled = false;
 
             });
     });

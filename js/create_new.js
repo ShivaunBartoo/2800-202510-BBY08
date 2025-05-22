@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('newStorageForm').addEventListener('submit', (e) => {
         e.preventDefault();
 
-
+        const submitBtn = document.querySelector('.cre-save-btn');
+        submitBtn.disabled = true;
         const form = e.target;
         const coverPhotoInput = document.querySelector('.coverPhotoInput');
 
@@ -47,11 +48,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     throw new Error(data.error);
                 }
-
+                submitBtn.disabled = false;
                 window.location.href = '/profile';
             })
             .catch(error => {
                 console.error('Submission error:', error);
+                submitBtn.disabled = true;
+
             });
     });
 });

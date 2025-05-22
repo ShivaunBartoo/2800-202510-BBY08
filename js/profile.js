@@ -258,7 +258,8 @@ function toggleReplyForm(button) {
 }
 
 async function submitReply(button) {
-
+const submitBtn = document.querySelector(".submit-reply");
+    submitBtn.disabled = true;
     try {
         const reviewDiv = button.closest(".review");
         const reviewId = reviewDiv.dataset.reviewId;
@@ -295,9 +296,14 @@ async function submitReply(button) {
             loadReviewCards();
         } else {
             alert("Failed to submit reply.");
+            
         }
+            submitBtn.disabled = false;
+
     } catch (err) {
         console.error("Submit Reply Error:", err);
+            submitBtn.disabled = true;
+
     }
 }
 

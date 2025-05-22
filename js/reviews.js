@@ -78,7 +78,8 @@ async function submitReview() {
         alert("Please log in to submit a review.");
         return;
     }
-    // document.querySelector("#submit-review-button").disabled = true;
+    const submitBtn = document.querySelector("#submit-review-button");
+    submitBtn.disabled = true;
     const storageId = window.location.pathname.split("/")[2];
 
     const photoInput = document.querySelector(".coverPhotoInput").files[0];
@@ -139,8 +140,13 @@ async function submitReview() {
                     highlightErrorFields(data.fields);
                 }
             }
+
+            submitBtn.disabled = false;
+
         } catch (err) {
             console.log(err);
+            submitBtn.disabled = true;
+
         }
     }
 }
@@ -229,7 +235,8 @@ async function submitReply(button) {
         alert("Please log in to reply to a review.");
         return;
     }
-
+    const submitBtn = document.querySelector(".submit-reply");
+    submitBtn.disabled = true;
     try {
         const reviewDiv = button.closest(".review");
         const reviewId = reviewDiv.dataset.reviewId;
@@ -247,7 +254,7 @@ async function submitReply(button) {
             }
             return;
         }
-      
+
 
         const formData = new FormData();
         formData.append("reviewId", reviewId);
@@ -270,8 +277,12 @@ async function submitReply(button) {
             displayError(data.error);
             alert("Failed to submit reply.");
         }
+        submitBtn.disabled = false;
+
     } catch (err) {
         console.error("Submit Reply Error:", err);
+        submitBtn.disabled = true;
+
     }
 }
 

@@ -32,6 +32,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Handle form submit
     document.querySelector('.man-save-btn').addEventListener('click', async () => {
 
+        const submitBtn = document.querySelector('.man-save-btn');
+        submitBtn.disabled = true;
         const coverPhotoInput = document.querySelector('.coverPhotoInput');
 
         const formData = new FormData();
@@ -72,9 +74,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.querySelector('.previewImage').src = result.image;
                 document.querySelector('.photoPreview').style.display = 'block';
             }
+            submitBtn.disabled = false;
+
 
         } catch (err) {
             console.error('Save error:', err);
+            submitBtn.disabled = true;
+
         }
     });
 

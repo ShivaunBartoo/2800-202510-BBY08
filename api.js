@@ -3,11 +3,7 @@ const { classify } = require("./js/food-classify");
 const fs = require("fs");
 const pg = require("pg");
 const ejs = require("ejs");
-const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
-const express = require("express");
-const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage() });
 const Joi = require('joi');
 
 const notificationUtils = require('./notification-emails');
@@ -67,6 +63,8 @@ module.exports = function (app) {
                     const isFavourite = favoriteIds.includes(row.storageId);
 
                     if (radius !== null && !isFavourite && distance > radius) return null;
+
+                    console.log("session:" + req.session.isAuthenticated);
 
                     return ejs
                         .renderFile("views/partials/storage-card.ejs", {

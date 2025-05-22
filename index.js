@@ -223,6 +223,11 @@ app.get("/manage/:id", (req, res) => {
 
 // Route for profile page
 app.get("/profile", async function (req, res) {
+    let {lat, lon} = req.query;
+    if (!lat || !lon) {
+        lat = null;
+        lon = null;
+    }
 
     const userId = req.session.userId;
     if (!userId) {
@@ -246,6 +251,8 @@ app.get("/profile", async function (req, res) {
         const userInfo = result.rows[0];
 
         res.render("profile", {
+            lat,
+            lon,
             userInfo,
             stylesheets: ["browse.css", "reviews.css", "profile.css"],
             scripts: ["profile.js"],

@@ -19,7 +19,7 @@
                     <tr>
                         <th>Qty</th>
                         <th>Item</th>
-                        <th>BBD</th>
+                        <th>Best Before Date</th>
                     </tr>
                 </table>
             </div>
@@ -46,7 +46,6 @@
                     <div>Last cleaned: <span id="clean-date">
                             <%=lastCleaned%>
                         </span></div>
-                    <div>Contact the <span id="contact-type">fridge</span> manager</div>
                 </div>
             </div>
             </main>
@@ -79,12 +78,7 @@
                                 <input type="date" id="bbd" />
                             </div>
                         </div>
-                        <div id="donate-errors" class="hidden">
-                            <p id="name-error">Uh oh! Something went wrong. </p>
-                            <p id="qty-error">Item Name cannot be empty and must be recognizable as food, item quantity
-                                cannot be 0, and BBD cannot be
-                                expired.
-                            </p>
+                        <div id="add-item-error" class="hidden">
                         </div>
                         <button id="addItem">Add Item</button>
                         <div id="itempreview">

@@ -50,13 +50,15 @@
             <button type="submit" id="submit">Save</button>
         </form>
     </div>
-
+    <% if (!lat || !lon) { %>
     <div id="locationinform">
         <strong>Note:</strong>
         <small>
             To get the most out of our location-based features, please allow the app to access your location.
         </small>
     </div>
+    <% } %>
+     
 
     <div class="container" id="addsec">
         <div id="storage-header">

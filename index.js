@@ -123,7 +123,7 @@ app.get("/contents/:id", function (req, res) {
     const client = new pg.Client(config);
     client.connect((err) => {
         if (err) {
-            console.log(err);
+            console.error('Cannot connect to contents page', err);
             return;
         }
         client.query(
@@ -134,7 +134,7 @@ app.get("/contents/:id", function (req, res) {
             [storageID, userId],
             (error, results) => {
                 if (error) {
-                    console.log(error);
+                    console.error('Cannot connect to database', err);
                     client.end();
                     return;
                 }
@@ -190,14 +190,14 @@ app.get("/manage/:id", (req, res) => {
         const client = new pg.Client(config);
         client.connect((err) => {
             if (err) {
-                console.log(error);
+                console.error('Cannot connect to manage page', err);
             }
             client.query(
                 `SELECT * FROM public.storage WHERE "storageId" = $1 AND "deletedDate" IS NULL`,
                 [storageId], (error, results) => {
                     client.end();
                     if (error) {
-                        console.log(error);
+                        console.error('Cannot connect to database', err);
 
                     }
                     if (results.rows.length === 0) {

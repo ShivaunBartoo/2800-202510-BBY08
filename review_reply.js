@@ -82,12 +82,10 @@ module.exports = function (app) {
 
         client.connect((err) => {
             if (err) {
-                console.log(err);
+                console.error('Cannot connect to reviews', err);
                 return;
             }
             if (req.file) {
-
-                console.log('file', req.file);
                 uploadPhotoCloud(req.file.buffer, null, 'review_img')
                     .then(cloudResult => {
 
@@ -110,7 +108,7 @@ module.exports = function (app) {
                     [userId, storageId, title, body, rating, imageUrl, publicId],
                     (err, results) => {
                         if (err) {
-                            console.log(err);
+                            console.error('Cannot connect to database', err);
                             client.end();
                             return;
                         }
@@ -166,8 +164,6 @@ module.exports = function (app) {
 
     app.delete('/replies/:id', async (req, res) => {
         const replyId = req.params.id;
-
-        console.log('reply id', replyId);
         const client = new pg.Client(config);
 
         try {

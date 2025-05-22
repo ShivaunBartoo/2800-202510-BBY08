@@ -112,16 +112,9 @@ tr {
     border-bottom: 1px solid var(--blue-medium);
 }
 
-<<<<<<< HEAD
-/* #contents>table th,
-td {
-    text-align: center;
-} */
-=======
 tr > :last-child {
     text-align: right !important;
 }
->>>>>>> f1182123a08c6e3732871266e6dc03366426a5ae
 
 #buttons {
     grid-area: buttons;

@@ -107,7 +107,7 @@ main {
 
 #contents>table th,
 tr {
-    text-align: center;
+    text-align: left;
     height: 2em;
     border-bottom: 1px solid var(--blue-medium);
 }

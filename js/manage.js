@@ -1,4 +1,4 @@
-import { initImageUploadPreview } from './imageUploadUtil.js';
+import { initImageUploadPreview, displayError, highlightErrorFields } from './imageUploadUtil.js';
 
 const storageId = window.location.pathname.split("/")[2];
 
@@ -10,7 +10,7 @@ if (!storageId) {
 document.addEventListener('DOMContentLoaded', function () {
 
     registerEventListeners();
-    
+
     // Edit fridge name
     document.querySelector('.storage-title .edit-btn').addEventListener('click', () => {
         const nameEl = document.getElementById('storageName');
@@ -20,10 +20,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     initImageUploadPreview(
-        'uploadTrigger',
-        'coverPhotoInput',
-        'photoPreview',
-        'previewImage',
+        '.uploadTrigger',
+        '.coverPhotoInput',
+        '.photoPreview',
+        '.previewImage',
         (file) => {
             console.log('User selected file:', file);
         }
@@ -32,7 +32,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Handle form submit
     document.querySelector('.man-save-btn').addEventListener('click', async () => {
 
-        const coverPhotoInput = document.getElementById('coverPhotoInput');
+        const submitBtn = document.querySelector('.man-save-btn');
+        submitBtn.disabled = true;
+        const coverPhotoInput = document.querySelector('.coverPhotoInput');
 
         const formData = new FormData();
 
@@ -43,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('storageType', document.getElementById('storageTypeSelect').value);
         formData.append('lastCleaned', document.getElementById('lastCleaned').value.trim());
         formData.append('description', document.getElementById('description').value.trim());
-
+        console.log('lastcleaned', document.getElementById('lastCleaned').value.trim());
         // Append photo only if user selected one
         if (coverPhotoInput.files.length > 0) {
             formData.append('photo', coverPhotoInput.files[0]);
@@ -54,24 +56,31 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'PUT',
                 body: formData
             });
+            const result = await response.json();
 
             if (!response.ok) {
+                displayError(result.error);
+
+                if (Array.isArray(result.fields)) {
+                    highlightErrorFields(result.fields);
+                }
                 throw new Error('Failed to save storage');
             }
 
-            const result = await response.json();
-            alert('Storage saved successfully!');
-            console.log('client side', result);
+            displayError('Storage saved successfully!');
 
             // Update preview image if new one was uploaded
             if (result.image) {
-                document.getElementById('previewImage').src = result.image;
-                document.getElementById('photoPreview').style.display = 'block';
+                document.querySelector('.previewImage').src = result.image;
+                document.querySelector('.photoPreview').style.display = 'block';
             }
+            submitBtn.disabled = false;
+
 
         } catch (err) {
             console.error('Save error:', err);
-            alert('Error saving storage: ' + err.message);
+            submitBtn.disabled = true;
+
         }
     });
 
@@ -140,14 +149,13 @@ async function softDeleteStorage(storageId) {
         });
 
         if (response.ok) {
-            alert('Storage archived successfully!');
             window.location.href = '/browse';
         } else {
             throw new Error('Failed to archive storage');
         }
     } catch (error) {
         console.error(error);
-        alert('Error: ' + error.message);
+        displayError('Error: ' + error.message);
     }
 }
 

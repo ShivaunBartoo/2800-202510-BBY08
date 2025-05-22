@@ -45,8 +45,14 @@ body {
     height: 100%;
     width: 100%;
     box-sizing: border-box;
-    font-family: "Sunflower", sans-serif;
-    background-color: var(--blue-background);
+    font-family: "Sunflower", sans-serif !important;
+    background-color: var(--blue-background) !important;
+
+}
+
+main{
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 *,
@@ -63,6 +69,13 @@ body {
 
 .spacer {
     height: 5px;
+}
+
+.required::after {
+  content: " *";
+  color: red;
+  font-weight: bold;
+  margin-left: 2px;
 }
 
 /*source: https://css-loaders.com/bars/ */

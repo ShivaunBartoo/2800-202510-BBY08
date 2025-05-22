@@ -4,8 +4,9 @@ const pg = require("pg");
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const express = require('express');
-const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
+const Joi = require("joi");
+
 
 const saltRounds = 12;
 
@@ -46,34 +47,50 @@ async function geocodeAddress(fullAddress) {
     }
 }
 
-async function uploadPhotoCloud(fileBuffer, oldPublicId = null, folder = 'default_folder') {
-    try {
-        if (oldPublicId) {
-            await cloudinary.uploader.destroy(oldPublicId);
-        }
-
-        const cloudResult = await new Promise((resolve, reject) => {
-            cloudinary.uploader.upload_stream({ folder }, (err, result) => {
-                if (err) return reject(err);
-                resolve(result);
-            }).end(fileBuffer);
-        });
-
-        return {
-            image: cloudResult.secure_url,
-            imgPublicId: cloudResult.public_id
-        };
-    } catch (err) {
-        throw new Error('Cloudinary upload failed: ' + err.message);
-    }
-}
+const { uploadPhotoCloud } = require('./utils');
 
 module.exports = function (app) {
 
-    
+    const storageSchema = Joi.object({
+        title: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(50).required().messages({
+            'string.empty': 'Name of the storage is required',
+            'string.pattern.invert.base': 'Field contains invalid characters like $, (), or <>',
+        }),
+
+        storageType: Joi.string().valid("1", "2").required(),
+        street: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(50).required().messages({
+            'string.empty': 'Street is required',
+            'string.pattern.invert.base': 'Field contains invalid characters like $, (), or <>',
+        }),
+        city: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(50).required().messages({
+            'string.empty': 'City is required',
+            'string.pattern.invert.base': 'Field contains invalid characters like $, (), or <>',
+        }),
+        province: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(50).required().messages({
+            'string.empty': 'Province is required',
+            'string.pattern.invert.base': 'Field contains invalid characters like $, (), or <>',
+        }),
+        lastCleaned: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
+            .optional()
+            .allow(""),
+        description: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(1000).optional().allow("")
+    });
+
+    const deleteSchema = Joi.object({
+        storageId: Joi.number().integer().required()
+    });
+
     app.put('/manage/storage', upload.single('photo'), async (req, res) => {
         const { storageId } = req.query;
         const { title, storageType, street, city, province, lastCleaned, description } = req.body;
+
+        const { error } = storageSchema.validate({ title, storageType, street, city, province, lastCleaned, description }, {abortEarly : false});
+        if (error) return res.status(400).json({ 
+            error: error.details.map(e => e.message),
+            fields: error.details.map(e => e.context.key) });
+
+        if (!storageId) return res.status(400).json({ error: 'Storage ID is required' });
+
 
         const address = `${street}, ${city}, ${province}, Canada`;
 
@@ -146,6 +163,9 @@ module.exports = function (app) {
     app.delete("/manage/storage/soft-delete", async (req, res) => {
         const { storageId } = req.query;
 
+        const { error } = deleteSchema.validate({ storageId: Number(storageId) });
+        if (error) return res.status(400).json({ error: error.details.map(e => e.message) });
+
         if (!storageId) {
             return res.status(400).json({ error: "Storage ID is required" });
         }
@@ -176,13 +196,26 @@ module.exports = function (app) {
     });
 
     app.post('/storage/createnew', upload.single('photo'), async (req, res) => {
-        
+
         const ownerId = req.session.userId;
         if (!ownerId) {
             return res.status(400).json({ error: "userID is required" });
         }
 
-        const { storageType, title, street, city, province, description } = req.body;
+        let { storageType, title, street, city, province, description } = req.body;
+
+        title = title?.trim();
+        street = street?.trim();
+        city = city?.trim();
+        province = province?.trim();
+        description = description?.trim();
+
+        const { error } = storageSchema.validate({ title, storageType, street, city, province, description }, {abortEarly: false});
+        if (error) return res.status(400).json({
+            error: error.details.map(e => e.message),
+            fields: error.details.map(e => e.context.key)
+        });
+
         const address = `${street}, ${city}, ${province}, Canada`;
 
         const coords = await geocodeAddress(address);

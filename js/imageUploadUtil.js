@@ -9,15 +9,16 @@
  * @param {function} [onSelect] - Optional callback with the selected File object
  */
 
-export async function initImageUploadPreview(triggerId, inputId, previewContainerId, previewImageId, onSelect) {
-    
-    const trigger = document.getElementById(triggerId);
-    const input = document.getElementById(inputId);
-    const previewContainer = document.getElementById(previewContainerId);
-    const previewImage = document.getElementById(previewImageId);
+export async function initImageUploadPreview(trigger, input, previewContainer, previewImage, onSelect) {
 
+    if (typeof trigger === 'string') trigger = document.querySelector(trigger);
+    if (typeof input === 'string') input = document.querySelector(input);
+    if (typeof previewContainer === 'string') previewContainer = document.querySelector(previewContainer);
+    if (typeof previewImage === 'string') previewImage = document.querySelector(previewImage);
+
+    
     if (!trigger || !input) {
-        console.error(`Missing upload element(s): ${triggerId}, ${inputId}`);
+        console.error(`Missing upload element(s): ${trigger}, ${input}`);
         return;
     }
 
@@ -49,5 +50,39 @@ export async function initImageUploadPreview(triggerId, inputId, previewContaine
             }
         };
         reader.readAsDataURL(file);
+    });
+    
+    document.querySelectorAll('.removeImageBtn').forEach(button =>{
+    if (button != null) {
+        button.addEventListener('click', () => {
+            input.value = ''; // clear file input
+            previewImage.src = '#'; // reset image src
+            previewContainer.style.display = 'none'; // hide preview
+            if (onSelect) onSelect(null); // optional: signal no image
+        });
+    }
+    })
+}
+
+export function displayError(msg) {
+    const errorDiv = document.getElementById("error");
+    errorDiv.textContent = msg;
+    errorDiv.style.display = "block";
+}
+
+export function highlightErrorFields(fields) {
+    // Clear previous error styles
+    document.querySelectorAll('.error-input').forEach(el => {
+        el.classList.remove('error-input');
+    });
+
+    fields.forEach(field => {
+        // Try select by name
+        const input = document.querySelector(`[name="${field}"]`);
+        if (input) {
+            input.classList.add('error-input');
+        } else {
+            console.warn(`Field "${field}" not found in form`);
+        }
     });
 }

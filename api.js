@@ -3,11 +3,10 @@ const { classify } = require("./js/food-classify");
 const fs = require("fs");
 const pg = require("pg");
 const ejs = require("ejs");
-const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
-const express = require("express");
-const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage() });
+const Joi = require('joi');
+
+const notificationUtils = require('./notification-emails');
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -27,13 +26,23 @@ const config = {
     },
 };
 
+
 module.exports = function (app) {
     app.get("/api/browse", async (req, res) => {
         const client = new pg.Client(config);
         try {
             await client.connect();
 
-            const storageResults = await client.query('SELECT * FROM public.storage WHERE "deletedDate" IS NULL');
+            const storageResults = await client.query(`SELECT s.*,
+	        (SELECT MAX(c."donatedAt") > (Now() - interval '24 hours')
+	        FROM public.content AS c
+	        WHERE c."storageId" = s."storageId"
+	        ) AS restocked,
+			(SELECT AVG(r."rating")::numeric(10,1) 
+			FROM public.reviews AS r
+			Where r."storageId" = s."storageId")
+            FROM public.storage AS s
+            WHERE s."deletedDate" IS NULL`);
 
             let favoriteIds = [];
             const favResults = await client.query('SELECT "storageId" FROM public.favourites WHERE "userId" = $1', [
@@ -47,7 +56,6 @@ module.exports = function (app) {
                 ? null
                 : parseFloat(req.query.radiusFilter);
 
-                console.log('radius', radius);
             let renderedCards = await Promise.all(
                 storageResults.rows.map((row) => {
                     let distance = getDistance(lat, lon, parseFloat(row.coordinates.x), parseFloat(row.coordinates.y));
@@ -55,12 +63,12 @@ module.exports = function (app) {
                     const isFavourite = favoriteIds.includes(row.storageId);
 
                     if (radius !== null && !isFavourite && distance > radius) return null;
-
                     return ejs
                         .renderFile("views/partials/storage-card.ejs", {
                             row,
                             distance,
                             isFavourite,
+                            isAuthenticated: req.session.authenticated,
                         })
                         .then((html) => ({
                             html,
@@ -123,10 +131,33 @@ module.exports = function (app) {
 
     app.post("/api/donate", (req, res) => {
         let data = req.body;
+
+        const itemSchema = Joi.object({
+            itemName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required(),
+            quantity: Joi.number().integer().min(1).max(50).required()
+        });
+
+        // Validate itemName in each object
+        const validationErrors = data
+            .map((item, index) => {
+                const { error } = itemSchema.validate({ itemName: item.itemName }, { abortEarly: false });
+                return error ? `Item ${index + 1}: ${error.details.map(d => d.message).join(", ")}` : null;
+            })
+            .filter(msg => msg !== null);
+
+        if (validationErrors.length > 0) {
+            return res.status(400).send({
+                status: "fail",
+                msg: validationErrors
+            });
+        }
+
         let sql = 'INSERT INTO "content" ("storageId", "itemName", "quantity", "bbd") VALUES ';
         let items = [];
+        let storageId;
         for (let i = 0; i < data.length; i++) {
             let info = data[i];
+            storageId = info.storageId;
             let str = "(" + info.storageId + ", '" + info.itemName + "', " + info.quantity + ", '" + info.bbd + "')";
             items.push(str);
         }
@@ -144,12 +175,17 @@ module.exports = function (app) {
                     client.end();
                     res.send({ status: "fail", msg: "Unable to add item to DB" });
                 } else {
-                    res.send({ status: "success", msg: "Item added to DB" });
+
+                    // add notifications
+                    notificationUtils.generateNotifications(storageId);
+
+                    res.send({ status: "success", msg: "Item added to DB" })
                 }
                 client.end();
             });
         });
     });
+
 
     app.post("/api/take", async (req, res) => {
         let data = req.body;
@@ -174,7 +210,7 @@ module.exports = function (app) {
 
         let updateSql = 'UPDATE "content" AS c SET "quantity" = d.qty FROM (VALUES ' + updateList.map(d => { return `(${d.id}, ${d.qty})` }).join(', ') + ') as d(id, qty) WHERE d.id = c."contentId"';
 
-        let deleteSql = 'DELETE FROM "content" WHERE "contentId" IN (' + deleteList.map(d => { return `${d.id}` }).join(', ') + ')';
+        let deleteSql = 'WITH c_deleted AS (DELETE FROM "content" WHERE "contentId" IN (' + deleteList.map(d => { return `${d.id}` }).join(', ') + '))' + 'DELETE FROM notifications WHERE "contentId" IN (' + deleteList.map(d => { return `${d.id}` }).join(', ') + ')';
 
         const queryPromises = [];
 
@@ -223,9 +259,9 @@ module.exports = function (app) {
             .then(() => {
                 res.send({ status: "success", msg: "Database successfully updated" });
             })
-            .catch(err =>{
+            .catch(err => {
                 console.log(err);
-                res.send({ status:"fail", msg: "Unable to remove items"});
+                res.send({ status: "fail", msg: "Unable to remove items" });
             });
     });
 
@@ -240,11 +276,11 @@ module.exports = function (app) {
 
             client.query(
                 `SELECT * 
-            FROM public.reviews AS r
-            JOIN public.users AS u ON r."userId" = u."userId"
-            WHERE r."storageId" = $1 
-            AND r."deletedDate" IS NULL 
-            ORDER BY r."createdAt" DESC
+                FROM public.reviews AS r
+                JOIN public.users AS u ON r."userId" = u."userId"
+                WHERE r."storageId" = $1 
+                AND r."deletedDate" IS NULL 
+                ORDER BY r."createdAt" DESC
                 `, [storageId],
                 async (error, results) => {
                     if (error) {
@@ -259,15 +295,14 @@ module.exports = function (app) {
                         JOIN public.users AS u ON r."userId" = u."userId"
                         AND r."deletedDate" IS NULL 
                         ORDER BY r."createdAt" DESC`
-                    ) 
+                    )
                     try {
                         const renderedCards = await Promise.all(
-                            results.rows.map((row) =>
-                                {
-                                    const reviewReplies = replies.rows.filter(reply => reply.reviewId == row.reviewId);
-                                    
-                                    return ejs.renderFile("views/partials/review-card.ejs", { row, replies: reviewReplies });
-                                }
+                            results.rows.map((row) => {
+                                const reviewReplies = replies.rows.filter(reply => reply.reviewId == row.reviewId);
+
+                                return ejs.renderFile("views/partials/review-card.ejs", { row, replies: reviewReplies, page: 'reviews', currentUser: req.session.userId });
+                            }
                             )
                         );
 
@@ -283,7 +318,7 @@ module.exports = function (app) {
         });
     });
 
-     app.get('/api/fridgePoint', (req, res) => {
+    app.get('/api/fridgePoint', (req, res) => {
 
 
         const client = new pg.Client(config);
@@ -298,15 +333,15 @@ module.exports = function (app) {
                     client.end();
                     return;
                 }
-                 const points = results.rows.map(row => ({
-                id: row.id,
-                name: row.title,
-                lat: parseFloat(row.coordinates.x),
-                lon: parseFloat(row.coordinates.y)
-            }));
+                const points = results.rows.map(row => ({
+                    id: row.storageId,
+                    name: row.title,
+                    lat: parseFloat(row.coordinates.x),
+                    lon: parseFloat(row.coordinates.y)
+                }));
 
-            res.json(points);
-            client.end();
+                res.json(points);
+                client.end();
             });
         });
     });
@@ -318,10 +353,10 @@ module.exports = function (app) {
         await client.connect();
         const seperate = await client.query(
             `
-            SELECT CAST(coordinates[0] AS FLOAT) AS latitude, CAST(coordinates[1] AS FLOAT) AS longitude
-            FROM storage WHERE "storageId" = $1`,
+SELECT CAST(coordinates[0] AS FLOAT) AS latitude, CAST(coordinates[1] AS FLOAT) AS longitude
+FROM storage WHERE "storageId" = $1`,
             [storageId]);
-       
+
         res.json(seperate.rows[0]);
         client.end();
 
@@ -333,6 +368,10 @@ module.exports = function (app) {
     });
 
     app.post("/api/favourite", async (req, res) => {
+        if (!req.session || !req.session.userId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
         const id = req.body.id;
         const client = new pg.Client(config);
         await client.connect();
@@ -368,4 +407,13 @@ module.exports = function (app) {
         const response = await classify(input);
         res.send(response);
     });
-}
+
+    app.get("/api/session", (req, res) => {
+        if (req.session && req.session.userId) {
+            res.status(200).json({ loggedIn: true, userId: req.session.userId });
+        } else {
+            res.status(200).json({ loggedIn: false });
+        }
+    });
+
+};

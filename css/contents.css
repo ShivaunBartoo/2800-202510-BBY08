@@ -1,14 +1,26 @@
-body {
+main {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    margin-top: 80px;
 }
 
 #tab-nav {
     height: 30px;
     background-color: var(--blue-light);
+    margin-bottom: 45px;
+    position: fixed;
+    left: 0;
+    top: var(--header-height);
+    width: 100%;
+}
+
+#tab-nav-contents {
+    height: 100%;
+    max-width: 500px;
+    margin: 0 auto;
     display: flex;
     justify-content: space-around;
-    margin-bottom: 45px;
 }
 
 .tab {
@@ -46,7 +58,7 @@ body {
 main {
     height: calc(100vh - 175px);
     display: grid;
-    grid-template-columns: 100vw;
+    grid-template-columns: 100%;
     grid-template-rows: auto 1fr auto auto;
     grid-template-areas:
         "title"
@@ -86,7 +98,7 @@ main {
 }
 
 #contents>table {
-    width: 90%;
+    min-width: 60%;
     border-collapse: collapse;
     margin: 0 auto;
     font-size: 1.1em;
@@ -98,6 +110,10 @@ tr {
     text-align: left;
     height: 2em;
     border-bottom: 1px solid var(--blue-medium);
+}
+
+tr > :last-child {
+    text-align: right !important;
 }
 
 #buttons {
@@ -128,7 +144,6 @@ tr {
 
 #contact {
     grid-area: contact;
-    width: 100%;
     margin: 5%;
     display: flex;
     gap: 10px;
@@ -137,36 +152,10 @@ tr {
 }
 
 #main-contents {
-    display: block;
+    /* display: block; */
 }
 
-#map-content {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
 
-#map {
-    height: 100%;
-    width: 100%;
-}
-
-#maps-btn {
-    margin: 10px;
-    width: 300px;
-    height: 50px;
-    border-radius: 50px;
-    border: none;
-    background-color: var(--blue-text);
-    color: var(--pink-light);
-    font-size: 1.2em;
-    cursor: pointer;
-}
-
-#maps-btn:hover {
-    background-color: var(--blue-dark);
-}
 #donationList {
     width: 80%;
     border-collapse: collapse;
@@ -175,7 +164,7 @@ tr {
     color: var(--blue-dark);
 }
 
-#donationList > th,
+#donationList>th,
 tr {
     text-align: left;
     height: 2em;
@@ -186,12 +175,7 @@ tr {
     margin-left: 0.3em;
 }
 
-#donate-errors {
-    color: red;
-    text-align: center;
-}
-
-#distance-error, #take-error {
+#distance-error, #take-error, #add-item-error {
     display: flex;
     justify-self: center;
     padding: 0.5em;
@@ -209,22 +193,94 @@ tr {
     gap: 10px;
 }
 
-/* .modal-content{
-    width: 80% !important; 
-} */
-
-#ai-good{
+#ai-good {
     font-size: 2em;
     color: greenyellow;
 }
 
-#ai-bad{
+#ai-bad {
     font-size: 2em;
     color: red;
 }
 
-#ai-warning{
+#ai-warning {
     font-size: 0.8em;
     font-style: italic;
     color: var(--pink-dark-bold);
+}
+
+.modal-content {
+    max-width: 1000px;
+}
+
+.persoloader {
+    display: inline-block;
+    margin-left: 35px;
+    position: relative;
+    width: 45px;
+    aspect-ratio: 1;
+    --c: no-repeat linear-gradient(var(--blue-accent) 0 0);
+    background: 
+      var(--c) 0%   50%,
+      var(--c) 50%  50%,
+      var(--c) 100% 50%;
+    background-size: 20% 100%;
+    animation: l1 1s infinite linear;
+    
+  
+}
+
+@keyframes l1 {
+    0%  {background-size: 20% 100%,20% 100%,20% 100%}
+    33% {background-size: 20% 10% ,20% 100%,20% 100%}
+    50% {background-size: 20% 100%,20% 10% ,20% 100%}
+    66% {background-size: 20% 100%,20% 100%,20% 10% }
+    100%{background-size: 20% 100%,20% 100%,20% 100%}
+}
+
+.donate-hidden {
+    display: none;
+}
+
+.nuthaloader {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-block;
+    border-top: 3px solid #FFF;
+    border-right: 3px solid transparent;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.take-hidden {
+    display: none;
+}
+
+#bot-checking {
+    display: flex;
+    justify-self: center;
+    padding: 0.5em;
+    background-color: var(--blue-light);
+    text-align: center;
+    border: 1px solid var(--blue-accent);
+}
+
+#bot-checking-donate {
+    display: flex;
+    justify-self: center;
+    padding: 0.5em;
+    background-color: var(--blue-light);
+    text-align: center;
+    border: 1px solid var(--blue-accent);
 }

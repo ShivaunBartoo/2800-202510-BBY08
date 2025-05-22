@@ -4,100 +4,124 @@ function ajaxPOST(url, callback, data) {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             callback(this.responseText);
         } else {
-            console.log(this.status);
+            let parsedRes = JSON.parse(this.response)
+            showError(parsedRes.msg);
         }
-    }
+    };
     xhr.open("POST", url);
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.send(data);
 }
 
-document.querySelector('#login-submit')?.addEventListener('click', function (e) {
+function showError(message) {
+    const element = document.getElementById("errormsg");
+    element.classList.remove("hidden");
+    element.innerHTML = message;
+}
+
+document.querySelector("#login-submit")?.addEventListener("click", function (e) {
     e.preventDefault();
     let email = document.getElementById("login-email");
     let password = document.getElementById("login-password");
 
     if (email.value == "") {
-        email.style.backgroundColor = '#ac6872';
-        document.getElementById("errormsg").classList.remove("hidden");
-        return;
+        email.style.border = "solid #ac6872";
+        showError("Highlighted fields cannot be empty.");
     }
-
     if (password.value == "") {
-        password.style.backgroundColor = '#ac6872';
-        document.getElementById("errormsg").classList.remove("hidden");
-        return;
+        password.style.border = "solid #ac6872";
+        showError("Highlighted fields cannot be empty.");
     }
+    if (email.value && password.value) {
+        const vars = { email: email.value, password: password.value };
+        let data = btoa(JSON.stringify(vars));
+        let body = "data=" + data;
 
-    const vars = { "email": email.value, "password": password.value }
-    let data = btoa(JSON.stringify(vars));
-    let body =
-        "data=" + data;
-    
-    ajaxPOST("/loggingIn", function (data) {
-
-        if (data) {
-            let dataParsed = JSON.parse(data);
-            if (dataParsed.status == "fail") {
-                alert(dataParsed.msg);
-                return;
-            } else {
-                window.location.replace("/browse");
-            }
-        }
-
-    }, body);
+        ajaxPOST(
+            "/loggingIn",
+            function (data) {
+                if (data) {
+                    let dataParsed = JSON.parse(data);
+                    if (dataParsed.status == "fail") {
+                        showError(dataParsed.msg);
+                        return;
+                    } else {
+                        window.location.replace("/browse");
+                    }
+                }
+            },
+            body
+        );
+    }
 });
 
-document.querySelector('#create-submit')?.addEventListener('click', function (e) {
+document.querySelector("#create-submit")?.addEventListener("click", function (e) {
     e.preventDefault();
 
-    let firstName = document.getElementById('first-name');
-    let lastName = document.getElementById('last-name');
-    let email = document.getElementById('email');
-    let pword = document.getElementById('password');
-    let confirm = document.getElementById('confirm-password');
-
+    let firstName = document.getElementById("first-name");
+    let lastName = document.getElementById("last-name");
+    let email = document.getElementById("email");
+    let pword = document.getElementById("password");
+    let confirm = document.getElementById("confirm-password");
+    let error = false;
     if (firstName.value == "") {
-        firstName.style.backgroundColor = '#ac6872';
+        firstName.style.border = "solid #ac6872";
         document.getElementById("errormsg").classList.remove("hidden");
-        return;
+        showError("Highlighted fields cannot be empty.");
+        error = true;
     }
-
     if (lastName.value == "") {
-        lastName.style.backgroundColor = '#ac6872';
+        lastName.style.border = "solid #ac6872";
         document.getElementById("errormsg").classList.remove("hidden");
-        return;
+        showError("Highlighted fields cannot be empty.");
+        error = true;
     }
-
     if (email.value == "") {
-        email.style.backgroundColor = '#ac6872';
+        email.style.border = "solid #ac6872";
         document.getElementById("errormsg").classList.remove("hidden");
-        return;
+        showError("Highlighted fields cannot be empty.");
+        error = true;
     }
-
+    if (pword.value == "") {
+        pword.style.border = "solid #ac6872";
+        document.getElementById("errormsg").classList.remove("hidden");
+        showError("Highlighted fields cannot be empty.");
+        error = true;
+    }
+    if (confirm.value == "") {
+        confirm.style.border = "solid #ac6872";
+        document.getElementById("errormsg").classList.remove("hidden");
+        showError("Highlighted fields cannot be empty.");
+        error = true;
+    }
     if (!pword.value == confirm.value) {
-        pword.style.backgroundColor = '#ac6872';
-        confirm.style.backgroundColor = '#ac6872';
+        pword.style.border = "solid #ac6872";
+        confirm.style.border = "solid #ac6872";
         document.getElementById("pwderror").classList.remove("hidden");
-        return;
+        showError("Highlighted fields cannot be empty.");
+        error = true;
     } else {
         var password = pword.value;
     }
-    const vars = {"firstName": firstName.value, "lastName": lastName.value, "email": email.value, "password": password}
-    let data = btoa(JSON.stringify(vars));
-    let body =
-        "data=" + data;
+    if (!error) {
+        const vars = { firstName: firstName.value, lastName: lastName.value, email: email.value, password: password };
+        let data = btoa(JSON.stringify(vars));
+        let body = "data=" + data;
 
-    ajaxPOST("/createUser", function (data) {
-        if (data) {
-            let dataParsed = JSON.parse(data);
-            if (dataParsed.status == "fail") {
-                alert(dataParsed.msg);
-            } else {
-                window.location.replace("/browse");
-            }
-        }
-    }, body);
+        ajaxPOST(
+            "/createUser",
+            function (data) {
+                if (data) {
+                    let dataParsed = JSON.parse(data);
+                    if (dataParsed.status == "fail") {
+                        alert(dataParsed.msg);
+                    } else {
+                        window.location.replace("/browse");
+                    }
+                }
+            },
+            body
+        );
+    }
 });

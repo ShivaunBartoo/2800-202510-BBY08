@@ -1,19 +1,57 @@
-<%-include('partials/header')%>
-<div class="main-header">
-    <img src="/img/fridge1.jpg" alt="fridge" />
-    <div class="headText">
-        <h1>What is BeCool?</h1>
-        <p>
-            BeCool is a community-driven sharing platform that fights food insecurity and food waste by
-            promoting equal access to healthy food through public community fridges. Whether you're donating
-            surplus produce, picking up essentials, or sparking conversations about food systems, BeCool
-            empowers neighbors to GIVE, TAKE, and SHARE—building stronger, more connected communities through
-            shared food, stories, and ideas.
-        </p>
-        <div class="button-header">
-            <button class="button" onclick="location.href='/createAccount'"><span>Create an Account!</span></button>
-            <button class="button" onclick="location.href='/about'"><span>Our Mission</span></button>
+<%-include(`partials/header`, {headerImage: "/img/becool_light.png" })%>
+    <div id="jumbotron">
+        <div id="jumbotron-background">
+            <div id="jumbotron-container">
+                <div id="jumbotron-text">
+                    <div class="header">Food Access Made Simple</div>
+                    <strong>BeCool</strong> is a community-powered platform that fights food waste and insecurity
+                    through
+                    community
+                    fridges.
+                    Give, take, and share food to help build a healthier, more connected neighborhood!
+                </div>
+                <div id="jumbotron-buttons">
+                    <a href="/browse" class="button" id="explore-button">Check it Out</a>
+                    <a href="/createAccount" class="button" id="account-button">Create Account</a>
+                </div>
+                <div id="jumbotron-art-container">
+                    <img id="jumbotron-circle" src="/img/index_circle.svg" />
+                    <img id="jumbotron-art" src="/img/hero_fridge.png" alt="artwork of a refrigerator" />
+                </div>
+            </div>
         </div>
+        <img id="jumbotron-bottom" src="/img/index_curve.svg" />
     </div>
-</div>
-<%-include('partials/footer')%>
+    <div id="mission-statement">
+
+
+        <div id="mission-statement-container">
+            <div class="header">
+                Our Mission
+            </div>
+            <strong>BeCool</strong> started as a student project with the aim to decrease food insecurity and
+            food
+            waste in
+            Canada by not
+            only raising awareness of community fridges in the greater Vancouver area,
+            but also by facilitating the accessibility and contribution of food to those fridges.
+
+        </div>
+        <a href="/about" class="button" id="mission-button">Learn More</a>
+        <div class="spacer"></div>
+
+    </div>
+    <script>
+        function scaleImage() {
+            const baseWidth = 685.479;
+            const currentWidth = window.innerWidth;
+            const scaleX = Math.max(1, currentWidth / baseWidth);
+
+            const img = document.getElementById("jumbotron-bottom");
+            img.style.transform = `scaleX(${scaleX})`;
+        }
+
+        window.addEventListener("resize", scaleImage);
+        window.addEventListener("DOMContentLoaded", scaleImage);
+    </script>
+    <%-include('partials/footer')%>

@@ -1,16 +1,19 @@
 <%- include('partials/header') %>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/googlemaps/js-info-bubble@master/src/infobubble.css">
 <section id="location-bar">
-    <span class="material-icons">location_on</span>
-    <span>Current Location:&nbsp;</span>
-    <span id="location-bar-location"> <%= city %></span>
+    <div id="location-bar-contents">
+        <span class="material-icons">location_on</span>
+        <span>Current Location:&nbsp;</span>
+        <span id="location-bar-location"> <%= city %></span>
+    </div>
 </section>
 
-<%- include('partials/mapPop') %>
+
 
 <div class="top-pick-title">Top Pick Near You!</div>
 
 <section id="hero-card-container" class="card-container">
+    <div class="loader" id="page-loader"></div>
 </section>
 
 <section id="filters">
@@ -29,8 +32,10 @@
 </section>
 <section id="main-card-container" class="card-container">
 </section>
+<%- include('partials/mapPop') %>
 <div class="spacer"></div>
 <script src="https://maps.googleapis.com/maps/api/js?key=<%= apiKey %>&libraries=marker"></script>
 <script type="module" src="../js/browse.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/googlemaps/js-info-bubble@master/src/infobubble-compiled.js"></script>
+<%- include('partials/browse-help')%>
 <%- include('partials/footer')%>

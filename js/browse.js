@@ -4,9 +4,21 @@ const radiusFilter = localStorage.getItem('radiusFilter');
 
 initialize();
 
+//Check if user is logged in for the browse page.
+let isLoggedIn = false;
+
+async function checkLoginStatus() {
+    try {
+        const res = await fetch("/api/session");
+        isLoggedIn = res.ok;
+    } catch (err) {
+        isLoggedIn = false;
+    }
+}
 
 
 async function initialize() {
+    await checkLoginStatus();
 
     const currentUrl = new URL(window.location.href);
     const lat = currentUrl.searchParams.get("lat");
@@ -83,6 +95,15 @@ async function loadCards() {
     } else {
         console.log("No fridges to show.");
     }
+
+    if (!isLoggedIn) {
+    document.querySelectorAll(".card-favourite").forEach(btn => {
+        btn.disabled = true;
+        btn.title = "Log in to use favourites";
+        btn.classList.add("disabled"); // Optional: for styling
+    });
+}
+
 }
 
 function labelType(store) {
@@ -95,21 +116,29 @@ function labelType(store) {
 }
 
 function addFavouriteButtonListener(element) {
-    element.addEventListener("click", async (event) => {
-        const id = element.dataset.id;
-        event.preventDefault();
-        element.classList.toggle("active");
-        const response = await fetch("/api/favourite", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ id }),
+    if (element) {
+        element.addEventListener("click", async (event) => {
+            event.preventDefault();
+            if (!isLoggedIn) {
+                alert("Please log in to add favourites.");
+                return;
+            }
+
+            const id = element.dataset.id;
+            event.preventDefault();
+            element.classList.toggle("active");
+            const response = await fetch("/api/favourite", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ id }),
+            });
+            if (!response.ok) {
+                console.log("Error adding to favourites");
+            }
         });
-        if (!response.ok) {
-            console.log("Error adding to favourites");
-        }
-    });
+    }
 }
 
 
@@ -158,6 +187,7 @@ async function makeMap() {
 
     points.forEach(point => {
         const marker = new google.maps.marker.AdvancedMarkerElement({
+            id: point.id,
             position: { lat: point.lat, lng: point.lon },
             map: embed,
             title: point.name || "Fridge"
@@ -166,7 +196,7 @@ async function makeMap() {
         marker.addEventListener('click', () => {
             console.log(point.name)
             storageCard.setContent(`<div class="storageCard">
-            <strong>${point.name}</strong>
+            <a href="/contents/${point.id}"> <strong>${point.name}</strong> </a>
             <a href=https://www.google.com/maps?q=${point.lat},${point.lon}> Directions </a>
             </div>
 `);
@@ -183,11 +213,13 @@ async function makeMap() {
 document.addEventListener("DOMContentLoaded", () => {
     const toggleBtn = document.getElementById("toggleMap");
     const mapContainer = document.getElementById("mapContainer");
+    const cardContainer = document.getElementById("main-card-container")
 
     toggleBtn.addEventListener("click", () => {
         const isHidden = mapContainer.style.display === "none";
+        
         mapContainer.style.display = isHidden ? "block" : "none";
-
+        cardContainer.style.display = isHidden ? "none" : "flex";
         if (isHidden && !mapexist) {
             makeMap();
             mapexist = true;

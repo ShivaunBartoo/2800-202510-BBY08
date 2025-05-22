@@ -1,0 +1,32 @@
+/* Floating Help Button */
+#help-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background-color: var(--blue-accent);
+  color: white;
+  border-radius: 50%;
+  font-size: 24px;
+  text-align: center;
+  line-height: 50px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 1000;
+}
+
+/* Help Popover */
+#help-popover {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 250px;
+  padding: 15px;
+  background-color: white;
+  color: #333;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: none;
+  z-index: 999;
+}

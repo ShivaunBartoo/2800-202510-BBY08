@@ -4,8 +4,8 @@ const itemsToDonate = [];
 const storageId = window.location.pathname.split("/")[2];
 
 function initialize() {
-    loadRows();
     checkDistance();
+    loadRows();
 }
 initialize();
 
@@ -39,19 +39,21 @@ async function checkDistance() {
     }
 }
 
-async function loadRows() {
+function loadRows() {
     let table = document.getElementById("content-rows");
-    let rows = await getRows();
-    if (rows.length > 0) {
-        for (let row of rows) {
-            let rowHTML = document.createElement("tr");
-            rowHTML.innerHTML = row.trim();
-            table.appendChild(rowHTML);
+
+    getRows().then((rows) => {
+
+        if (rows.length > 0) {
+            for (let row of rows) {
+                let rowHTML = document.createElement("tr");
+                rowHTML.innerHTML = row.trim();
+                table.appendChild(rowHTML);
+            }
         }
-    } else {
-        console.log("fridge is empty");
-    }
+    })
 }
+
 
 function ajaxPOST(url, callback, data) {
     const xhr = new XMLHttpRequest();
@@ -92,25 +94,42 @@ function resetValues() {
 document.querySelector("#modal-cancel").addEventListener("click", function (e) {
     resetValues();
     document.getElementById("contentsmodal").style.display = "none";
-    document.getElementById("donate-errors").classList.add("hidden");
+    document.getElementById("add-item-error").classList.add("hidden");
 });
 
 document.querySelector("#close-modal").addEventListener("click", function (e) {
+    document.getElementById("add-item-error").classList.add("hidden");
     resetValues();
     document.getElementById("contentsmodal").style.display = "none";
 });
 
+function showError(message) {
+    const element = document.getElementById("add-item-error");
+    element.classList.remove("hidden");
+    element.innerHTML = message;
+}
+
 document.querySelector("#addItem").addEventListener("click", function (e) {
-    document.getElementById("donate-errors").classList.add("hidden");
+    document.getElementById("add-item-error").classList.add("hidden");
     let name = document.getElementById("itemName");
     let qty = document.getElementById("qty");
     let bbd = document.getElementById("bbd");
-
+    console.log("qty", qty.value);
     let today = new Date().setHours(0, 0, 0);
     let bbdDate = new Date(bbd.value);
     let aiRejected = document.getElementById("ai-good").classList.contains("hidden");
-    if (aiRejected || name.value == "" || qty.value == 0 || bbdDate == `Invalid Date` || bbdDate < today) {
-        document.getElementById("donate-errors").classList.remove("hidden");
+    if (aiRejected || name.value == "") {
+        showError("Item Name cannot be empty and must be recognized as food.");
+        return;
+    }
+
+    if (1 > qty.value || qty.value > 50) {
+        showError("Item quantity must be between 1 and 50.");
+        return;
+    }
+
+    if (bbdDate == `Invalid Date` || bbdDate < today) {
+        showError("Best Before Date cannot be expired.");
         return;
     }
 
@@ -133,12 +152,84 @@ document.querySelector("#addItem").addEventListener("click", function (e) {
     item.appendChild(itemName);
     item.appendChild(itemBBD);
     list.appendChild(item);
-    current="";
+    current = "";
     setClassificationResult("none");
     document.querySelector("#donate-btn").disabled = false;
 });
+//currentAction is protection against inspect element goblins
+let currentAction = null; //copy from here
+let pending = false;
 
-document.querySelector("#donate-btn").addEventListener("click", function (e) {
+//sends challenge and receives token
+async function onTurnstileSuccess(token) {
+
+    const res = await fetch('/challenge-point', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, action: currentAction })
+
+    });
+    const result = await res.json();
+    return result;
+}
+const closebtn = document.querySelector("#close-modal");
+closebtn.disabled = false
+document.querySelector("#donate-btn").addEventListener("click", function (e) { // add cloudflare
+    document.querySelector("#bot-checking-donate").classList.remove("hidden");
+
+    e.preventDefault();
+
+    //assigns currentAction as donate
+    currentAction = "donate"
+
+    const ploader = document.querySelector(".persoloader")
+
+    closebtn.disabled = true;
+
+
+    ploader.classList.remove("donate-hidden");
+
+    turnstile.reset('#turnstile-widget');
+    pending = true;
+    //executes the widget to then get verified
+    turnstile.execute('#turnstile-widget', { action: currentAction });
+});
+
+//verified result gets used to determine which action was selected
+//this is important because if something malicious actually manages to
+//get one token it can't use it across all functions 
+window.onTurnstileVerified = async function (token) {
+
+    if (!pending) return;
+
+    pending = false;
+
+    const ploader = document.querySelector(".persoloader")
+    const nloader = document.querySelector(".nuthaloader")
+
+    const result = await onTurnstileSuccess(token);
+
+    if (!result.success) {
+        alert("not verified");
+        return;
+    }
+
+    ploader.classList.add("donate-hidden");
+    nloader.classList.add("take-hidden");
+    takeBtn.textContent = originalText;
+    document.querySelector("#bot-checking").classList.add("hidden");
+    document.querySelector("#bot-checking-donate").classList.add("hidden");
+    //determines which function to call based on which button was pushed
+    if (currentAction === "donate") {
+        donateHandler();
+    } else if (currentAction === "take") {
+        takeHandler();
+    }
+    //clears action so you can use other actions
+    currentAction = null;
+};
+function donateHandler() {
+
     console.log("donate button clicked");
     let items = JSON.stringify(itemsToDonate);
 
@@ -154,6 +245,7 @@ document.querySelector("#donate-btn").addEventListener("click", function (e) {
                     while (2 <= table.rows.length) {
                         table.deleteRow(1);
                     }
+
                     loadRows();
                     resetValues();
                     document.getElementById("contentsmodal").style.display = "none";
@@ -162,11 +254,31 @@ document.querySelector("#donate-btn").addEventListener("click", function (e) {
         },
         items
     );
-});
+    closebtn.disabled = false;
+} // to here
+
 
 var qtyList = [];
-
+let takeBtn = document.getElementById("take-text");
+let originalText = takeBtn.textContent.trim();
 document.querySelector("#take").addEventListener("click", function takeMode() {
+
+    currentAction = "take"
+    turnstile.reset('#turnstile-widget');
+
+    const nloader = document.querySelector(".nuthaloader");
+
+
+
+    takeBtn.textContent = "";
+    nloader.classList.remove("take-hidden")
+    document.querySelector("#bot-checking").classList.remove("hidden");
+    pending = true;
+    turnstile.execute('#turnstile-widget', { action: currentAction });
+
+});
+
+function takeHandler() {
     let elements = document.getElementsByClassName("item-quantity");
     let quantities = Array.from(elements);
     quantities.forEach((qty) => {
@@ -179,7 +291,7 @@ document.querySelector("#take").addEventListener("click", function takeMode() {
     document.getElementById("take").classList.add("hidden");
     document.getElementById("take-cancel").classList.remove("hidden");
     document.getElementById("take-confirm").classList.remove("hidden");
-});
+}
 
 document.querySelector("#take-cancel").addEventListener("click", function () {
     cancelTake();
@@ -224,18 +336,13 @@ document.querySelector("#take-confirm").addEventListener("click", async function
     });
 
     if (response.status == 200) {
-        let table = document.getElementById("content-rows");
-        while (2 <= table.rows.length) {
-            table.deleteRow(1);
-        }
-        loadRows();
-        cancelTake();
+        window.location = window.location;
     } else {
         console.log("An error has occurred!");
     }
 });
 
-function setClassificationResult(result){
+function setClassificationResult(result) {
     const loader = document.getElementById("ai-loader");
     const good = document.getElementById("ai-good");
     const bad = document.getElementById("ai-bad");
@@ -244,7 +351,7 @@ function setClassificationResult(result){
     good.classList.add("hidden");
     bad.classList.add("hidden");
     warning.classList.add("hidden");
-    switch(result){
+    switch (result) {
         case "loading":
             loader.classList.remove("hidden");
             break;
@@ -265,29 +372,30 @@ function setClassificationResult(result){
 let current = "";
 
 document.querySelector("#itemName").addEventListener("focusin", async (event) => {
-    if(event.target.value != current){
+    if (event.target.value != current) {
         setClassificationResult("none");
     }
 });
 
 document.querySelector("#itemName").addEventListener("focusout", async (event) => {
     const input = event.target.value;
-    if (input && current != input) {
+    let aiRejected = document.getElementById("ai-good").classList.contains("hidden");
+    if (input && (current != input || aiRejected)) {
         current = input;
         setClassificationResult("loading");
         console.log(`getting score for ${input}.`)
         let response = await fetch(`/api/classify?input=${encodeURIComponent(input)}`);
         let result = await response.json();
         console.log("score: " + JSON.stringify(result));
-        if(result.input == current){
-            if(result.isFood){
+        if (result.input == current) {
+            if (result.isFood) {
                 setClassificationResult("good");
             }
-            else{
+            else {
                 setClassificationResult("bad");
             }
         }
-        else{
+        else {
             console.log("stale result rejected.")
         }
     }

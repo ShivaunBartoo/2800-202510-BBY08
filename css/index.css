@@ -1,76 +1,210 @@
-/* CSS for index */
-
-.navbar-before-login {
-    background-color: #89C4DA;
-    padding: 1em;
+main {
+    width: 100vw;
+    max-width: unset;
+    overflow: hidden;
 }
 
-.navbar-before-login img {
-    width: 200px;
+header {
+    background-color: var(--blue-dark);
 }
 
-.login-btn {
-    float: right;
-    text-align: center;
-    display: block;
-    text-decoration: none;
-    font-size: 20pt;
-    color: black;
-    border: black;
-    background-color: white;
-    padding: 5px;
-    border-radius: 10px;
+.header-menu-option {
+    color: var(--blue-light);
 }
 
-.navbar-before-login a:hover {
-    background-color: #ddd;
-    color: black;
-}
-
-.navbar-before-login a.active {
-    background-color: #04AA6D;
-    color: white;
-}
-
-.main-header {
-    background-color: #ceddf1;
-    position: relative;
-    margin: 0;
-}
-
-.main-header img {
-    width: 100%;
-    height: auto;
-    position: relative;
-    margin: auto;
-    opacity: 0.5;
-}
-
-.headText {
-    position: absolute;
-    color: white;
-    background: rgba(0, 0, 0, 0.5);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 10px;
-    text-align: center;
-}
-
-.button-header {
+#jumbotron {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: fit-content;
+}
+
+#jumbotron-background {
+    width: 100%;
+        display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--blue-dark);
+}
+
+#jumbotron-container {
+    width: 100%;
+    padding-top: 20px;
+    flex-grow: 1;
+    display: grid;
+    max-width: 1000px;
+    grid-template-areas:
+        "txt txt"
+        "btn art"
+        "btn art";
+}
+
+#jumbotron-text {
+    grid-area: txt;
+    font-size: 1em;
+    width: 90%;
+    text-align: center;
+    color: var(--blue-light);
+    justify-self: center;
+    align-self: center;
+    margin-bottom: 10px;
+}
+
+.header {
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+#jumbotron-text .header {
+    color: var(--pink-medium);
+    margin-bottom: 10px;
+}
+
+#jumbotron-buttons {
+    grid-area: btn;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-self: end;
+    align-self: center;
+    margin-left: 20px;
+    margin-bottom: 40px;
 }
 
 .button {
+    height: 40px;
+    width: 120px;
     border-radius: 5px;
-    background-color: #96AAC4;
-    border: none;
-    color: black;
-    text-align: center;
-    font-size: 20px;
-    padding: 5px;
-    transition: all 0.5s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
     cursor: pointer;
+    color: var(--blue-dark);
+    background-color: var(--blue-medium);
+    text-decoration: none;
+
+}
+
+.button#account-button {
+
+    color: var(--pink-text);
+    background-color: var(--pink-medium);
+}
+
+.button:hover {
+    filter: brightness(1.2);
+}
+
+#jumbotron-art-container {
+    grid-area: art;
+    width: 180px;
+    height: 250px;
+    margin: 20px;
+    justify-self: end;
+    position: relative;
+}
+
+#jumbotron-art {
+    height: 250px;
+    margin-top: -10px;
+    z-index: 2;
+    position: absolute;
+    transform: translate(-10px, 0px);
+}
+
+#jumbotron-circle {
+    position: absolute;
+    height: 400px;
+    margin-top: -10px;
+    z-index: 1;
+    opacity: 0.1;
+    transform: translate(20px, -120px);
+}
+
+#jumbotron-bottom {
+
+    margin-top: -5px;
+}
+
+#mission-statement {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#mission-statement .header {
+    color: var(--blue-text);
     margin: 5px;
+}
+
+#mission-statement-container {
+    font-size: 0.9em;
+    margin-top: -30px;
+    color: var(--blue-dark);
+    padding: 20px;
+    text-align: center;
+    max-width: 612px;
+}
+
+#mission-button {
+    width: 140px;
+    background-color: var(--blue-light);
+    margin: 0 auto;
+}
+
+.spacer {
+    height: 20px;
+}
+
+@media (min-width: 700px) {
+
+    #jumbotron-container {
+        margin-top: 100px;
+        grid-template-areas:
+            "txt art"
+            "btn art"
+            "xxx art";
+    }
+
+    #jumbotron-text {
+        grid-area: txt;
+        text-align: left;
+        justify-self: left;
+        align-self: first baseline;
+        margin-left: 30px;
+        max-width: 450px;
+    }
+
+    #jumbotron-buttons {
+        grid-area: btn;
+        display: flex;
+        flex-direction: row;
+        justify-self: left;
+        align-self: start;
+        margin-left: 30px;
+        margin-top: 10px;
+    }
+
+    #jumbotron-art-container {
+        width: 340px;
+    }
+
+
+    #jumbotron-bottom {
+        height: 200px;
+        width: fit-content;
+        object-fit: fill;
+    }
+
+    #jumbotron-art {
+        height: 300px;
+        transform: translate(20px, -40px);
+    }
+
+    #jumbotron-circle {
+    height: 380px;
+    transform: translate(0px, -100px);
+}
 }

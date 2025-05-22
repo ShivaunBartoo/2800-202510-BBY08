@@ -1,23 +1,26 @@
-import { initImageUploadPreview } from './imageUploadUtil.js';
+import { initImageUploadPreview, displayError, highlightErrorFields } from './imageUploadUtil.js';
 
 document.addEventListener('DOMContentLoaded', function () {
 
     registerEventListeners();
 
     initImageUploadPreview(
-        'uploadTrigger',
-        'coverPhotoInput',
-        'photoPreview',
-        'previewImage',
+        '.uploadTrigger',
+        '.coverPhotoInput',
+        '.photoPreview',
+        '.previewImage',
         (file) => {
             console.log('User selected file:', file);
         }
     );
-    
+
     document.getElementById('newStorageForm').addEventListener('submit', (e) => {
         e.preventDefault();
+
+        const submitBtn = document.querySelector('.cre-save-btn');
+        submitBtn.disabled = true;
         const form = e.target;
-        const coverPhotoInput = document.getElementById('coverPhotoInput');
+        const coverPhotoInput = document.querySelector('.coverPhotoInput');
 
         const formData = new FormData(form);
 
@@ -27,24 +30,35 @@ document.addEventListener('DOMContentLoaded', function () {
             formData.set('photo', coverPhotoInput.files[0]);
         }
 
-
         fetch(`/storage/createnew/`, {
             method: 'POST',
             body: formData
         })
-            .then(res => res.json())
-            .then(() => {
+            .then(async res => {
+                const data = await res.json();
 
-                alert('Storage created in database');
-                window.location.href = '/browse';
+                if (!res.ok) {
+
+                    displayError(data.error);
+
+                    console.log(data.fields);
+                    if (Array.isArray(data.fields)) {
+                        highlightErrorFields(data.fields);
+                    }
+
+                    throw new Error(data.error);
+                }
+                submitBtn.disabled = false;
+                window.location.href = '/profile';
             })
-
             .catch(error => {
-                console.error('error', error);
-                alert('Error: ' + error.message);
+                console.error('Submission error:', error);
+                submitBtn.disabled = true;
+
             });
     });
 });
+
 
 function registerEventListeners() {
 
@@ -55,13 +69,12 @@ function registerEventListeners() {
             }
         };
 
-        executeOnMatch("#fridgeBtn", selectType,'fridge');
-        executeOnMatch("#pantryBtn", selectType,'pantry');
-        
-
+        executeOnMatch("#fridgeBtn", selectType, 'fridge');
+        executeOnMatch("#pantryBtn", selectType, 'pantry');
+        executeOnMatch(".cre-back-btn", () => {
+            window.location.href = '/profile';
+        });
     });
-
-
 }
 
 function selectType(type) {
@@ -77,7 +90,5 @@ function selectType(type) {
         pantryBtn.classList.add('active');
         fridgeBtn.classList.remove('active');
         storageTypeInput.value = 2;
-
-
     }
 }

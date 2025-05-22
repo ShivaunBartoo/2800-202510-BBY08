@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt");
 const saltRounds = 12;
 const pg = require("pg");
 const fs = require("fs");
+const Joi = require('joi');
+
 
 const config = ({
     user: process.env.DB_USER,
@@ -16,8 +18,64 @@ const config = ({
 });
 
 module.exports = function (app) {
+
+    const userSchema = Joi.object({
+        firstName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required().messages({
+      'string.empty': 'First name is required',
+      'string.pattern.base': 'First name can only include letters, spaces, hyphens, and apostrophes',
+      'string.min': 'First name must be at least 1 character long',
+      'string.max': 'First name cannot exceed 50 characters',
+      'any.required': 'First name is required',
+    }),
+        lastName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required().messages({
+      'string.empty': 'Last name is required',
+      'string.pattern.base': 'Last name can only include letters, spaces, hyphens, and apostrophes',
+      'string.min': 'Last name must be at least 1 character long',
+      'string.max': 'Last name cannot exceed 50 characters',
+      'any.required': 'Last name is required',
+    }),
+        email: Joi.string().email().required().messages({
+      'string.empty': 'Email is required',
+      'string.email': 'Please enter a valid email address',
+      'any.required': 'Email is required',
+    }),
+        password: Joi.string().min(4).max(128).required().messages({
+      'string.empty': 'Password is required',
+      'string.min': 'Password must be at least 4 characters',
+      'string.max': 'Password cannot exceed 128 characters',
+      'any.required': 'Password is required',
+    }),
+    });
+
+    const loginSchema = Joi.object({
+        email: Joi.string().email().required().messages({
+      'string.empty': 'Email is required',
+      'string.email': 'Please enter a valid email address',
+      'any.required': 'Email is required',
+    }),
+        password: Joi.string().min(4).max(128).required().messages({
+      'string.empty': 'Password is required',
+      'string.min': 'Password must be at least 4 characters',
+      'string.max': 'Password cannot exceed 128 characters',
+      'any.required': 'Password is required',
+    })
+    });
+
     app.post('/createUser', async (req, res) => {
-        let {firstName, lastName, email, password} = JSON.parse(atob(req.body.data));
+        let parsedData;
+
+        try {
+            parsedData = JSON.parse(atob(req.body.data));
+        } catch (err) {
+            return res.status(400).send({ status: "fail", msg: "Invalid data format" });
+        }
+
+        const { error, value } = userSchema.validate(parsedData);
+        if (error) {
+            return res.status(400).send({ status: "fail", msg: error.details[0].message });
+        }
+
+        const { firstName, lastName, email, password } = value;
 
         let hashedPassword = bcrypt.hashSync(password, saltRounds);
 
@@ -27,7 +85,7 @@ module.exports = function (app) {
                 console.log("Error connecting to database in /createUser:", err);
                 return;
             }
-            client.query(`INSERT INTO "users" ("firstName", "lastName", "email", "password") VALUES ($1, $2, $3, $4)`, [firstName, lastName, email, hashedPassword], (error, results) => {
+            client.query(`INSERT INTO "users" ("firstName", "lastName", "email", "password") VALUES ($1, $2, $3, $4) RETURNING "userId"`, [firstName, lastName, email, hashedPassword], (error, results) => {
                 if (error) {
                     if (firstName == null || lastName == null || email == null || password == null) {
                         console.log("Validation error in /createUser: All fields are required.");
@@ -37,6 +95,7 @@ module.exports = function (app) {
                     res.send({ status: "fail", msg: "Unable to create user." });
                     return;
                 } else {
+                    req.session.userId = results.rows[0].userId;
                     req.session.authenticated = true;
                     req.session.userFirstName = firstName;
                     req.session.lastName = lastName;
@@ -54,7 +113,20 @@ module.exports = function (app) {
     });
 
     app.post('/loggingIn', (req, res) => {
-        let {email, password} = JSON.parse(atob(req.body.data));
+        let parsedData;
+
+        try {
+            parsedData = JSON.parse(atob(req.body.data));
+        } catch (err) {
+            return res.status(400).send({ status: "fail", msg: "Invalid data format" });
+        }
+
+        const { error, value } = loginSchema.validate(parsedData);
+        if (error) {
+            return res.status(400).send({ status: "fail", msg: error.details[0].message });
+        }
+
+        const { email, password } = value;
 
         const client = new pg.Client(config);
         client.connect((err) => {

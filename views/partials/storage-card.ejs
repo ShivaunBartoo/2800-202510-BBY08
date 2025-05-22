@@ -5,7 +5,7 @@
     <div class="card-background-gradient"></div>
     <div class="card-content">
         <div class="card-content-left">
-            <% if(typeof isFavourite != "undefined") { %>
+            <% if(isAuthenticated && typeof isFavourite != "undefined") { %>
             <div class="card-favourite <%if(isFavourite){%>active<%}%> material-icons" 
                 data-id="<%= row.storageId %>">favorite</div>
             <% } %>
@@ -19,12 +19,19 @@
                 <div class="card-storage-type">community pantry</div>
                 <% } %>
                 <span class="card-rating-container">
-                    <span class="card-rating">4.5/5</span>
+                    
+                        <% if (row.avg) { %>
+                        <span class="card-rating"><%= row.avg %>/5</span>
+                        <% } else { %>
+                            <span class="card-rating">-/5</span>
+                            <% } %>
                     <span class="card-rating-icon material-icons">star</span>
                 </span>
             </div>
             <span class="card-footer">
-                <div class="card-footer-restocked hidden"><span>RESTOCKED</span></div>
+                <% if (row.restocked) { %>
+                <div class="card-footer-restocked"><span>RESTOCKED</span></div>
+                <% } %>
                 <% if(typeof distance != "undefined") { %>
                 <div class="card-distance"><%= distance %> km</div>
                 <% } %>

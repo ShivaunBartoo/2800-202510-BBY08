@@ -145,7 +145,7 @@ async function submitReview() {
 
         } catch (err) {
             console.log(err);
-            submitBtn.disabled = true;
+            submitBtn.disabled = false;
 
         }
     }
@@ -281,7 +281,7 @@ async function submitReply(button) {
 
     } catch (err) {
         console.error("Submit Reply Error:", err);
-        submitBtn.disabled = true;
+        submitBtn.disabled = false;
 
     }
 }

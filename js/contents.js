@@ -30,7 +30,7 @@ async function checkDistance() {
 
     document.getElementById("distance").innerHTML = `${distance}km Away`;
 
-    if (distance > 50) {
+    if (distance > 7) {
         document.querySelector("#open-modal").disabled = true;
         document.querySelector("#take").disabled = true;
         document.querySelector("#distance-error").classList.remove("hidden");
@@ -156,126 +156,52 @@ document.querySelector("#addItem").addEventListener("click", function (e) {
     setClassificationResult("none");
     document.querySelector("#donate-btn").disabled = false;
 });
-//currentAction is protection against inspect element goblins
-let currentAction = null; //copy from here
-let pending = false;
 
-//sends challenge and receives token
-async function onTurnstileSuccess(token) {
-
-    const res = await fetch('/challenge-point', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, action: currentAction })
-
-    });
-    const result = await res.json();
-    return result;
-}
 const closebtn = document.querySelector("#close-modal");
-closebtn.disabled = false
-document.querySelector("#donate-btn").addEventListener("click", function (e) { // add cloudflare
-    document.querySelector("#bot-checking-donate").classList.remove("hidden");
+closebtn.disabled = false;
 
+document.querySelector("#donate-btn").addEventListener("click", function (e) {
+    document.querySelector("#donate-btn").disabled = true;
+     donateHandler(); 
     e.preventDefault();
-
-    //assigns currentAction as donate
-    currentAction = "donate"
-
-    const ploader = document.querySelector(".persoloader")
-
     closebtn.disabled = true;
-
-
-    ploader.classList.remove("donate-hidden");
-
-    turnstile.reset('#turnstile-widget');
-    pending = true;
-    //executes the widget to then get verified
-    turnstile.execute('#turnstile-widget', { action: currentAction });
 });
 
-//verified result gets used to determine which action was selected
-//this is important because if something malicious actually manages to
-//get one token it can't use it across all functions 
-window.onTurnstileVerified = async function (token) {
 
-    if (!pending) return;
-
-    pending = false;
-
-    const ploader = document.querySelector(".persoloader")
-    const nloader = document.querySelector(".nuthaloader")
-
-    const result = await onTurnstileSuccess(token);
-
-    if (!result.success) {
-        alert("not verified");
-        return;
-    }
-
-    ploader.classList.add("donate-hidden");
-    nloader.classList.add("take-hidden");
-    takeBtn.textContent = originalText;
-    document.querySelector("#bot-checking").classList.add("hidden");
-    document.querySelector("#bot-checking-donate").classList.add("hidden");
-    //determines which function to call based on which button was pushed
-    if (currentAction === "donate") {
-        donateHandler();
-    } else if (currentAction === "take") {
-        takeHandler();
-    }
-    //clears action so you can use other actions
-    currentAction = null;
-};
 function donateHandler() {
 
     console.log("donate button clicked");
     let items = JSON.stringify(itemsToDonate);
-
+    console.log("items: ",items);
     ajaxPOST(
-        `/api/donate?ID=${storageId}`,
+        `/api/donate`,
         function (data) {
             if (data) {
                 let parsedData = JSON.parse(data);
                 if (parsedData.status == "fail") {
                     alert(parsedData.msg);
+                    document.querySelector("#donate-btn").disabled = false;
                 } else {
                     let table = document.getElementById("content-rows");
                     while (2 <= table.rows.length) {
                         table.deleteRow(1);
                     }
-
                     loadRows();
                     resetValues();
                     document.getElementById("contentsmodal").style.display = "none";
+                    document.querySelector("#donate-btn").disabled = false;
                 }
             }
         },
         items
     );
     closebtn.disabled = false;
-} // to here
+} 
 
 
 var qtyList = [];
-let takeBtn = document.getElementById("take-text");
-let originalText = takeBtn.textContent.trim();
 document.querySelector("#take").addEventListener("click", function takeMode() {
-
-    currentAction = "take"
-    turnstile.reset('#turnstile-widget');
-
-    const nloader = document.querySelector(".nuthaloader");
-
-
-
-    takeBtn.textContent = "";
-    nloader.classList.remove("take-hidden")
-    document.querySelector("#bot-checking").classList.remove("hidden");
-    pending = true;
-    turnstile.execute('#turnstile-widget', { action: currentAction });
-
+    takeHandler();
 });
 
 function takeHandler() {
@@ -311,6 +237,7 @@ function cancelTake() {
 }
 
 document.querySelector("#take-confirm").addEventListener("click", async function confirmTake() {
+    document.querySelector("#take-confirm").disabled = true;
     let error = false;
     qtyList.forEach((item) => {
         let subQty = parseInt(document.querySelector(`[data-itemid~="${item.id}"]`).value);
@@ -336,9 +263,11 @@ document.querySelector("#take-confirm").addEventListener("click", async function
     });
 
     if (response.status == 200) {
+        document.querySelector("#take-confirm").disabled = false;
         window.location = window.location;
     } else {
         console.log("An error has occurred!");
+        document.querySelector("#take-confirm").disabled = false;
     }
 });
 

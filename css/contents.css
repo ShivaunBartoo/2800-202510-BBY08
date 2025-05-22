@@ -107,10 +107,15 @@ main {
 
 #contents>table th,
 tr {
-    text-align: left;
+    text-align: center;
     height: 2em;
     border-bottom: 1px solid var(--blue-medium);
 }
+
+/* #contents>table th,
+td {
+    text-align: center;
+} */
 
 #buttons {
     grid-area: buttons;

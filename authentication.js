@@ -20,15 +20,45 @@ const config = ({
 module.exports = function (app) {
 
     const userSchema = Joi.object({
-        firstName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required(),
-        lastName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required(),
-        email: Joi.string().email().required(),
-        password: Joi.string().min(4).max(128).required()
+        firstName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required().messages({
+      'string.empty': 'First name is required',
+      'string.pattern.base': 'First name can only include letters, spaces, hyphens, and apostrophes',
+      'string.min': 'First name must be at least 1 character long',
+      'string.max': 'First name cannot exceed 50 characters',
+      'any.required': 'First name is required',
+    }),
+        lastName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required().messages({
+      'string.empty': 'Last name is required',
+      'string.pattern.base': 'Last name can only include letters, spaces, hyphens, and apostrophes',
+      'string.min': 'Last name must be at least 1 character long',
+      'string.max': 'Last name cannot exceed 50 characters',
+      'any.required': 'Last name is required',
+    }),
+        email: Joi.string().email().required().messages({
+      'string.empty': 'Email is required',
+      'string.email': 'Please enter a valid email address',
+      'any.required': 'Email is required',
+    }),
+        password: Joi.string().min(4).max(128).required().messages({
+      'string.empty': 'Password is required',
+      'string.min': 'Password must be at least 4 characters',
+      'string.max': 'Password cannot exceed 128 characters',
+      'any.required': 'Password is required',
+    }),
     });
 
     const loginSchema = Joi.object({
-        email: Joi.string().email().required(),
-        password: Joi.string().min(4).max(128).required()
+        email: Joi.string().email().required().messages({
+      'string.empty': 'Email is required',
+      'string.email': 'Please enter a valid email address',
+      'any.required': 'Email is required',
+    }),
+        password: Joi.string().min(4).max(128).required().messages({
+      'string.empty': 'Password is required',
+      'string.min': 'Password must be at least 4 characters',
+      'string.max': 'Password cannot exceed 128 characters',
+      'any.required': 'Password is required',
+    })
     });
 
     app.post('/createUser', async (req, res) => {

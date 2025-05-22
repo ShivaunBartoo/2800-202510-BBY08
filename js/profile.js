@@ -5,19 +5,19 @@ onPageStart()
 
 async function onPageStart() {
 
-const currentUrl = new URL(window.location.href);
+    const currentUrl = new URL(window.location.href);
     const lat = currentUrl.searchParams.get("lat");
     const lon = currentUrl.searchParams.get("lon");
 
     if (!lat || !lon) {
 
         try {
-        const location = await getUserLocation();
-        const { lat, lon } = location;
+            const location = await getUserLocation();
+            const { lat, lon } = location;
 
-        window.location.href = `/profile?lat=${lat}&lon=${lon}`;
-        
-        } catch(err) {
+            window.location.href = `/profile?lat=${lat}&lon=${lon}`;
+
+        } catch (err) {
             console.log("User denied locational access... continuing on without it")
         }
     }
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             notifications: document.getElementById('notifications').checked
         };
 
-        if (oldPassword && newPassword) {
+        if (oldPassword !== '' && newPassword !== '') {
             data.oldPassword = oldPassword;
             data.newPassword = newPassword;
         }
@@ -140,9 +140,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (Array.isArray(result.fields)) {
                     highlightErrorFields(result.fields);
                 }
+            } else {
+                showSuccess('Saved Change!!!');
+                togglePasswordFields();
             }
-            showSuccess('Saved Change!!!');
-            togglePasswordFields();
+
         } catch (err) {
             console.error("Error submitting form:", err);
             alert("Submission failed.");

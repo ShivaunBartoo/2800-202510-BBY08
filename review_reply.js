@@ -32,14 +32,35 @@ const { uploadPhotoCloud } = require('./utils');
 module.exports = function (app) {
 
     const reviewSchema = Joi.object({
-        title: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(100).required(),
-        body: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(1000).required(),
-        rating: Joi.number().integer().min(1).max(5).required(),
+        title: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(100).required().messages({
+      'string.empty': 'Review title is required',
+      'string.pattern.invert.base': 'Review title cannot contain characters like $, (, ), <, or >',
+      'string.max': 'Review title must not exceed 100 characters',
+      'any.required': 'Review title is required',
+    }),
+        body: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(1000).required().messages({
+      'string.empty': 'Review body is required',
+      'string.pattern.invert.base': 'Review body cannot contain characters like $, (, ), <, or >',
+      'string.max': 'Review body must not exceed 1000 characters',
+      'any.required': 'Review body is required',
+    }),
+        rating: Joi.number().integer().min(1).max(5).required().messages({
+      'number.base': 'Rating must be a number',
+      'number.integer': 'Rating must be a whole number',
+      'number.min': 'Rating must be at least 1',
+      'number.max': 'Rating cannot be more than 5',
+      'any.required': 'Rating is required',
+    }),
     });
 
     const replySchema = Joi.object({
         reviewId: Joi.number().integer().required(),
-        reply: Joi.string().max(1000).required(),
+        reply: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(1000).required().messages({
+      'string.empty': 'Reply body is required',
+      'string.pattern.invert.base': 'Reply body cannot contain characters like $, (, ), <, or >',
+      'string.max': 'Reply body must not exceed 1000 characters',
+      'any.required': 'Reply body is required',
+        }),
     });
 
 

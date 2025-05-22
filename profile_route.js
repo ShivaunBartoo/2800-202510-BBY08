@@ -29,16 +29,33 @@ async function isOwner(req, res, next) {
 module.exports = function (app) {
 
     const updateProfileSchema = Joi.object({
-        firstName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required(),
-        lastName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required(),
-        email: Joi.string().email().required(),
-        oldPassword: Joi.string().min(4).optional().allow(''),
-        newPassword: Joi.string().min(4).optional().allow(''),
+        firstName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required().messages({
+      'string.empty': 'First name is required',
+      'string.pattern.base': 'First name can only contain letters, spaces, apostrophes, and hyphens',
+      'string.min': 'First name must be at least 1 character',
+      'string.max': 'First name cannot exceed 50 characters',
+    }),
+        lastName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required().messages({
+      'string.empty': 'Last name is required',
+      'string.pattern.base': 'Last name can only contain letters, spaces, apostrophes, and hyphens',
+      'string.min': 'Last name must be at least 1 character',
+      'string.max': 'Last name cannot exceed 50 characters',
+    }),
+        email: Joi.string().email().required().messages({
+      'string.empty': 'Email is required',
+      'string.email': 'Please provide a valid email address',
+    }),
+        oldPassword: Joi.string().min(4).optional().allow('').messages({
+      'string.min': 'Old password must be at least 4 characters',
+    }),
+        newPassword: Joi.string().min(4).optional().allow('').messages({
+      'string.min': 'New password must be at least 4 characters',
+    }),
         notifications: Joi.boolean().required()
     });
 
     app.post('/update-profile', async (req, res) => {
-        const { error, value } = updateProfileSchema.validate(req.body);
+        const { error, value } = updateProfileSchema.validate(req.body, {abortEarly: false});
 
         if (error) {
             return res.status(400).json({ 
@@ -61,10 +78,10 @@ module.exports = function (app) {
 
             let newHashedPassword = null;
 
-            if (oldPassword && newPassword) {
+            if (oldPassword && oldPassword.trim() !== '' && newPassword && newPassword.trim() !== '') {
                 const match = await bcrypt.compare(oldPassword, user.password);
                 if (!match) {
-                    return res.status(400).json({ message: "Old password is incorrect." });
+                    return res.status(400).json({ error: "Old password is incorrect." });
                 }
                 newHashedPassword = await bcrypt.hash(newPassword, saltRounds);
             }

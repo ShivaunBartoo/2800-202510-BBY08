@@ -1,4 +1,4 @@
-import { initImageUploadPreview } from './imageUploadUtil.js';
+import { initImageUploadPreview, displayError, highlightErrorFields } from './imageUploadUtil.js';
 
 const storageId = window.location.pathname.split("/")[2];
 
@@ -10,7 +10,7 @@ if (!storageId) {
 document.addEventListener('DOMContentLoaded', function () {
 
     registerEventListeners();
-    
+
     // Edit fridge name
     document.querySelector('.storage-title .edit-btn').addEventListener('click', () => {
         const nameEl = document.getElementById('storageName');
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('storageType', document.getElementById('storageTypeSelect').value);
         formData.append('lastCleaned', document.getElementById('lastCleaned').value.trim());
         formData.append('description', document.getElementById('description').value.trim());
-console.log('lastcleaned', document.getElementById('lastCleaned').value.trim());
+        console.log('lastcleaned', document.getElementById('lastCleaned').value.trim());
         // Append photo only if user selected one
         if (coverPhotoInput.files.length > 0) {
             formData.append('photo', coverPhotoInput.files[0]);
@@ -54,14 +54,18 @@ console.log('lastcleaned', document.getElementById('lastCleaned').value.trim());
                 method: 'PUT',
                 body: formData
             });
+            const result = await response.json();
 
             if (!response.ok) {
+                displayError(result.error);
+
+                if (Array.isArray(result.fields)) {
+                    highlightErrorFields(result.fields);
+                }
                 throw new Error('Failed to save storage');
             }
 
-            const result = await response.json();
-            alert('Storage saved successfully!');
-            console.log('client side', result);
+            displayError('Storage saved successfully!');
 
             // Update preview image if new one was uploaded
             if (result.image) {
@@ -71,7 +75,6 @@ console.log('lastcleaned', document.getElementById('lastCleaned').value.trim());
 
         } catch (err) {
             console.error('Save error:', err);
-            alert('Error saving storage: ' + err.message);
         }
     });
 
@@ -146,7 +149,7 @@ async function softDeleteStorage(storageId) {
         }
     } catch (error) {
         console.error(error);
-        alert('Error: ' + error.message);
+        displayError('Error: ' + error.message);
     }
 }
 

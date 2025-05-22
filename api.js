@@ -134,7 +134,7 @@ module.exports = function (app) {
 
         const itemSchema = Joi.object({
             itemName: Joi.string().regex(/^[a-zA-Z\s'-]{1,50}$/).min(1).max(50).required(),
-            quantity: Joi.string().number().integer().min(1).max(50).required()
+            quantity: Joi.number().integer().min(1).max(50).required()
         });
 
         // Validate itemName in each object

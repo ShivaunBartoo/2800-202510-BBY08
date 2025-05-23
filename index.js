@@ -8,9 +8,11 @@ const session = require("express-session");
 const pgSession = require("connect-pg-simple")(session);
 const fs = require("fs");
 const pg = require("pg");
+const dotenv = require('dotenv').config();
 
 const notificationUtils = require("./notification-emails");
 const authorization = require("./authorization.js");
+
 
 const app = express();
 const port = process.env.PORT || 3000;

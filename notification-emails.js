@@ -32,7 +32,7 @@ function generateNotifications(storageId) {
   const client = new pg.Client(dbconfig);
   client.connect((err) => {
     if (err) {
-      console.log(err);
+      console.error(err);
       return;
     }
     client.query(
@@ -62,7 +62,7 @@ function buildNotifications(storageId, items) {
   const client = new pg.Client(dbconfig);
   client.connect((err) => {
     if (err) {
-      console.log(err);
+      console.error(err);
       return;
     }
 
@@ -169,14 +169,12 @@ function sendNotifications() {
 
   console.log(`[INFO] ${(new Date()).toUTCString()} - Sending Notifications`);
   let bccList = [];
-
   getPendingNotifications().then(notifications => {
     notifications.forEach(note => {
       const storageId = note.storageId
       getRecipientList(storageId).then(recipients => {
         recipients.forEach(recipient => {
           bccList.push(recipient.email);
-          console.log("\t", recipient.email);
         });
 
         if (recipients.length > 0) {
@@ -194,10 +192,9 @@ function sendNotifications() {
 
           transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
-              console.log(error);
+              console.error(error);
               return;
             }
-            console.log(info);
             updateNotifications(note.notificationids);
           });
         }

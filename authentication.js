@@ -82,16 +82,16 @@ module.exports = function (app) {
         const client = new pg.Client(config);
         client.connect((err) => {
             if (err) {
-                console.log("Error connecting to database in /createUser:", err);
+                console.error("Error connecting to database in /createUser:", err);
                 return;
             }
             client.query(`INSERT INTO "users" ("firstName", "lastName", "email", "password") VALUES ($1, $2, $3, $4) RETURNING "userId"`, [firstName, lastName, email, hashedPassword], (error, results) => {
                 if (error) {
                     if (firstName == null || lastName == null || email == null || password == null) {
-                        console.log("Validation error in /createUser: All fields are required.");
+                        console.error("Validation error in /createUser: All fields are required.");
                         return;
                     }
-                    console.log("Error inserting user in /createUser:", error);
+                    console.error("Error inserting user in /createUser:", error);
                     res.send({ status: "fail", msg: "Unable to create user." });
                     return;
                 } else {
@@ -131,7 +131,7 @@ module.exports = function (app) {
         const client = new pg.Client(config);
         client.connect((err) => {
             if (err) {
-                console.log("Error connecting to database in /loggingIn:", err);
+                console.error("Error connecting to database in /loggingIn:", err);
                 return;
             }
             client.query(`SELECT * FROM "users" WHERE users.email = $1`, [email], async (error, results) => {

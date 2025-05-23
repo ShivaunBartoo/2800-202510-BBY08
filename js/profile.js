@@ -18,7 +18,7 @@ async function onPageStart() {
             window.location.href = `/profile?lat=${lat}&lon=${lon}`;
 
         } catch (err) {
-            console.log("User denied locational access... continuing on without it")
+            console.warn("User denied locational access... continuing on without it")
         }
     }
 
@@ -191,7 +191,7 @@ async function loadStorageCards() {
         }
     }
     else {
-        console.log("No storages to show.");
+        console.warn("No storages to show.");
     }
 }
 
@@ -209,7 +209,7 @@ async function loadReviewCards() {
     }
     else {
         mainContainer.innerHTML = 'No review to show'
-        console.log("No review to show.");
+        console.warn("No review to show.");
     }
 }
 
@@ -250,10 +250,7 @@ function toggleReplyForm(button) {
         trigger,
         input,
         previewContainer,
-        previewImage,
-        (file) => {
-            console.log('User selected file:', file);
-        }
+        previewImage
     );
 }
 
@@ -326,9 +323,6 @@ function openModal(modalId) {
     modal.style.top = "50%";
     modal.style.left = "50%";
     modal.style.transform = "translate(-50%, -50%)";
-
-
-    console.log(`Modal ${modalId} opened.`);
 }
 
 function closeModal(modalId) {

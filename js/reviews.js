@@ -64,8 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         '.uploadTrigger',
         '.coverPhotoInput',
         '.photoPreview',
-        '.previewImage',
-        (file) => console.log('User selected file:', file)
+        '.previewImage'
     );
 
     await getReviews();
@@ -121,7 +120,6 @@ async function submitReview() {
         formData.append("review", JSON.stringify(review));
 
         try {
-            console.log(storageId);
             const res = await fetch(`/reviews/${storageId}`, {
                 method: "POST",
                 body: formData,
@@ -133,7 +131,6 @@ async function submitReview() {
                 await getReviews();
             } else {
                 const data = await res.json();
-                console.log(data);
                 displayError(data.error);
 
                 if (Array.isArray(data.fields)) {
@@ -144,7 +141,7 @@ async function submitReview() {
             submitBtn.disabled = false;
 
         } catch (err) {
-            console.log(err);
+            console.error('Submiting review error: ', err);
             submitBtn.disabled = false;
 
         }
@@ -225,9 +222,7 @@ function toggleReplyForm(button) {
     const previewContainer = form.querySelector(".replyphotoPreview");
     const previewImage = form.querySelector(".replypreviewImage");
 
-    initImageUploadPreview(trigger, input, previewContainer, previewImage, (file) => {
-        console.log("User selected file:", file);
-    });
+    initImageUploadPreview(trigger, input, previewContainer, previewImage);
 }
 
 async function submitReply(button) {
@@ -308,7 +303,6 @@ function openModal(modalId) {
     modal.style.top = "50%";
     modal.style.left = "50%";
     modal.style.transform = "translate(-50%, -50%)";
-    console.log(`Modal ${modalId} opened.`);
 }
 
 function closeModal(modalId) {

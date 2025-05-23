@@ -6,15 +6,15 @@
  * Integrates with PostgreSQL, Cloudinary, and various utility modules.
  */
 
-const { getDistance } = require("./js/userLocation");
-const { classify } = require("./js/food-classify");
+const { getDistance } = require("../userLocation");
+const { classify } = require("../food-classify");
 const fs = require("fs");
 const pg = require("pg");
 const ejs = require("ejs");
 const cloudinary = require("cloudinary").v2;
 const Joi = require('joi');
 
-const notificationUtils = require('./notification-emails');
+const notificationUtils = require('../notification-emails');
 
 // Cloudinary configuration for image uploads
 cloudinary.config({

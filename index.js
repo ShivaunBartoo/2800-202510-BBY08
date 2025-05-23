@@ -10,8 +10,8 @@ const fs = require("fs");
 const pg = require("pg");
 const dotenv = require('dotenv').config();
 
-const notificationUtils = require("./notification-emails");
-const authorization = require("./authorization.js");
+const notificationUtils = require("./js/notification-emails");
+const authorization = require("./js/authorization.js");
 
 
 const app = express();
@@ -324,11 +324,11 @@ app.get("/logout", function (req, res) {
 });
 
 // Register additional API and route modules
-require('./api')(app);
-require('./authentication')(app);
-require('./create_manageStorage')(app);
-require('./profile_route')(app);
-require('./review_reply')(app);
+require('./js/routes/api')(app);
+require('./js/routes/authentication')(app);
+require('./js/routes/create_manageStorage')(app);
+require('./js/routes/profile_route')(app);
+require('./js/routes/review_reply')(app);
 
 // Catch-all route for 404 Page Not Found
 app.use(function (req, res) {

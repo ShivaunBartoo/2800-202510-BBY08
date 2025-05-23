@@ -3,3 +3,4 @@ package-lock.json
 .env
 ca.pem
 classified_food_*
+eslint.config.mjs

@@ -25,7 +25,7 @@ const config = {
         ca: fs.readFileSync("./ca.pem").toString(),
     },
 };
-const { uploadPhotoCloud } = require('./utils');
+const { uploadPhotoCloud } = require('../utils');
 
 module.exports = function (app) {
 

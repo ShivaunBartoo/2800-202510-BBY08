@@ -47,7 +47,7 @@ async function geocodeAddress(fullAddress) {
     }
 }
 
-const { uploadPhotoCloud } = require('./utils');
+const { uploadPhotoCloud } = require('../utils');
 
 module.exports = function (app) {
 

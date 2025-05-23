@@ -14,7 +14,6 @@ main {
     color: var(--blue-dark);
     padding: 15px;
     border-radius: 10px;
-    /* position: static; */
 }
 
 .review-header {

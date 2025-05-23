@@ -80,7 +80,6 @@ C:.
 │   profile_route.js
 │   README.md
 │   review_reply.js
-│   Tree.txt
 │   utils.js
 │
 +---css
@@ -105,7 +104,6 @@ C:.
 │       datasets.json
 │       food_classification_tests.txt
 │
-+---html
 +---img
 │       becoolfavicon.ico
 │       becool_dark.png
@@ -156,7 +154,6 @@ C:.
             footer.ejs
             header.ejs
             mapPop.ejs
-            reply-card.ejs
             review-card.ejs
             storage-card.ejs
 ```

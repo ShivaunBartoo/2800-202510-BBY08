@@ -151,11 +151,6 @@ tr > :last-child {
     align-items: center;
 }
 
-#main-contents {
-    /* display: block; */
-}
-
-
 #donationList {
     width: 80%;
     border-collapse: collapse;

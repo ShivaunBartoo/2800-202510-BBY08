@@ -43,7 +43,6 @@ label {
 input[type="text"] {
   width: calc(100% - 40px);
   padding: 8px;
-  /* border: 1px solid #CEDDF1; */
   border-radius: 4px;
   margin-right: 5px;
   font-size: 16pt;

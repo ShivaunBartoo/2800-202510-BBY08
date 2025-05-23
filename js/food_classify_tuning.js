@@ -29,12 +29,10 @@ runTests(prompts, true, false);
  */
 async function runTests(prompts, generate, log) {
     if (generate) {
-        console.log("Generating test data...");
         await generateTestData(prompts, datasets[dataset]);
     }
     // let testErrors = calculatePredictionErrors(getDataFilePath());
     if (log) {
-        console.log("Logging test data...");
         logFoodClassificationTest(prompts, testErrors);
     }
 }
@@ -45,12 +43,9 @@ async function runTests(prompts, generate, log) {
  * @param {Array} dataset - The dataset to classify.
  */
 async function generateTestData(prompts, dataset) {
-    console.log("Generating test data...");
     for (let data of dataset) {
-        console.log(`Classifying ${data.word}.`);
         const result = await classify(data.word, prompts);
         data.score = result.score;
-        console.log(data.word + ": " + data.score + "\n");
     }
     fs.writeFileSync(getDataFilePath(), JSON.stringify(dataset)); // Save the classified dataset to a file
 }
@@ -65,14 +60,11 @@ function calculatePredictionErrors(path) {
     let falsePositives = 0;
     let falseNegatives = 0;
     let correct = 0;
-    console.log("=== Errors in Final Result ===");
     for (let data of testData) {
         const actualFood = data.label === "food";
         if (!actualFood && data.score > threshold) {
-            console.log("False positive: " + data.word);
             falsePositives++;
         } else if (actualFood && data.score <= threshold) {
-            console.log("False negative: " + data.word);
             falseNegatives++;
         } else {
             correct++;
@@ -80,7 +72,6 @@ function calculatePredictionErrors(path) {
     }
     const total = testData.length;
     const accuracy = (total > 0 ? (correct / total) * 100 : 0).toFixed(2) + "%";
-    console.log("Accuracy: ", accuracy);
     return {
         falsePositives,
         falseNegatives,

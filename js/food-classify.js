@@ -31,7 +31,7 @@ let getScoreDeepseek = (response) => {
         return 0;
     }
     else{
-        console.log("bad response: " + response)
+        console.warn("bad response: " + response)
         return threshold;
     }
 }
@@ -95,7 +95,6 @@ const models = {
                 const labels = response.result.labels;
                 const scores = response.result.scores;
                 const ethical = scores[labels.indexOf("ethical")];
-                // console.log("ethical: " + ethical)
                 if(ethical < 0.35){
                     return ethical;
                 }
@@ -262,7 +261,5 @@ async function queryDeepseek(input, prompt) {
         ],
     });
     const content = response.choices[0].message.content;
-    // const end = Date.now();
-    // console.log(`${prompt.model.name} took ${end - start} ms to classify ${input} as ${content.trim()}`);
     return { result: content, prompt };
 }

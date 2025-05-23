@@ -23,10 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '.uploadTrigger',
         '.coverPhotoInput',
         '.photoPreview',
-        '.previewImage',
-        (file) => {
-            console.log('User selected file:', file);
-        }
+        '.previewImage'
     );
 
     // Handle form submit
@@ -45,7 +42,6 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('storageType', document.getElementById('storageTypeSelect').value);
         formData.append('lastCleaned', document.getElementById('lastCleaned').value.trim());
         formData.append('description', document.getElementById('description').value.trim());
-        console.log('lastcleaned', document.getElementById('lastCleaned').value.trim());
         // Append photo only if user selected one
         if (coverPhotoInput.files.length > 0) {
             formData.append('photo', coverPhotoInput.files[0]);
@@ -115,7 +111,6 @@ function registerEventListeners() {
 }
 
 function toggleEdit(fieldId) {
-    console.log(fieldId);
     const field = document.getElementById(fieldId);
     field.disabled = !field.disabled;
 

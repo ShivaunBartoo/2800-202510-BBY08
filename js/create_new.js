@@ -8,10 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '.uploadTrigger',
         '.coverPhotoInput',
         '.photoPreview',
-        '.previewImage',
-        (file) => {
-            console.log('User selected file:', file);
-        }
+        '.previewImage'
     );
 
     document.getElementById('newStorageForm').addEventListener('submit', (e) => {
@@ -40,8 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!res.ok) {
 
                     displayError(data.error);
-
-                    console.log(data.fields);
+                    
                     if (Array.isArray(data.fields)) {
                         highlightErrorFields(data.fields);
                     }

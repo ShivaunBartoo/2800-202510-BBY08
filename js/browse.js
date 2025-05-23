@@ -93,7 +93,7 @@ async function loadCards() {
             addFavouriteButtonListener(card.querySelector(".card-favourite"));
         });
     } else {
-        console.log("No fridges to show.");
+        console.error("No fridges to show.");
     }
 
     if (!isLoggedIn) {
@@ -135,12 +135,11 @@ function addFavouriteButtonListener(element) {
                 body: JSON.stringify({ id }),
             });
             if (!response.ok) {
-                console.log("Error adding to favourites");
+                console.error("Error adding to favourites");
             }
         });
     }
 }
-
 
 let mapexist = false;
 
@@ -183,7 +182,6 @@ async function makeMap() {
 
     const result = await fetch('/api/fridgePoint');
     const points = await result.json();
-    console.log(points);
 
     points.forEach(point => {
         const marker = new google.maps.marker.AdvancedMarkerElement({
@@ -194,7 +192,6 @@ async function makeMap() {
         });
 
         marker.addEventListener('click', () => {
-            console.log(point.name)
             storageCard.setContent(`<div class="storageCard">
             <a href="/contents/${point.id}"> <strong>${point.name}</strong> </a>
             <a href=https://www.google.com/maps?q=${point.lat},${point.lon}> Directions </a>

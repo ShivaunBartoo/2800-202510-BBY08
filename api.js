@@ -100,7 +100,7 @@ module.exports = function (app) {
         const client = new pg.Client(config);
         client.connect((err) => {
             if (err) {
-                console.log(err);
+                console.error('Fail to connect to the database', err);
                 return;
             }
             client.query(
@@ -112,7 +112,7 @@ module.exports = function (app) {
                 [storageID],
                 async (error, results) => {
                     if (error) {
-                        console.log(error);
+                        console.error('Fail to retrieve content information: ', error);
                         client.end();
                         return;
                     }
@@ -145,12 +145,12 @@ module.exports = function (app) {
         const client = new pg.Client(config);
         client.connect((err) => {
             if (err) {
-                console.log(err);
+                console.error('fail to connect to DB: ', err);
                 return;
             }
             client.query(sql, (error, results) => {
                 if (error) {
-                    console.log(error);
+                    console.error('fail to query database to donate items: ', error);
                     client.end();
                     res.send({ status: "fail", msg: "Unable to add item to DB" });
                 } else {
@@ -239,7 +239,7 @@ module.exports = function (app) {
                 res.send({ status: "success", msg: "Database successfully updated" });
             })
             .catch(err => {
-                console.log(err);
+                console.error('fail to query database when taking items: ', err);
                 res.send({ status: "fail", msg: "Unable to remove items" });
             });
     });
@@ -249,7 +249,7 @@ module.exports = function (app) {
         const client = new pg.Client(config);
         client.connect((err) => {
             if (err) {
-                console.error(err);
+                console.error('fail to connect to DB', err);
                 return res.status(500).send("DB connection error");
             }
 
@@ -263,7 +263,7 @@ module.exports = function (app) {
                 `, [storageId],
                 async (error, results) => {
                     if (error) {
-                        console.error(error);
+                        console.error('query error for getting reviews: ',error);
                         client.end();
                         return res.status(500).send("Query error");
                     }
@@ -303,12 +303,12 @@ module.exports = function (app) {
         const client = new pg.Client(config);
         client.connect((err) => {
             if (err) {
-                console.log(err);
+                console.error('get fridge point error: ', err);
                 return;
             }
             client.query("SELECT * FROM public.storage", async (error, results) => {
                 if (error) {
-                    console.log(error);
+                    console.error('Fail to get storage information from database: ', error);
                     client.end();
                     return;
                 }

@@ -65,7 +65,7 @@ function ajaxPOST(url, callback, data) {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             callback(this.responseText);
         } else {
-            console.log(this.status);
+            console.error(this.status);
         }
     };
     xhr.open("POST", url);
@@ -121,7 +121,6 @@ document.querySelector("#addItem").addEventListener("click", function (e) {
     let name = document.getElementById("itemName");
     let qty = document.getElementById("qty");
     let bbd = document.getElementById("bbd");
-    console.log("qty", qty.value);
     let today = new Date().setHours(0, 0, 0);
     let bbdDate = new Date(bbd.value);
     let aiRejected = document.getElementById("ai-good").classList.contains("hidden");
@@ -185,10 +184,7 @@ function donateHandler() {
     if (disabled) {
         return;
     }
-
-    console.log("donate button clicked");
     let items = JSON.stringify(itemsToDonate);
-    console.log("items: ", items);
     ajaxPOST(
         `/api/donate`,
         function (data) {
@@ -279,7 +275,6 @@ document.querySelector("#take-confirm").addEventListener("click", async function
         item["qty"] = newQty;
     });
     if (error) {
-        console.log("trigger");
         document.querySelector("#take-confirm").disabled = false;
         return;
     }
@@ -299,7 +294,7 @@ document.querySelector("#take-confirm").addEventListener("click", async function
         document.querySelector('#take-confirm').innerHTML = `Confirm`;
         window.location = window.location;
     } else {
-        console.log("An error has occurred!");
+        console.error("An error has occurred!");
         document.querySelector("#take-confirm").disabled = false;
     }
 });
@@ -345,10 +340,8 @@ document.querySelector("#itemName").addEventListener("focusout", async (event) =
     if (input && (current != input || aiRejected)) {
         current = input;
         setClassificationResult("loading");
-        console.log(`getting score for ${input}.`)
         let response = await fetch(`/api/classify?input=${encodeURIComponent(input)}`);
         let result = await response.json();
-        console.log("score: " + JSON.stringify(result));
         if (result.input == current) {
             if (result.isFood) {
                 setClassificationResult("good");
@@ -358,7 +351,7 @@ document.querySelector("#itemName").addEventListener("focusout", async (event) =
             }
         }
         else {
-            console.log("stale result rejected.")
+            console.error("stale result rejected.")
         }
     }
 });

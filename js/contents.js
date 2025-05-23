@@ -121,25 +121,32 @@ document.querySelector("#addItem").addEventListener("click", function (e) {
     let name = document.getElementById("itemName");
     let qty = document.getElementById("qty");
     let bbd = document.getElementById("bbd");
+    name.style.border = `none`;
+    qty.style.border = `none`;
+    bbd.style.border = `none`;
     let today = new Date().setHours(0, 0, 0);
     let bbdDate = new Date(bbd.value);
     let aiRejected = document.getElementById("ai-good").classList.contains("hidden");
     if (aiRejected || name.value == "") {
+        name.style.border = `1px solid var(--pink-accent)`;
         showError("Item Name cannot be empty and must be recognized as food.");
         return;
     }
 
     if (1 > qty.value || qty.value > 50) {
+        qty.style.border = `1px solid var(--pink-accent)`;
         showError("Item quantity must be between 1 and 50.");
         return;
     }
 
     if (qty.value % 1 != 0) {
+        qty.style.border = `1px solid var(--pink-accent)`;
         showError("Item quantity cannot be fractional.");
         return;
     }
 
     if (bbdDate == `Invalid Date` || bbdDate < today) {
+        bbd.style.border = `1px solid var(--pink-accent)`;
         showError("Best Before Date cannot be expired.");
         return;
     }
@@ -239,6 +246,8 @@ document.querySelector("#take-cancel").addEventListener("click", function () {
 });
 
 function cancelTake() {
+    document.getElementById("take-error").classList.add("hidden");
+    document.getElementById("decimal-error").classList.add("hidden");
     let elements = document.getElementsByClassName("item-quantity");
     let quantities = Array.from(elements);
     for (let i = 0; i < quantities.length; i++) {
@@ -253,6 +262,9 @@ function cancelTake() {
 
 document.querySelector("#take-confirm").addEventListener("click", async function confirmTake() {
     document.querySelector("#take-confirm").disabled = true;
+    document.querySelector(".input-values").style.border = `none`;
+    document.getElementById("take-error").classList.add("hidden");
+    document.getElementById("decimal-error").classList.add("hidden");
     let error = false;
     qtyList.forEach((item) => {
         let subQty = parseFloat(document.querySelector(`[data-itemid~="${item.id}"]`).value);

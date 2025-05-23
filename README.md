@@ -3,27 +3,21 @@
 **Hosted Link - Check out our Web App!**
 https://two800-202510-bby08.onrender.com/ 
 
-**TABLE OF CONTENTS**
 ## Project Information
-## Tech Stack
-## File Contents
-## Features
-## Credits and References
-## Contact Information
 
-## Project Information
-**Project Title and Team**
-Project Title: BeCool
-Team Name: BBY-08
-Team Members: 
+**Project Title:** BeCool </br>
+**Team Name:** BBY-08 </br>
+**Team Members:** 
 - Shivaun Bartoo    
 - Luka Poledica
 - Ana Silva
 - Wynn Le
 - Isabel Cabral
+</br>
 
-**Project Description** 
+**Project Description** </br>
 Our app allows users to visualize the contents of a community fridge/pantry from wherever they are, edit the contents by donating and taking items when within a specified radius, receive notifications when items have been added to their favourite locations, and leave reviews for their visited locations. Community organizers can create and manage their own locations to keep information up to date.
+---
 
 ## Tech Stack
 Frontend:
@@ -67,8 +61,10 @@ Misc. Collaboration tools:
 
 AI:
 - Github CoPilot for assistance in documentation/comment generation and occasional misc. problem solving 
+---
 
 ## File Contents
+```
 C:.
 │   .env
 │   .gitignore
@@ -164,6 +160,8 @@ C:.
             reply-card.ejs
             review-card.ejs
             storage-card.ejs
+```
+---
 
 ## Features
 - Browse and favourite community fridges/pantries
@@ -188,19 +186,22 @@ C:.
     - Under the account page, simply scroll down to "My storages" and click "new storage" to add a new fridge/pantry to the application.
     - When you are the "owner" of a fridge, a new tab will appear for you under that location's contents page with a settings icon.
     - By clicking on this tab, you can then "manage" your fridge or pantry, updating information as needed, updating the cover photo, and displaying when the fridge was last cleaned as a courtesy for users.
+---
 
 ## Credits and References
-**Credits**
-Developed by: Ana Silva, Shivuan Bartoo, Luka Poledica, Isabel Cabral,  Wynn Le
-APIs Used:
+**Developed by:** Ana Silva, Shivuan Bartoo, Luka Poledica, Isabel Cabral,  Wynn Le </br>
+**APIs Used:**
+- GoogleMaps Geocoding: https://developers.google.com/maps/documentation/geocoding/requests-geocoding?_gl=1*2mpn5p*_up*MQ..*_ga*ODg4MTU4NjAxLjE3NDgwMjQzNzA.*_ga_NRWSTWS78N*czE3NDgwMjQzNzAkbzEkZzEkdDE3NDgwMjQzNzEkajAkbDAkaDA
 - GoogleMaps JavaScript: https://developers.google.com/maps/documentation/javascript?_gl=1*127ho9y*_up*MQ..*_ga*NTA2NzgzMjIwLjE3NDgwMjM2NTg.*_ga_NRWSTWS78N*czE3NDgwMjM2NTgkbzEkZzAkdDE3NDgwMjM2NjUkajAkbDAkaDA.
 - Cloudinary: https://cloudinary.com/documentation/image_upload_api_reference
 - HuggingFace: https://huggingface.co/docs/huggingface.js/index 
 
 Code snippets for geolocational distance algoirthm were adapted from resources such as Stack Overflow and MDN Web Docs.
+---
 
-**Acknowledgements**
+**Acknowledgements** </br>
 Thank you to our instructors and mentors at BCIT, we would especially like to thank Hassan for his guidance throughout our project. 
+---
 
 ## Contact Information
 **Email**

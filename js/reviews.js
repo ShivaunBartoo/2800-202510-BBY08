@@ -1,18 +1,26 @@
-import { initImageUploadPreview, displayError, highlightErrorFields } from "./imageUploadUtil.js";
+// This script manages the reviews and replies UI for a storage location page.
+// It handles review/reply submission, image upload preview, review expansion, and modal dialogs.
 
-const storageId = window.location.pathname.split("/")[2];
+import { initImageUploadPreview, displayError, highlightErrorFields } from "./imageUploadUtil.js";
 
 let isLoggedIn = false;
 
+/**
+ * Checks the user's login status by querying the session API.
+ * Sets the isLoggedIn variable accordingly.
+ */
 async function checkLoginStatus() {
     try {
         const response = await fetch("/api/session");
         isLoggedIn = response.ok;
-    } catch (err) {
+    } catch {
         isLoggedIn = false;
     }
 }
 
+/**
+ * Expands or collapses a review body and updates the read more/less button text.
+ */
 function expandReview(element) {
     const body = element.previousElementSibling;
     if (body) {
@@ -25,6 +33,9 @@ function expandReview(element) {
     }
 }
 
+/**
+ * Expands or collapses a review image within the review card.
+ */
 function expandImage(element) {
     if (element.classList.contains("expanded")) {
         element.parentElement.querySelector(".review-body").prepend(element);
@@ -34,6 +45,9 @@ function expandImage(element) {
     element.classList.toggle("expanded");
 }
 
+/**
+ * Updates the visibility of the read more button based on review body overflow.
+ */
 function updateReadMoreButton() {
     document.querySelectorAll(".review-body").forEach((body) => {
         const readMore = body.nextElementSibling;
@@ -47,7 +61,6 @@ function updateReadMoreButton() {
 }
 
 // Main initialization
-
 document.addEventListener("DOMContentLoaded", async () => {
     await checkLoginStatus();
 
@@ -64,15 +77,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         '.uploadTrigger',
         '.coverPhotoInput',
         '.photoPreview',
-        '.previewImage',
-        (file) => console.log('User selected file:', file)
+        '.previewImage'
     );
 
     await getReviews();
     registerEventListeners();
 });
 
-// Review functions
+/**
+ * Handles review submission, including validation and image upload.
+ */
 async function submitReview() {
     if (!isLoggedIn) {
         alert("Please log in to submit a review.");
@@ -121,7 +135,6 @@ async function submitReview() {
         formData.append("review", JSON.stringify(review));
 
         try {
-            console.log(storageId);
             const res = await fetch(`/reviews/${storageId}`, {
                 method: "POST",
                 body: formData,
@@ -133,7 +146,6 @@ async function submitReview() {
                 await getReviews();
             } else {
                 const data = await res.json();
-                console.log(data);
                 displayError(data.error);
 
                 if (Array.isArray(data.fields)) {
@@ -144,13 +156,16 @@ async function submitReview() {
             submitBtn.disabled = false;
 
         } catch (err) {
-            console.log(err);
+            console.error('Submiting review error: ', err);
             submitBtn.disabled = false;
 
         }
     }
 }
 
+/**
+ * Resets the review form fields to their default state.
+ */
 function resetReviewForm() {
     document.getElementById("reviewTitle").value = "";
     document.getElementById("reviewText").value = "";
@@ -158,6 +173,9 @@ function resetReviewForm() {
     document.querySelectorAll('input[name="rating"]').forEach(radio => radio.checked = false);
 }
 
+/**
+ * Fetches and displays the reviews for the current storage location.
+ */
 async function getReviews() {
     try {
         const storageId = window.location.pathname.split("/")[2];
@@ -176,6 +194,10 @@ async function getReviews() {
 let selectedCard = null;
 
 //replies
+
+/**
+ * Registers all event listeners for review and reply actions, including modals and delete.
+ */
 function registerEventListeners() {
     document.addEventListener("click", (event) => {
         const executeOnMatch = (selector, callback) => {
@@ -216,6 +238,9 @@ function registerEventListeners() {
     window.addEventListener("resize", updateReadMoreButton);
 }
 
+/**
+ * Toggles the reply form for a review and initializes image upload preview for replies.
+ */
 function toggleReplyForm(button) {
     const form = button.nextElementSibling;
     form.style.display = form.style.display == "none" ? "block" : "none";
@@ -225,11 +250,12 @@ function toggleReplyForm(button) {
     const previewContainer = form.querySelector(".replyphotoPreview");
     const previewImage = form.querySelector(".replypreviewImage");
 
-    initImageUploadPreview(trigger, input, previewContainer, previewImage, (file) => {
-        console.log("User selected file:", file);
-    });
+    initImageUploadPreview(trigger, input, previewContainer, previewImage);
 }
 
+/**
+ * Handles the reply submission for a review, including image upload.
+ */
 async function submitReply(button) {
     if (!isLoggedIn) {
         alert("Please log in to reply to a review.");
@@ -254,7 +280,6 @@ async function submitReply(button) {
             }
             return;
         }
-
 
         const formData = new FormData();
         formData.append("reviewId", reviewId);
@@ -286,6 +311,9 @@ async function submitReply(button) {
     }
 }
 
+/**
+ * Opens a modal dialog by ID and shows the overlay.
+ */
 function openModal(modalId) {
     if (!isLoggedIn) {
         alert("Please log in to add a review.");
@@ -308,9 +336,11 @@ function openModal(modalId) {
     modal.style.top = "50%";
     modal.style.left = "50%";
     modal.style.transform = "translate(-50%, -50%)";
-    console.log(`Modal ${modalId} opened.`);
 }
 
+/**
+ * Closes a modal dialog by ID and hides the overlay if no other modals are open.
+ */
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     const overlay = document.getElementById("modalOverlay");
@@ -332,6 +362,9 @@ function closeModal(modalId) {
     }
 }
 
+/**
+ * Deletes a review or reply card from the server and removes it from the DOM.
+ */
 function deleteCard(card) {
     const reviewId = parseInt(card.dataset.reviewId);
     const replyId = parseInt(card.dataset.replyId);

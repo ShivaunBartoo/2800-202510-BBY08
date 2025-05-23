@@ -34,16 +34,16 @@
 
             <!-- Hidden Password Fields -->
             <div id="change-password-container">
-                <label for="old-password">Old Password:</label>
+                <label for="oldPassword">Old Password:</label>
                 <input type="password" id="oldPassword" name="oldPassword" /><br /><br />
 
-                <label for="new-password">New Password:</label>
+                <label for="newPassword">New Password:</label>
                 <input type="password" id="newPassword" name="newPassword" /><br /><br />
             </div>
 
             <div id="notifs">
                 <label for="notifications">
-                    <input type="checkbox" name="notifications" id="notifications" />
+                    <input type="checkbox" name="notifications" id="notifications" <%=userInfo.notifications==true? 'checked' : ''%> />
                     Enable notifications
                 </label>
             </div>

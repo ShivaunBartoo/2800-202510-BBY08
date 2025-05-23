@@ -1,22 +1,23 @@
+// This script is the main entry point for the Express web server.
+// It sets up middleware, session management, static file serving, and all main application routes.
+// The script handles rendering of all major pages, user authentication, authorization, and integrates with other route modules.
+
 const { getYourCity } = require("./js/city.js");
 const express = require("express");
 const session = require("express-session");
 const pgSession = require("connect-pg-simple")(session);
-const bcrypt = require("bcrypt");
 const fs = require("fs");
 const pg = require("pg");
-const dotenv = require("dotenv").config();
+const dotenv = require('dotenv').config();
 
 const notificationUtils = require("./notification-emails");
 const authorization = require("./authorization.js");
 
-const ejs = require("ejs");
 
-const saltRounds = 12;
 const app = express();
 const port = process.env.PORT || 3000;
 
-
+// Database connection configuration
 const config = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
@@ -30,6 +31,8 @@ const config = {
 };
 
 const pgPool = new pg.Pool(config);
+
+// Periodically send notifications using the notification utility
 setInterval(() => {
     notificationUtils.sendNotifications();
 }, process.env.NOTIF_INTERVAL_IN_MINUTES * 60 * 1000)
@@ -39,10 +42,12 @@ app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Serve static files for JS, CSS, and images
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/css", express.static(__dirname + "/css"));
 app.use("/img", express.static(__dirname + "/img"));
 
+// Configure session management with PostgreSQL session store
 app.use(
     session({
         secret: process.env.SESSION_SECRET,
@@ -55,12 +60,14 @@ app.use(
     })
 );
 
+// Make session available in all templates via res.locals
 app.use((req, res, next) => {
     res.locals.session = req.session;
     next();
 });
 
-// Route for landing page pre-login
+// Route: GET /
+// Landing page. Redirects authenticated users to /browse, otherwise renders index page.
 app.get("/", function (req, res) {
     if (req.session.authenticated) {
         res.redirect("/browse");
@@ -72,7 +79,8 @@ app.get("/", function (req, res) {
     }
 });
 
-// Route for landing page pre-login
+// Route: GET /createAccount
+// Renders the account creation page.
 app.get("/createAccount", function (req, res) {
     res.render("create_account", {
         stylesheets: ["login.css"],
@@ -80,7 +88,8 @@ app.get("/createAccount", function (req, res) {
     });
 });
 
-// Route for about page
+// Route: GET /about
+// Renders the about page.
 app.get("/about", function (req, res) {
     res.render("about", {
         stylesheets: ["about.css"],
@@ -88,7 +97,8 @@ app.get("/about", function (req, res) {
     });
 });
 
-// Route for login page
+// Route: GET /login
+// Renders the login page.
 app.get("/login", function (req, res) {
     res.render("login", {
         stylesheets: ["login.css"],
@@ -96,7 +106,8 @@ app.get("/login", function (req, res) {
     });
 });
 
-// Route for browse page
+// Route: GET /browse
+// Renders the browse page, showing storage locations and city info.
 app.get("/browse", async function (req, res) {
     const { lat, lon } = req.query;
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
@@ -109,7 +120,8 @@ app.get("/browse", async function (req, res) {
     });
 });
 
-// Route for contents page
+// Route: GET /contents/:id
+// Renders the contents page for a specific storage location.
 app.get("/contents/:id", function (req, res) {
     let css = ["contents.css", "contents-modal.css"];
     let js = ["contents.js", "locational.js"];
@@ -123,7 +135,7 @@ app.get("/contents/:id", function (req, res) {
     const client = new pg.Client(config);
     client.connect((err) => {
         if (err) {
-            console.log(err);
+            console.error('Cannot connect to contents page', err);
             return;
         }
         client.query(
@@ -134,7 +146,7 @@ app.get("/contents/:id", function (req, res) {
             [storageID, userId],
             (error, results) => {
                 if (error) {
-                    console.log(error);
+                    console.error('Cannot connect to database', err);
                     client.end();
                     return;
                 }
@@ -158,6 +170,8 @@ app.get("/contents/:id", function (req, res) {
     });
 });
 
+// Route: GET /map/:id
+// Renders the map page for a specific storage location.
 app.get("/map/:id", function (req, res) {
     let storageID = req.params.id;
     authorization.isAuthorized(storageID, req.session.userId).then(auth => {
@@ -170,13 +184,15 @@ app.get("/map/:id", function (req, res) {
     })
 });
 
-// Route for directions page
+// Route: GET /directions
+// Serves the static directions HTML page.
 app.get("/directions", function (req, res) {
     let doc = fs.readFileSync("./html/directions.html", "utf8");
     res.send(doc);
 });
 
-// Route for manage page
+// Route: GET /manage/:id
+// Renders the manage page for a specific storage location, only if the user is authorized (owner).
 app.get("/manage/:id", (req, res) => {
     const storageId = req.params.id;
     authorization.isAuthorized(storageId, req.session.userId).then(auth => {
@@ -190,14 +206,14 @@ app.get("/manage/:id", (req, res) => {
         const client = new pg.Client(config);
         client.connect((err) => {
             if (err) {
-                console.log(error);
+                console.error('Cannot connect to manage page', err);
             }
             client.query(
                 `SELECT * FROM public.storage WHERE "storageId" = $1 AND "deletedDate" IS NULL`,
                 [storageId], (error, results) => {
                     client.end();
                     if (error) {
-                        console.log(error);
+                        console.error('Cannot connect to database', err);
 
                     }
                     if (results.rows.length === 0) {
@@ -221,7 +237,8 @@ app.get("/manage/:id", (req, res) => {
     });
 });
 
-// Route for profile page
+// Route: GET /profile
+// Renders the profile page for the currently logged-in user.
 app.get("/profile", async function (req, res) {
     let {lat, lon} = req.query;
     if (!lat || !lon) {
@@ -265,7 +282,8 @@ app.get("/profile", async function (req, res) {
     }
 });
 
-// Route for create new fridge/pantry page
+// Route: GET /storage/createnew
+// Renders the page for creating a new fridge or pantry.
 app.get("/storage/createnew", (req, res) => {
     res.render("create_new", {
         stylesheets: ["create_new.css"],
@@ -273,7 +291,8 @@ app.get("/storage/createnew", (req, res) => {
     });
 });
 
-///route for reviews
+/// Route: GET /reviews/:storageId
+// Renders the reviews page for a specific storage location.
 app.get("/reviews/:storageId", function (req, res) {
     const storageId = req.params.storageId;
     authorization.isAuthorized(storageId, req.session.userId).then(auth => {
@@ -304,20 +323,21 @@ app.get("/logout", function (req, res) {
     }
 });
 
+// Register additional API and route modules
 require('./api')(app);
 require('./authentication')(app);
 require('./create_manageStorage')(app);
 require('./profile_route')(app);
 require('./review_reply')(app);
 
-
-// Page not found
-app.use(function (req, res, next) {
+// Catch-all route for 404 Page Not Found
+app.use(function (req, res) {
     res.status(404).render("404", {
             stylesheets: ["404.css"]
     });
 });
 
+// Start the server and listen on the specified port
 app.listen(port, () => {
     console.log(`[INFO] ${(new Date()).toUTCString()} - Server is running on http://localhost:${port}`);
 });

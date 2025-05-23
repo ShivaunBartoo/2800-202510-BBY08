@@ -1,14 +1,13 @@
-const bcrypt = require("bcrypt");
+// This script provides API endpoints for creating, updating, and soft-deleting storage locations (fridges/pantries).
+// It handles image uploads (with Cloudinary), address geocoding, and input validation using Joi.
+// The script supports both creation and management (edit/delete) of storage locations.
+
 const fs = require("fs");
 const pg = require("pg");
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
-const express = require('express');
 const upload = multer({ storage: multer.memoryStorage() });
 const Joi = require("joi");
-
-
-const saltRounds = 12;
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -28,6 +27,7 @@ const config = ({
     }
 });
 
+// Geocodes a full address using Google Maps API and returns latitude/longitude.
 async function geocodeAddress(fullAddress) {
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
     const encoded = encodeURIComponent(fullAddress);
@@ -51,6 +51,7 @@ const { uploadPhotoCloud } = require('./utils');
 
 module.exports = function (app) {
 
+    // Joi schema for validating storage creation/edit fields
     const storageSchema = Joi.object({
         title: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(50).required().messages({
             'string.empty': 'Name of the storage is required',
@@ -76,10 +77,14 @@ module.exports = function (app) {
         description: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(1000).optional().allow("")
     });
 
+    // Joi schema for validating storageId for deletion
     const deleteSchema = Joi.object({
         storageId: Joi.number().integer().required()
     });
 
+    // Route: PUT /manage/storage
+    // Updates an existing storage location (fridge/pantry) with new data and/or image.
+    // Handles geocoding, image upload, and input validation.
     app.put('/manage/storage', upload.single('photo'), async (req, res) => {
         const { storageId } = req.query;
         const { title, storageType, street, city, province, lastCleaned, description } = req.body;
@@ -90,7 +95,6 @@ module.exports = function (app) {
             fields: error.details.map(e => e.context.key) });
 
         if (!storageId) return res.status(400).json({ error: 'Storage ID is required' });
-
 
         const address = `${street}, ${city}, ${province}, Canada`;
 
@@ -109,8 +113,7 @@ module.exports = function (app) {
             let imgPublicId = null;
 
             if (req.file) {
-
-                // Delete old image
+                // If a new image is uploaded, delete the old image from Cloudinary
                 const existing = await client.query(
                     `SELECT "imgPublicId" FROM public.storage WHERE "storageId" = $1`,
                     [storageId]
@@ -122,7 +125,7 @@ module.exports = function (app) {
                 image = cloudResult.image;
                 imgPublicId = cloudResult.imgPublicId;
             } else {
-                // Keep existing image
+                // If no new image, keep the existing image and public ID
                 const existing = await client.query(
                     `SELECT "image", "imgPublicId" FROM public.storage WHERE "storageId" = $1`,
                     [storageId]
@@ -160,6 +163,8 @@ module.exports = function (app) {
         }
     });
 
+    // Route: DELETE /manage/storage/soft-delete
+    // Soft-deletes a storage location by setting its deletedDate to the current date.
     app.delete("/manage/storage/soft-delete", async (req, res) => {
         const { storageId } = req.query;
 
@@ -195,6 +200,9 @@ module.exports = function (app) {
         }
     });
 
+    // Route: POST /storage/createnew
+    // Creates a new storage location (fridge/pantry) with provided data and optional image.
+    // Handles geocoding, image upload, and input validation.
     app.post('/storage/createnew', upload.single('photo'), async (req, res) => {
 
         const ownerId = req.session.userId;
@@ -230,8 +238,8 @@ module.exports = function (app) {
             let imgPublicId = null;
 
             if (req.file) {
-
-                const cloudResult = await uploadPhotoCloud(req.file.buffer, oldPublicId = null, 'storage_img');
+                // Upload new image to Cloudinary
+                const cloudResult = await uploadPhotoCloud(req.file.buffer, null, 'storage_img');
 
                 image = cloudResult.image;
                 imgPublicId = cloudResult.imgPublicId;

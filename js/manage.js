@@ -1,3 +1,6 @@
+// This script manages the "manage storage" page for editing or deleting a fridge/pantry.
+// It handles form submission, image upload preview, error display, field editing toggles, and soft deletion.
+
 import { initImageUploadPreview, displayError, highlightErrorFields } from './imageUploadUtil.js';
 
 const storageId = window.location.pathname.split("/")[2];
@@ -11,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     registerEventListeners();
 
-    // Edit fridge name
+    // Enables editing of the fridge/pantry name when the edit button is clicked
     document.querySelector('.storage-title .edit-btn').addEventListener('click', () => {
         const nameEl = document.getElementById('storageName');
         const isEditable = nameEl.getAttribute('contenteditable') === 'true';
@@ -19,17 +22,15 @@ document.addEventListener('DOMContentLoaded', function () {
         nameEl.focus();
     });
 
+    // Initializes image upload preview for the cover photo
     initImageUploadPreview(
         '.uploadTrigger',
         '.coverPhotoInput',
         '.photoPreview',
-        '.previewImage',
-        (file) => {
-            console.log('User selected file:', file);
-        }
+        '.previewImage'
     );
 
-    // Handle form submit
+    // Handles the save button click for updating storage details
     document.querySelector('.man-save-btn').addEventListener('click', async () => {
 
         const submitBtn = document.querySelector('.man-save-btn');
@@ -45,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('storageType', document.getElementById('storageTypeSelect').value);
         formData.append('lastCleaned', document.getElementById('lastCleaned').value.trim());
         formData.append('description', document.getElementById('description').value.trim());
-        console.log('lastcleaned', document.getElementById('lastCleaned').value.trim());
         // Append photo only if user selected one
         if (coverPhotoInput.files.length > 0) {
             formData.append('photo', coverPhotoInput.files[0]);
@@ -76,7 +76,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             submitBtn.disabled = false;
 
-
         } catch (err) {
             console.error('Save error:', err);
             submitBtn.disabled = false;
@@ -84,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // Handles the delete button click to show the delete confirmation modal
     document.querySelector('.man-delete-btn').addEventListener('click', function () {
 
         document.getElementById('deleteModal').style.display = 'flex';
@@ -94,9 +94,14 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+/**
+ * Registers event listeners for edit buttons and modal controls.
+ * Handles toggling of edit mode for various fields and closing modals.
+ */
 function registerEventListeners() {
 
     document.addEventListener("click", (event) => {
+        // Utility to execute a callback if the event target matches a selector
         const executeOnMatch = (selector, callback, arg) => {
             if (event.target.closest(selector)) {
                 callback(arg);
@@ -111,11 +116,13 @@ function registerEventListeners() {
 
     });
 
-
 }
 
+/**
+ * Toggles the disabled state of a single editable field.
+ * Focuses the field if it becomes enabled.
+ */
 function toggleEdit(fieldId) {
-    console.log(fieldId);
     const field = document.getElementById(fieldId);
     field.disabled = !field.disabled;
 
@@ -127,6 +134,9 @@ function toggleEdit(fieldId) {
     }
 }
 
+/**
+ * Toggles the disabled state of the address fields (street, city, province).
+ */
 function toggleAddressEdit() {
     const fieldIds = ['street', 'city', 'province'];
 
@@ -138,10 +148,17 @@ function toggleAddressEdit() {
     });
 }
 
+/**
+ * Closes the delete confirmation modal.
+ */
 function closeModal() {
     document.getElementById('deleteModal').style.display = 'none';
 }
 
+/**
+ * Sends a DELETE request to soft-delete (archive) the storage location.
+ * Redirects to /browse on success, or displays an error on failure.
+ */
 async function softDeleteStorage(storageId) {
     try {
         const response = await fetch(`/manage/storage/soft-delete?storageId=${storageId}`, {

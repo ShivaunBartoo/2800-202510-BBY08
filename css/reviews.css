@@ -2,7 +2,7 @@ main {
     display: flex;
     gap: 15px;
     flex-direction: column;
-    justify-content: baseline;
+    justify-content: flex-start;
     align-items: center;
 }
 
@@ -14,7 +14,6 @@ main {
     color: var(--blue-dark);
     padding: 15px;
     border-radius: 10px;
-    /* position: static; */
 }
 
 .review-header {
@@ -31,7 +30,12 @@ main {
     justify-content: center;
     align-items: center;
 }
-
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 20px;
+  aspect-ratio: 1;
+  animation: l13-0 2s linear infinite;
+}
 .review-header-avatar {
     height: 70%;
     border-radius: 50%;
@@ -44,7 +48,7 @@ main {
 }
 
 .review-header-date {
-    font-weight: light;
+    font-weight:lighter;
     color: var(--pink-dark);
 }
 

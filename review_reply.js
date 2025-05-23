@@ -1,20 +1,18 @@
+// This script provides API endpoints for creating, replying to, and deleting reviews and replies for storage locations.
+// It handles image uploads for reviews and replies, input validation, and manages related Cloudinary images and database records.
+
 const fs = require("fs");
 const pg = require("pg");
-const dotenv = require("dotenv").config();
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 const cloudinary = require('cloudinary').v2;
 const Joi = require("joi");
-
-
-const ejs = require("ejs");
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_CLOUD_KEY,
     api_secret: process.env.CLOUDINARY_CLOUD_SECRET
 });
-
 
 const config = {
     user: process.env.DB_USER,
@@ -31,6 +29,7 @@ const { uploadPhotoCloud } = require('./utils');
 
 module.exports = function (app) {
 
+    // Joi schema for validating review creation fields
     const reviewSchema = Joi.object({
         title: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(100).required().messages({
       'string.empty': 'Review title is required',
@@ -53,6 +52,7 @@ module.exports = function (app) {
     }),
     });
 
+    // Joi schema for validating reply creation fields
     const replySchema = Joi.object({
         reviewId: Joi.number().integer().required(),
         reply: Joi.string().regex(/[$\(\)<>]/, { invert: true }).max(1000).required().messages({
@@ -63,7 +63,8 @@ module.exports = function (app) {
         }),
     });
 
-
+    // Route: POST /reviews/:storageId
+    // Creates a new review for a storage location, with optional image upload.
     app.post("/reviews/:storageId", upload.single('photo'), async (req, res) => {
         const userId = req.session.userId;
         const storageId = req.params.storageId;
@@ -85,6 +86,7 @@ module.exports = function (app) {
                 console.error('Cannot connect to reviews', err);
                 return;
             }
+            // If an image is uploaded, upload to Cloudinary first
             if (req.file) {
                 uploadPhotoCloud(req.file.buffer, null, 'review_img')
                     .then(cloudResult => {
@@ -98,6 +100,7 @@ module.exports = function (app) {
             } else {
                 insertReview(null);
             }
+            // Helper function to insert the review into the database
             function insertReview(imageUrl, publicId) {
                 client.query(
                     `
@@ -106,7 +109,7 @@ module.exports = function (app) {
         VALUES ($1, $2, $3, $4, $5, $6, $7)
       `,
                     [userId, storageId, title, body, rating, imageUrl, publicId],
-                    (err, results) => {
+                    (err) => {
                         if (err) {
                             console.error('Cannot connect to database', err);
                             client.end();
@@ -120,6 +123,8 @@ module.exports = function (app) {
         });
     });
 
+    // Route: POST /replies
+    // Creates a new reply to a review, with optional image upload.
     app.post("/replies", upload.single('photo'), async (req, res) => {
 
         const userId = req.session.userId;
@@ -140,7 +145,7 @@ module.exports = function (app) {
             let imgPublicId = null;
 
             if (file) {
-
+                // Upload reply image to Cloudinary if provided
                 const cloudResult = await uploadPhotoCloud(file.buffer, null, 'review_img');
 
                 image = cloudResult.image;
@@ -162,6 +167,8 @@ module.exports = function (app) {
         client.end();
     });
 
+    // Route: DELETE /replies/:id
+    // Deletes a reply by its ID, and removes its image from Cloudinary if present.
     app.delete('/replies/:id', async (req, res) => {
         const replyId = req.params.id;
         const client = new pg.Client(config);
@@ -201,6 +208,8 @@ module.exports = function (app) {
 
     });
 
+    // Route: DELETE /reviews/:id
+    // Deletes a review and all its replies by review ID, and removes all related images from Cloudinary.
     app.delete('/reviews/:id', async (req, res) => {
         const reviewId = req.params.id;
 

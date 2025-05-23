@@ -1,9 +1,9 @@
-const express = require("express");
-const session = require("express-session");
+// This script manages notification emails for the application.
+// It generates notifications when new items are donated, stores them in the database, and sends email alerts to users who have favourited a storage location and enabled notifications.
+// Uses PostgreSQL for notification storage and nodemailer for sending emails.
+
 const fs = require("fs");
-const pgSession = require("connect-pg-simple")(session);
 const pg = require("pg");
-const dotenv = require('dotenv').config();
 const nodemailer = require('nodemailer');
 
 const dbconfig = {
@@ -26,7 +26,10 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-
+/**
+ * Generates notifications for all recently donated items at a storage location.
+ * Inserts new notification records for items donated in the last hour that have not yet triggered an email.
+ */
 function generateNotifications(storageId) {
   // query all recently added items
   const client = new pg.Client(dbconfig);
@@ -50,6 +53,9 @@ function generateNotifications(storageId) {
   });
 }
 
+/**
+ * Inserts notification records into the notifications table for each donated item.
+ */
 function buildNotifications(storageId, items) {
   let sql = 'INSERT INTO "notifications" ("storageId", "contentId", "body") VALUES ';
   let values = [];
@@ -68,7 +74,7 @@ function buildNotifications(storageId, items) {
 
     client.query(
       sql,
-      (error, results) => {
+      (error) => {
         client.end();
         if (error) {
           console.error(error);
@@ -78,6 +84,10 @@ function buildNotifications(storageId, items) {
   });
 }
 
+/**
+ * Retrieves all pending (unsent) notifications, grouped by storage location.
+ * Returns a promise that resolves to an array of notification objects.
+ */
 function getPendingNotifications() {
   return new Promise((resolve, reject) => {
     const client = new pg.Client(dbconfig);
@@ -107,6 +117,10 @@ function getPendingNotifications() {
   });
 }
 
+/**
+ * Retrieves the list of user emails who have favourited a storage location and enabled notifications.
+ * Returns a promise that resolves to an array of recipient objects.
+ */
 function getRecipientList(storageId) {
   return new Promise((resolve, reject) => {
     const client = new pg.Client(dbconfig);
@@ -137,6 +151,10 @@ function getRecipientList(storageId) {
   });
 }
 
+/**
+ * Marks the given notification IDs as emailed in the database.
+ * Returns a promise that resolves when the update is complete.
+ */
 function updateNotifications(notificationIds) {
   return new Promise((resolve, reject) => {
     const client = new pg.Client(dbconfig);
@@ -150,7 +168,7 @@ function updateNotifications(notificationIds) {
         `UPDATE notifications
                     SET emailed = true
                 WHERE "notificationId" IN (${notificationIds.join(', ')});`,
-        (error, results) => {
+        (error) => {
           client.end();
 
           if (error) {
@@ -165,6 +183,11 @@ function updateNotifications(notificationIds) {
   });
 }
 
+/**
+ * Sends notification emails for all pending notifications.
+ * For each storage location with new donations, sends a single email to all recipients who have favourited that location.
+ * After sending, marks the notifications as emailed.
+ */
 function sendNotifications() {
 
   console.log(`[INFO] ${(new Date()).toUTCString()} - Sending Notifications`);
@@ -190,6 +213,7 @@ function sendNotifications() {
                         
           };
 
+          // Send the email to all recipients in the bccList
           transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
               console.error(error);

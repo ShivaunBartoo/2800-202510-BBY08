@@ -50,6 +50,9 @@ Other Tools & APIs:
 - Trello
 - Git & Github
 
+AI:
+- Github CoPilot for documentation/comment generation and misc. problem solving. 
+
 ## File Contents
 C:.
 │   .env

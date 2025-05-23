@@ -1,3 +1,10 @@
+// This script handles client-side authentication logic for login and account creation forms.
+// It validates user input, displays error messages, and sends AJAX POST requests to the server for login and registration.
+
+/**
+ * Sends an AJAX POST request to the given URL with the provided data.
+ * Calls the callback with the response if successful, otherwise shows an error.
+ */
 function ajaxPOST(url, callback, data) {
     const xhr = new XMLHttpRequest();
     xhr.onload = function () {
@@ -14,12 +21,18 @@ function ajaxPOST(url, callback, data) {
     xhr.send(data);
 }
 
+
+// Displays an error message in the error message element.
 function showError(message) {
     const element = document.getElementById("errormsg");
     element.classList.remove("hidden");
     element.innerHTML = message;
 }
 
+/**
+ * Handles login form submission.
+ * Validates input fields and sends login data to the server.
+ */
 document.querySelector("#login-submit")?.addEventListener("click", function (e) {
     e.preventDefault();
     let email = document.getElementById("login-email");
@@ -56,6 +69,10 @@ document.querySelector("#login-submit")?.addEventListener("click", function (e) 
     }
 });
 
+/**
+ * Handles account creation form submission.
+ * Validates input fields and sends registration data to the server.
+ */
 document.querySelector("#create-submit")?.addEventListener("click", function (e) {
     e.preventDefault();
 
@@ -95,6 +112,7 @@ document.querySelector("#create-submit")?.addEventListener("click", function (e)
         showError("Highlighted fields cannot be empty.");
         error = true;
     }
+    // Check if password and confirm password match
     if (!pword.value == confirm.value) {
         pword.style.border = "solid #ac6872";
         confirm.style.border = "solid #ac6872";

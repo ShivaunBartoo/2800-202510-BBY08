@@ -1,4 +1,7 @@
-import { getUserLocation, getDistance } from "./userLocation.js";
+// This script manages the browse page for storage locations (fridges/pantries).
+// It handles user geolocation, card loading and filtering, favourite toggling, and map display with Google Maps integration.
+
+import { getUserLocation } from "./userLocation.js";
 
 const radiusFilter = localStorage.getItem('radiusFilter');
 
@@ -7,16 +10,23 @@ initialize();
 //Check if user is logged in for the browse page.
 let isLoggedIn = false;
 
+/**
+ * Checks the user's login status by querying the session API.
+ * Sets the isLoggedIn variable accordingly.
+ */
 async function checkLoginStatus() {
     try {
         const res = await fetch("/api/session");
         isLoggedIn = res.ok;
-    } catch (err) {
+    } catch {
         isLoggedIn = false;
     }
 }
 
-
+/**
+ * Initializes the browse page.
+ * Checks login status, ensures geolocation is present, and loads cards and filter buttons.
+ */
 async function initialize() {
     await checkLoginStatus();
 
@@ -25,8 +35,7 @@ async function initialize() {
     const lon = currentUrl.searchParams.get("lon");
 
     if (!lat || !lon) {
-
-
+        // If no geolocation in URL, get user location and reload with coordinates
         const location = await getUserLocation();
         const { lat, lon } = location;
 
@@ -38,6 +47,10 @@ async function initialize() {
     setupFilterButtons();
 }
 
+/**
+ * Sets up event listeners for the filter buttons (all, fridge, pantry).
+ * Applies the appropriate filter class to the main card container.
+ */
 function setupFilterButtons() {
     const buttons = document.querySelectorAll(".filter-button");
     const mainContainer = document.querySelector("#main-card-container");
@@ -62,9 +75,10 @@ function setupFilterButtons() {
     }
 }
 
-
-
-
+/**
+ * Fetches the list of storage cards from the API, using the user's location and radius filter.
+ * Returns a JSON array of card HTML strings.
+ */
 async function getCards() {
     let location = await getUserLocation();
     const response = await fetch(`/api/browse?lat=${location.lat}&lon=${location.lon}&radiusFilter=${radiusFilter}`);
@@ -75,6 +89,10 @@ async function getCards() {
     return json;
 }
 
+/**
+ * Loads and displays the storage cards on the page.
+ * Handles hero card, main cards, and disables favourite buttons if not logged in.
+ */
 async function loadCards() {
     const heroContainer = document.querySelector("#hero-card-container");
     const mainContainer = document.querySelector("#main-card-container");
@@ -96,16 +114,19 @@ async function loadCards() {
         console.error("No fridges to show.");
     }
 
+    // If not logged in, disable favourite buttons and show tooltip
     if (!isLoggedIn) {
-    document.querySelectorAll(".card-favourite").forEach(btn => {
-        btn.disabled = true;
-        btn.title = "Log in to use favourites";
-        btn.classList.add("disabled"); // Optional: for styling
-    });
+        document.querySelectorAll(".card-favourite").forEach(btn => {
+            btn.disabled = true;
+            btn.title = "Log in to use favourites";
+            btn.classList.add("disabled"); // Optional: for styling
+        });
+    }
 }
 
-}
-
+/**
+ * Adds a class to the card element based on its storage type (fridge or pantry).
+ */
 function labelType(store) {
     const typeElement = store.querySelector(".card-storage-type");
     if (typeElement.innerHTML == "community fridge") {
@@ -115,6 +136,10 @@ function labelType(store) {
     }
 }
 
+/**
+ * Adds a click event listener to the favourite button on a card.
+ * Handles toggling favourite status and sending the update to the server.
+ */
 function addFavouriteButtonListener(element) {
     if (element) {
         element.addEventListener("click", async (event) => {
@@ -143,6 +168,10 @@ function addFavouriteButtonListener(element) {
 
 let mapexist = false;
 
+/**
+ * Initializes and displays the Google Map with storage location markers.
+ * Adds click events to markers to show info bubbles with links.
+ */
 async function makeMap() {
     const currentUrl = new URL(window.location.href);
     let lat = parseFloat(currentUrl.searchParams.get("lat"));
@@ -205,8 +234,10 @@ async function makeMap() {
 
 }
 
-
-
+/**
+ * Sets up the map toggle button to show/hide the map and card containers.
+ * Initializes the map only once when first shown.
+ */
 document.addEventListener("DOMContentLoaded", () => {
     const toggleBtn = document.getElementById("toggleMap");
     const mapContainer = document.getElementById("mapContainer");

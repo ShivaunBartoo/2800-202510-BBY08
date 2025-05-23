@@ -1,3 +1,10 @@
+// This script manages the map view for a storage location page.
+// It fetches the Google Maps API key, retrieves the storage location's coordinates, and embeds a Google Map for that location.
+
+/**
+ * Fetches the latitude and longitude for a given fridge/storage location by ID.
+ * Updates global variables storelat and storelon with the coordinates.
+ */
 let storelat, storelon;
 
 function getFridgePosition(fridgeId) {
@@ -19,6 +26,10 @@ function getFridgePosition(fridgeId) {
 
 loadMapView();
 
+/**
+ * Loads and embeds the Google Map for the current storage location.
+ * Fetches the Google Maps API key and storage coordinates, then sets the map iframe src.
+ */
 function loadMapView() {
     const mapElement = document.getElementById("map");
     if (mapElement) {
@@ -37,6 +48,7 @@ function loadMapView() {
                         storelat = data.latitude;
                         storelon = data.longitude;
 
+                        // Embed the Google Map with the retrieved coordinates and API key
                         const googleEmbed = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${storelat},${storelon}`;
                         mapElement.src = googleEmbed;
                     }
@@ -48,9 +60,3 @@ function loadMapView() {
     }
 }
 
-async function getDistanceToFridge(fridgeId) {
-    let userlocation = await getUserLocation();
-    let storagelocation = await getFridgePosition(fridgeId);
-    let distance = getDistance(userlocation.lat, userlocation.lon, storagelocation.lat, storagelocation.lon);
-    return distance;
-}

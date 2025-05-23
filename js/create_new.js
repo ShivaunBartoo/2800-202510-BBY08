@@ -1,9 +1,14 @@
+// This script manages the "create new storage" page for adding a new fridge or pantry.
+// It handles form submission, image upload preview, error display, and storage type selection.
+
 import { initImageUploadPreview, displayError, highlightErrorFields } from './imageUploadUtil.js';
 
+// Waits for the DOM to load before initializing event listeners and image upload preview.
 document.addEventListener('DOMContentLoaded', function () {
 
     registerEventListeners();
 
+    // Initializes the image upload preview functionality for the cover photo.
     initImageUploadPreview(
         '.uploadTrigger',
         '.coverPhotoInput',
@@ -11,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '.previewImage'
     );
 
+    // Handles the form submission for creating a new storage location.
     document.getElementById('newStorageForm').addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -21,12 +27,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const formData = new FormData(form);
 
+        // Ensure storageType is an integer for backend validation.
         formData.set('storageType', parseInt(formData.get('storageType')));
 
+        // If a cover photo is selected, add it to the form data.
         if (coverPhotoInput.files.length > 0) {
             formData.set('photo', coverPhotoInput.files[0]);
         }
 
+        // Submit the form data to the server to create the new storage.
         fetch(`/storage/createnew/`, {
             method: 'POST',
             body: formData
@@ -35,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const data = await res.json();
 
                 if (!res.ok) {
-
+                    // Display error message and highlight fields if validation fails.
                     displayError(data.error);
                     
                     if (Array.isArray(data.fields)) {
@@ -50,15 +59,18 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => {
                 console.error('Submission error:', error);
                 submitBtn.disabled = false;
-
             });
     });
 });
 
-
+/**
+ * Registers event listeners for storage type selection and navigation buttons.
+ * Handles fridge/pantry type selection and back button navigation.
+ */
 function registerEventListeners() {
 
     document.addEventListener("click", (event) => {
+        // Utility to execute a callback if the event target matches a selector.
         const executeOnMatch = (selector, callback, arg) => {
             if (event.target.closest(selector)) {
                 callback(arg);
@@ -73,6 +85,10 @@ function registerEventListeners() {
     });
 }
 
+/**
+ * Handles the selection of storage type (fridge or pantry).
+ * Updates the UI and sets the hidden input value accordingly.
+ */
 function selectType(type) {
     const fridgeBtn = document.getElementById('fridgeBtn');
     const pantryBtn = document.getElementById('pantryBtn');

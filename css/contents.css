@@ -98,7 +98,7 @@ main {
 }
 
 #contents>table {
-    min-width: 60%;
+    min-width: max(60%, 300px);
     border-collapse: collapse;
     margin: 0 auto;
     font-size: 1.1em;

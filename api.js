@@ -1,3 +1,11 @@
+/**
+ * @file api.js
+ * @description
+ * Main Express API routes and database logic for the application.
+ * Handles storage browsing, content management, reviews, notifications, authentication, and classification endpoints.
+ * Integrates with PostgreSQL, Cloudinary, and various utility modules.
+ */
+
 const { getDistance } = require("./js/userLocation");
 const { classify } = require("./js/food-classify");
 const fs = require("fs");
@@ -8,12 +16,14 @@ const Joi = require('joi');
 
 const notificationUtils = require('./notification-emails');
 
+// Cloudinary configuration for image uploads
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_CLOUD_KEY,
     api_secret: process.env.CLOUDINARY_CLOUD_SECRET,
 });
 
+// PostgreSQL connection configuration
 const config = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
@@ -26,25 +36,31 @@ const config = {
     },
 };
 
-
 module.exports = function (app) {
+
+    /**
+     * GET /api/browse
+     * Returns a list of storage locations, sorted and filtered by user favourites and location.
+     * Renders each storage as an HTML card using EJS partials.
+     */
     app.get("/api/browse", async (req, res) => {
         const client = new pg.Client(config);
         try {
             await client.connect();
 
             const storageResults = await client.query(`SELECT s.*,
-	        (SELECT MAX(c."donatedAt") > (Now() - interval '24 hours')
-	        FROM public.content AS c
-	        WHERE c."storageId" = s."storageId"
-	        ) AS restocked,
-			(SELECT AVG(r."rating")::numeric(10,1) 
-			FROM public.reviews AS r
-			Where r."storageId" = s."storageId")
+            (SELECT MAX(c."donatedAt") > (Now() - interval '24 hours')
+            FROM public.content AS c
+            WHERE c."storageId" = s."storageId"
+            ) AS restocked,
+            (SELECT AVG(r."rating")::numeric(10,1) 
+            FROM public.reviews AS r
+            Where r."storageId" = s."storageId")
             FROM public.storage AS s
             WHERE s."deletedDate" IS NULL`);
 
             let favoriteIds = [];
+            // Get user's favourite storage IDs
             const favResults = await client.query('SELECT "storageId" FROM public.favourites WHERE "userId" = $1', [
                 req.session.userId,
             ]);
@@ -56,12 +72,14 @@ module.exports = function (app) {
                 ? null
                 : parseFloat(req.query.radiusFilter);
 
+            // Render each storage card as HTML using EJS
             let renderedCards = await Promise.all(
                 storageResults.rows.map((row) => {
                     let distance = getDistance(lat, lon, parseFloat(row.coordinates.x), parseFloat(row.coordinates.y));
                     distance = distance.toFixed(1);
                     const isFavourite = favoriteIds.includes(row.storageId);
 
+                    // Filter out cards outside the radius unless they are favourites
                     if (radius !== null && !isFavourite && distance > radius) return null;
                     return ejs
                         .renderFile("views/partials/storage-card.ejs", {
@@ -80,7 +98,7 @@ module.exports = function (app) {
 
             renderedCards = renderedCards.filter(card => card !== null);
 
-            //sort the cards by favourite/non-favourite, and then sort the sublists by distance.
+            // Sort cards: favourites first, then by distance
             let sortByDistance = (arr) => arr.sort((a, b) => a.distance - b.distance);
             let favouriteCards = sortByDistance(renderedCards.filter((card) => card.isFavourite));
             let nonFavouriteCards = sortByDistance(renderedCards.filter((card) => !card.isFavourite));
@@ -95,6 +113,10 @@ module.exports = function (app) {
         }
     });
 
+    /**
+     * GET /api/contents/:id
+     * Returns the contents of a specific storage location as rendered HTML rows.
+     */
     app.get("/api/contents/:id", (req, res) => {
         let storageID = req.params.id;
         const client = new pg.Client(config);
@@ -116,6 +138,7 @@ module.exports = function (app) {
                         client.end();
                         return;
                     }
+                    // Render each content row as HTML using EJS
                     const renderedRows = await Promise.all(
                         results.rows.map((row) => {
                             return ejs.renderFile("views/partials/content-rows.ejs", { row });
@@ -129,6 +152,11 @@ module.exports = function (app) {
         });
     });
 
+    /**
+     * POST /api/donate
+     * Adds donated items to a storage location after validating input.
+     * Triggers notification generation for the storage.
+     */
     app.post("/api/donate", (req, res) => {
         let data = req.body;
         let sql = 'INSERT INTO "content" ("storageId", "itemName", "quantity", "bbd") VALUES ';
@@ -148,7 +176,7 @@ module.exports = function (app) {
                 console.error('fail to connect to DB: ', err);
                 return;
             }
-            client.query(sql, (error, results) => {
+            client.query(sql, (error) => {
                 if (error) {
                     console.error('fail to query database to donate items: ', error);
                     client.end();
@@ -165,12 +193,17 @@ module.exports = function (app) {
         });
     });
 
-
+    /**
+     * POST /api/take
+     * Updates or deletes content items from a storage location based on user action.
+     * Handles both quantity updates and deletions in the database.
+     */
     app.post("/api/take", async (req, res) => {
         let data = req.body;
         let deleteList = [];
         let updateList = [];
         let failure = false;
+        // Separate items to update and delete
         data.forEach(item => {
             if (typeof item.id !== 'number' || typeof item.qty !== 'number') {
                 failure = true;
@@ -187,12 +220,14 @@ module.exports = function (app) {
             return;
         }
 
+        // SQL for updating and deleting items
         let updateSql = 'UPDATE "content" AS c SET "quantity" = d.qty FROM (VALUES ' + updateList.map(d => { return `(${d.id}, ${d.qty})` }).join(', ') + ') as d(id, qty) WHERE d.id = c."contentId"';
 
         let deleteSql = 'WITH c_deleted AS (DELETE FROM "content" WHERE "contentId" IN (' + deleteList.map(d => { return `${d.id}` }).join(', ') + '))' + 'DELETE FROM notifications WHERE "contentId" IN (' + deleteList.map(d => { return `${d.id}` }).join(', ') + ')';
 
         const queryPromises = [];
 
+        // Update items if needed
         queryPromises.push(new Promise((resolve, reject) => {
             if (updateList.length > 0) {
                 const client = new pg.Client(config);
@@ -200,7 +235,7 @@ module.exports = function (app) {
                     if (err) {
                         reject(err);
                     }
-                    client.query(updateSql, (error, results) => {
+                    client.query(updateSql, (error) => {
                         if (error) {
                             reject(err);
                         }
@@ -214,6 +249,7 @@ module.exports = function (app) {
             }
         }));
 
+        // Delete items if needed
         queryPromises.push(new Promise((resolve, reject) => {
             if (deleteList.length > 0) {
                 const client = new pg.Client(config);
@@ -221,7 +257,7 @@ module.exports = function (app) {
                     if (err) {
                         reject(err);
                     }
-                    client.query(deleteSql, (error, results) => {
+                    client.query(deleteSql, (error) => {
                         if (error) {
                             reject(err);
                         }
@@ -244,6 +280,11 @@ module.exports = function (app) {
             });
     });
 
+    /**
+     * GET /api/reviews/:storageId
+     * Returns all reviews for a given storage location, rendered as HTML.
+     * Also fetches and attaches replies to each review.
+     */
     app.get('/api/reviews/:storageId', (req, res) => {
         const { storageId } = req.params;
         const client = new pg.Client(config);
@@ -268,6 +309,7 @@ module.exports = function (app) {
                         return res.status(500).send("Query error");
                     }
 
+                    // Fetch all replies for reviews
                     const replies = await client.query(
                         `SELECT * 
                         FROM public.replies AS r
@@ -276,6 +318,7 @@ module.exports = function (app) {
                         ORDER BY r."createdAt" DESC`
                     )
                     try {
+                        // Render each review card as HTML using EJS, attaching replies
                         const renderedCards = await Promise.all(
                             results.rows.map((row) => {
                                 const reviewReplies = replies.rows.filter(reply => reply.reviewId == row.reviewId);
@@ -297,8 +340,11 @@ module.exports = function (app) {
         });
     });
 
+    /**
+     * GET /api/fridgePoint
+     * Returns all storage locations as points for mapping (lat/lon).
+     */
     app.get('/api/fridgePoint', (req, res) => {
-
 
         const client = new pg.Client(config);
         client.connect((err) => {
@@ -312,6 +358,7 @@ module.exports = function (app) {
                     client.end();
                     return;
                 }
+                // Map storage rows to lat/lon point objects
                 const points = results.rows.map(row => ({
                     id: row.storageId,
                     name: row.title,
@@ -325,7 +372,10 @@ module.exports = function (app) {
         });
     });
 
-
+    /**
+     * GET /storageloc/:id
+     * Returns the latitude and longitude of a specific storage location.
+     */
     app.get("/storageloc/:id", async (req, res) => {
         const storageId = req.params.id;
         const client = new pg.Client(config);
@@ -341,11 +391,20 @@ FROM storage WHERE "storageId" = $1`,
 
     });
 
+    /**
+     * GET /gmapkey
+     * Returns the Google Maps API key for client-side use.
+     */
     app.get("/gmapkey", (req, res) => {
         const apiKey = process.env.GOOGLE_MAPS_API_KEY;
         res.json({ apiKey })
     });
 
+    /**
+     * POST /api/favourite
+     * Adds or removes a storage location from the user's favourites.
+     * Requires authentication.
+     */
     app.post("/api/favourite", async (req, res) => {
         if (!req.session || !req.session.userId) {
             return res.status(401).json({ error: "Unauthorized" });
@@ -355,6 +414,7 @@ FROM storage WHERE "storageId" = $1`,
         const client = new pg.Client(config);
         await client.connect();
 
+        // Check if already a favourite
         const favResults = await client.query(
             'SELECT "storageId" FROM public.favourites WHERE "userId" = $1 AND "storageId" = $2',
             [req.session.userId, id]
@@ -379,14 +439,21 @@ FROM storage WHERE "storageId" = $1`,
         client.end();
     });
 
-    //query should be uri encoded.
-    //eg /api/classify?input=${encodeURIComponent(myString)}
+    /**
+     * GET /api/classify
+     * Classifies an input string as food or not food using the classify utility.
+     * Query parameter: input (string to classify, URI encoded)
+     */
     app.get("/api/classify", async (req, res) => {
         const input = req.query.input;
         const response = await classify(input);
         res.send(response);
     });
 
+    /**
+     * GET /api/session
+     * Returns the current session's authentication status and user ID.
+     */
     app.get("/api/session", (req, res) => {
         if (req.session && req.session.userId) {
             res.status(200).json({ loggedIn: true, userId: req.session.userId });

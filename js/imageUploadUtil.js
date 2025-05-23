@@ -1,46 +1,45 @@
-
 /**
  * Initializes image upload preview on the client page functionality.
- *
- * @param {string} triggerId - ID of the element that triggers the file input click
- * @param {string} inputId - ID of the hidden file input
- * @param {string} previewContainerId - ID of the container to show the preview
- * @param {string} previewImageId - ID of the img tag to show the preview image
- * @param {function} [onSelect] - Optional callback with the selected File object
  */
 
 export async function initImageUploadPreview(trigger, input, previewContainer, previewImage, onSelect) {
 
+    // Convert selectors to elements if needed
     if (typeof trigger === 'string') trigger = document.querySelector(trigger);
     if (typeof input === 'string') input = document.querySelector(input);
     if (typeof previewContainer === 'string') previewContainer = document.querySelector(previewContainer);
     if (typeof previewImage === 'string') previewImage = document.querySelector(previewImage);
 
-    
+    // Ensure required elements exist
     if (!trigger || !input) {
         console.error(`Missing upload element(s): ${trigger}, ${input}`);
         return;
     }
 
+    // When the trigger is clicked, open the file input dialog
     trigger.addEventListener('click', (e) => {
         e.preventDefault();
         input.click();
     });
 
+    // When a file is selected, validate and preview it
     input.addEventListener('change', (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        // Only allow image files
         if (!file.type.match('image.*')) {
             alert('Please select an image file (JPEG, PNG, etc.)');
             return;
         }
 
+        // Limit file size to 5MB
         if (file.size > 5 * 1024 * 1024) {
             alert('Image must be less than 5MB');
             return;
         }
 
+        // Read and preview the image
         const reader = new FileReader();
         reader.onload = (e) => {
             if (e.target?.result) {
@@ -64,12 +63,18 @@ export async function initImageUploadPreview(trigger, input, previewContainer, p
     })
 }
 
+/**
+ * Displays an error message in the error div.
+ */
 export function displayError(msg) {
     const errorDiv = document.getElementById("error");
     errorDiv.textContent = msg;
     errorDiv.style.display = "block";
 }
 
+/**
+ * Highlights form fields with errors by adding an error-input class.
+ */
 export function highlightErrorFields(fields) {
     // Clear previous error styles
     document.querySelectorAll('.error-input').forEach(el => {

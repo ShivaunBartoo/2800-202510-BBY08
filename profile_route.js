@@ -99,7 +99,7 @@ module.exports = function (app) {
             }
             query += ` WHERE "userId" = $5 RETURNING*`
 
-            const result = await client.query(query, updateFields);
+            await client.query(query, updateFields);
             res.json({ message: "Profile updated successfully." });
 
         } catch (err) {

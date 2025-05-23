@@ -17,7 +17,6 @@ https://two800-202510-bby08.onrender.com/
 
 **Project Description** </br>
 Our app allows users to visualize the contents of a community fridge/pantry from wherever they are, edit the contents by donating and taking items when within a specified radius, receive notifications when items have been added to their favourite locations, and leave reviews for their visited locations. Community organizers can create and manage their own locations to keep information up to date.
----
 
 ## Tech Stack
 Frontend:
@@ -197,11 +196,9 @@ C:.
 - HuggingFace: https://huggingface.co/docs/huggingface.js/index 
 
 Code snippets for geolocational distance algoirthm were adapted from resources such as Stack Overflow and MDN Web Docs.
----
 
 **Acknowledgements** </br>
 Thank you to our instructors and mentors at BCIT, we would especially like to thank Hassan for his guidance throughout our project. 
----
 
 ## Contact Information
 **Email**

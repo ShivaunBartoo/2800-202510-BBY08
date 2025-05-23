@@ -3,6 +3,8 @@
 
 import { getUserLocation, getDistance } from "./userLocation.js";
 
+const interactionRadius = 2;
+
 const itemsToDonate = [];
 const storageId = window.location.pathname.split("/")[2];
 
@@ -45,7 +47,7 @@ async function checkDistance() {
 
     document.getElementById("distance").innerHTML = `${distance}km Away`;
 
-    if (distance > 7) {
+    if (distance > interactionRadius) {
         disabled = true;
         document.querySelector("#open-modal").disabled = true;
         document.querySelector("#take").disabled = true;

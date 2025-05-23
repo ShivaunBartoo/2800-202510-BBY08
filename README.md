@@ -67,20 +67,12 @@ AI:
 C:.
 │   .env
 │   .gitignore
-│   api.js
-│   authentication.js
-│   authorization.js
 │   ca.pem
-│   create_manageStorage.js
 │   eslint.config.mjs
 │   index.js
-│   notification-emails.js
 │   package-lock.json
 │   package.json
-│   profile_route.js
 │   README.md
-│   review_reply.js
-│   utils.js
 │
 +---css
 │       404.css
@@ -114,23 +106,33 @@ C:.
 │       index_curve.svg
 │
 +---js
-│       authentication-client.js
-│       browse.js
-│       city.js
-│       config.js
-│       contents.js
-│       contentTabs.js
-│       create_new.js
-│       food-classify.js
-│       food_classify_tuning.js
-│       header.js
-│       help.js
-│       imageUploadUtil.js
-│       locational.js
-│       manage.js
-│       profile.js
-│       reviews.js
-│       userLocation.js
+│   │  authentication-client.
+│   |  authorization.js
+│   |  browse.js
+│   |  city.js
+│   |  config.js
+│   |  contents.js
+│   |  contentTabs.js
+│   |  create_new.js
+│   |  food-classify.js
+│   |  food_classify_tuning.js
+│   |  header.js
+│   |  help.js
+│   |  imageUploadUtil.js
+│   |  locational.js
+│   |  manage.js
+│   |  notification-emails.js
+│   |  profile.js
+│   |  reviews.js
+│   |  userLocation.js
+|   │  utils.js
+|   |    
+|   +---routes
+|           api.js
+│           authentication.js
+│           create_manageStorage.js
+|           profile_route.js
+|           review_reply.js
 │
 +---views
     │   404.ejs
